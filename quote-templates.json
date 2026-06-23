@@ -8,6 +8,38 @@
         { "id": "products", "name": "产品清单", "icon": "🛒" }
       ]
     },
+    "outdoor-scene": {
+      "label": "户外阳台整体",
+      "matchProjectTypes": ["户外全案", "户外阳台", "别墅户外"],
+      "sections": [
+        { "id": "design", "name": "设计服务", "icon": "✏️" },
+        { "id": "kitchen", "name": "户外厨房/烧烤", "icon": "🔥" },
+        { "id": "structure", "name": "凉亭/结构", "icon": "🏛️" },
+        { "id": "shade", "name": "遮阳配套", "icon": "☀️" },
+        { "id": "furniture", "name": "户外家具", "icon": "🛋️" },
+        { "id": "logistics", "name": "物流安装", "icon": "🚚" }
+      ]
+    },
+    "outdoor-kitchen": {
+      "label": "户外厨房",
+      "matchProjectTypes": ["户外厨房", "岛台", "户外烧烤"],
+      "sections": [
+        { "id": "cabinet", "name": "柜体", "icon": "🗄️" },
+        { "id": "countertop", "name": "台面/岛台", "icon": "▬" },
+        { "id": "grill", "name": "烧烤设备", "icon": "🔥" },
+        { "id": "hardware", "name": "功能配件", "icon": "⚙️" },
+        { "id": "electric", "name": "电器", "icon": "🔌" },
+        { "id": "logistics", "name": "物流安装", "icon": "🚚" }
+      ]
+    },
+    "event": {
+      "label": "活动家具快单",
+      "matchProjectTypes": ["活动家具", "活动批量"],
+      "sections": [
+        { "id": "products", "name": "活动 SKU", "icon": "🎪" },
+        { "id": "logistics", "name": "物流批次", "icon": "🚚" }
+      ]
+    },
     "kitchen": {
       "label": "不锈钢橱柜",
       "matchProjectTypes": ["不锈钢橱柜", "不锈钢厨柜"],
