@@ -1,27 +1,33 @@
 /**
- * DD Deep Design · 交付文档视觉令牌
- * 源：delivery-system/delivery-template-standard.html
- * 用途：1.md :root 与 delivery 模板保持同色阶；改交付样式时先改此处再同步 1.md
+ * DD Deep Design · 交付/协作 UI 令牌（与 1.md :root 同步）
  */
 :root {
-  --dd-doc-bg: #f5f5f5;
+  --dd-doc-bg: #ececec;
   --dd-doc-surface: #fff;
-  --dd-doc-surface-alt: #fafafa;
-  --dd-doc-text: #333;
-  --dd-doc-text-2: #666;
-  --dd-doc-text-3: #999;
-  --dd-doc-text-4: #bbb;
-  --dd-doc-heading: #222;
-  --dd-doc-section: #555;
-  --dd-doc-border: #eee;
-  --dd-doc-border-light: #f5f5f5;
-  --dd-doc-accent: #e17055;
-  --dd-doc-success: #27ae60;
+  --dd-doc-surface-nested: #f7f7f7;
+  --dd-doc-surface-inset: #f3f3f3;
+  --dd-doc-text-black: #1a1a1a;
+  --dd-doc-text-strong: #333;
+  --dd-doc-text-default: #444;
+  --dd-doc-text-muted: #666;
+  --dd-doc-text-light: #999;
+  --dd-doc-text-faint: #bbb;
+  --dd-doc-border-subtle: #eee;
+  --dd-doc-border-default: #e0e0e0;
+  --dd-doc-action-bg: #333;
+  --dd-doc-action-hover: #1a1a1a;
+  --dd-doc-elevation-1: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --dd-doc-elevation-hover: 0 4px 14px rgba(0, 0, 0, 0.08);
+  --dd-doc-shadow-inset: inset 0 1px 3px rgba(0, 0, 0, 0.05);
   --dd-doc-font: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  --dd-doc-fs-hero: 26px;
-  --dd-doc-fs-section: 16px;
-  --dd-doc-fs-body: 13px;
-  --dd-doc-fs-small: 12px;
-  --dd-doc-fs-meta: 11px;
+  --dd-doc-fs-xs: 11px;
+  --dd-doc-fs-sm: 12px;
+  --dd-doc-fs-base: 13px;
+  --dd-doc-fs-md: 14px;
+  --dd-doc-fs-lg: 16px;
+  --dd-doc-fs-xl: 20px;
+  --dd-doc-fw-bold: 600;
+  --dd-doc-fw-medium: 500;
+  --dd-doc-fw-normal: 400;
   --dd-doc-radius: 6px;
 }
