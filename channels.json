@@ -26,8 +26,10 @@
     "outdoor-kitchen": {
       "label": "户外厨房",
       "labelEn": "Outdoor Kitchen",
-      "site": "outdoor-kitchen",
       "independentDomain": true,
+      "site": "outdoor-kitchen",
+      "siteUrl": "https://zhouxianliang73.github.io/outdoor-kitchen/",
+      "collabUrl": "https://zhouxianliang73.github.io/dd-design/1.html?channel=outdoor-kitchen",
       "quoteTemplate": "outdoor-kitchen",
       "catalogSpaces": ["户外家具", "不锈钢家具"],
       "includeKitchenLines": true,
