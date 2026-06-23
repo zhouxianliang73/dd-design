@@ -3980,16 +3980,21 @@
             { id: 12, name: '户外简约休闲椅', emoji: '🪑', space: '户外家具', sub: '休闲椅', style: '现代', color: '浅色', spec: '标准款', material: 'PE藤+铝架', price: 1600, image: 'https://images.unsplash.com/photo-1567538096631-e0c55bd6774e?w=320&h=180&fit=crop', sections: ['products'] },
         ];
 
+        /** THOR 不锈钢橱柜 · 八类报价容器（与 thor-quote/index.html 的 .cat 一一对应，唯一分类定义） */
+        const THOR_QUOTE_SECTIONS = [
+            { id: 'cabinet', name: '柜体', icon: '🗄️' },
+            { id: 'countertop', name: '台面', icon: '▬' },
+            { id: 'panel', name: '见光板', icon: '📐' },
+            { id: 'trim', name: '地脚线/顶封板', icon: '📏' },
+            { id: 'hardware', name: '功能配件', icon: '⚙️' },
+            { id: 'sink', name: '水槽/龙头', icon: '🚰' },
+            { id: 'electric', name: '电器', icon: '🔌' },
+            { id: 'extra', name: '增加项目', icon: '➕' },
+        ];
+
         const SECTION_LABELS = {
             products: '产品清单',
-            cabinet: '柜体',
-            countertop: '台面',
-            panel: '见光板',
-            trim: '地脚线/顶封板',
-            hardware: '功能配件',
-            sink: '水槽/龙头',
-            electric: '电器',
-            extra: '增加项目',
+            ...Object.fromEntries(THOR_QUOTE_SECTIONS.map(s => [s.id, s.name])),
         };
 
         const SECTION_IMAGE_POOLS = {
@@ -4722,7 +4727,8 @@
             const p = findProjectById(projectId);
             if (!p) return false;
             const line = suggestionToQuoteLine(lineItem);
-            if (p.quoteCategories?.length) {
+            if (isThorQuoteProject(p)) {
+                ensureProjectQuoteCategories(p);
                 const catId = categoryId || sectionKey;
                 const cat = p.quoteCategories.find(c => c.id === catId);
                 if (!cat) return false;
@@ -4944,7 +4950,7 @@
                 return {
                     updatedAt: '2026-06-22',
                     ...cat,
-                    products: cat.products.map((p, i) => ({
+                    products: (cat.products || []).map((p, i) => ({
                         ...p,
                         image: p.image || pool[i % Math.max(pool.length, 1)] || null,
                         baseW: p.baseW ?? p.w,
@@ -4956,83 +4962,86 @@
             });
         }
 
-        const THOR_KITCHEN_QUOTE_CATEGORIES = enrichQuoteCategories([
-            {
-                id: 'cabinet',
-                name: '柜体',
-                icon: '🗄️',
-                products: [
+        function isThorQuoteProject(p) {
+            if (!p || p.children?.length) return false;
+            return /THOR|不锈钢橱柜/i.test(p.projectType || '');
+        }
+
+        function buildThorQuoteCategories(productsBySection, projectMeta = {}) {
+            const map = productsBySection || {};
+            return enrichQuoteCategories(
+                THOR_QUOTE_SECTIONS.map(s => ({
+                    ...s,
+                    updatedAt: projectMeta.updatedFull,
+                    progress: projectMeta.status,
+                    progressClass: projectMeta.statusClass,
+                    products: map[s.id] || [],
+                }))
+            );
+        }
+
+        function normalizeThorQuoteCategories(existing, projectMeta = {}) {
+            const byId = Object.fromEntries((existing || []).map(c => [c.id, c]));
+            return enrichQuoteCategories(
+                THOR_QUOTE_SECTIONS.map(s => ({
+                    ...s,
+                    updatedAt: byId[s.id]?.updatedAt || projectMeta.updatedFull,
+                    progress: byId[s.id]?.progress || projectMeta.status,
+                    progressClass: byId[s.id]?.progressClass || projectMeta.statusClass,
+                    products: byId[s.id]?.products ?? [],
+                }))
+            );
+        }
+
+        function ensureProjectQuoteCategories(p) {
+            if (!isThorQuoteProject(p)) return false;
+            p.quoteCategories = normalizeThorQuoteCategories(p.quoteCategories, p);
+            return true;
+        }
+
+        const THOR_KITCHEN_DEMO_PRODUCTS = {
+            cabinet: [
                     { name: '洗手盘地柜', emoji: '🗄️', w: 800, h: 700, d: 570, materialBody: '大千云纹', materialDoor: '大千云纹', coef: 1.0, qty: 1, unit: '米', unitPrice: 5627 },
                     { name: '地柜', emoji: '🗄️', w: 800, h: 700, d: 570, materialBody: '大千云纹', materialDoor: '大千云纹', coef: 1.0, qty: 3.2, unit: '米', unitPrice: 5627 },
                     { name: '灶台吊柜', emoji: '🗄️', w: 800, h: 700, d: 370, materialBody: '大千云纹', materialDoor: '大千云纹', coef: 1.0, qty: 0.9, unit: '米', unitPrice: 5077 },
                     { name: '吊柜', emoji: '🗄️', w: 800, h: 700, d: 370, materialBody: '大千云纹', materialDoor: '大千云纹', coef: 1.0, qty: 2.4, unit: '米', unitPrice: 5077 },
                     { name: '高柜', emoji: '🗄️', w: 600, h: 2100, d: 570, materialBody: '大千云纹', materialDoor: '大千云纹', coef: 1.0, qty: 1, unit: '米', unitPrice: 5908 },
-                    { name: '上翻门吊柜', emoji: '🗄️', w: 800, h: 700, d: 370, materialBody: '大千云纹', materialDoor: '大千云纹', coef: 1.0, qty: 0.8, unit: '米', unitPrice: 5077 },
-                ],
-            },
-            {
-                id: 'countertop',
-                name: '台面',
-                icon: '▬',
-                products: [
-                    { name: '台面', emoji: '▬', w: 3000, h: 12, d: 600, material: '琉晶-丝纹GY01 · 12mm', coef: 1.0, qty: 3, unit: '米', unitPrice: 1655 },
-                ],
-            },
-            {
-                id: 'panel',
-                name: '见光板',
-                icon: '📐',
-                products: [
-                    { name: '侧见光板', emoji: '📐', w: 800, h: 2400, d: 20, material: '大千云纹', coef: 1.0, qty: 1.5, unit: '㎡', unitPrice: 1598 },
-                    { name: '高柜见光板', emoji: '📐', w: 600, h: 2100, d: 20, material: '大千云纹', coef: 1.0, qty: 1, unit: '㎡', unitPrice: 1598 },
-                ],
-            },
-            {
-                id: 'trim',
-                name: '地脚线/顶封板',
-                icon: '📏',
-                products: [
-                    { name: '地脚线', emoji: '📏', w: 800, h: 60, d: 20, material: '与柜体一致', coef: 1.0, qty: 4.8, unit: '米', unitPrice: 120 },
-                    { name: '顶封板', emoji: '📏', w: 800, h: 100, d: 20, material: '与柜体一致', coef: 1.0, qty: 4.8, unit: '米', unitPrice: 150 },
-                ],
-            },
-            {
-                id: 'hardware',
-                name: '功能配件',
-                icon: '⚙️',
-                products: [
-                    { name: '百隆107°集成阻尼全盖铰链', emoji: '⚙️', w: 0, h: 0, d: 0, techParams: '集成阻尼 · 全盖', coef: 1.0, qty: 18, unit: '个', unitPrice: 77 },
-                    { name: '百隆全拉托底轨', emoji: '⚙️', w: 0, h: 0, d: 0, techParams: '全拉 · 400mm', coef: 1.0, qty: 4, unit: '套', unitPrice: 632 },
-                    { name: '希勒3.0三边碗碟篮800', emoji: '⚙️', w: 0, h: 0, d: 0, techParams: '800mm 柜宽', coef: 1.0, qty: 1, unit: '套', unitPrice: 1251 },
-                    { name: 'L型免拉手', emoji: '⚙️', w: 0, h: 0, d: 0, techParams: '哑黑铝合金', coef: 1.0, qty: 4, unit: '米', unitPrice: 59 },
-                ],
-            },
-            {
-                id: 'sink',
-                name: '水槽/龙头',
-                icon: '🚰',
-                products: [
-                    { name: '手工单槽', emoji: '🚰', w: 0, h: 0, d: 0, techParams: '304不锈钢 · 手工槽', coef: 1.0, qty: 1, unit: '个', unitPrice: 500 },
-                    { name: '抽拉龙头', emoji: '🚰', w: 0, h: 0, d: 0, techParams: '抽拉式 · 冷热水', coef: 1.0, qty: 1, unit: '个', unitPrice: 350 },
-                ],
-            },
-            {
-                id: 'electric',
-                name: '电器',
-                icon: '🔌',
-                products: [
-                    { name: '嵌入式蒸烤一体机', emoji: '🔌', w: 595, h: 455, d: 550, techParams: '60cm 嵌入式', coef: 1.0, qty: 1, unit: '台', unitPrice: 3000 },
-                ],
-            },
-            {
-                id: 'extra',
-                name: '增加项目',
-                icon: '➕',
-                products: [
-                    { name: '灶炉开槽费', emoji: '➕', w: 0, h: 0, d: 0, techParams: '台面燃气灶开孔', coef: 1.0, qty: 1, unit: '个', unitPrice: 100 },
-                ],
-            },
-        ]);
+                { name: '上翻门吊柜', emoji: '🗄️', w: 800, h: 700, d: 370, materialBody: '大千云纹', materialDoor: '大千云纹', coef: 1.0, qty: 0.8, unit: '米', unitPrice: 5077 },
+            ],
+            countertop: [
+                { name: '台面', emoji: '▬', w: 3000, h: 12, d: 600, material: '琉晶-丝纹GY01 · 12mm', coef: 1.0, qty: 3, unit: '米', unitPrice: 1655 },
+            ],
+            panel: [
+                { name: '侧见光板', emoji: '📐', w: 800, h: 2400, d: 20, material: '大千云纹', coef: 1.0, qty: 1.5, unit: '㎡', unitPrice: 1598 },
+                { name: '高柜见光板', emoji: '📐', w: 600, h: 2100, d: 20, material: '大千云纹', coef: 1.0, qty: 1, unit: '㎡', unitPrice: 1598 },
+            ],
+            trim: [
+                { name: '地脚线', emoji: '📏', w: 800, h: 60, d: 20, material: '与柜体一致', coef: 1.0, qty: 4.8, unit: '米', unitPrice: 120 },
+                { name: '顶封板', emoji: '📏', w: 800, h: 100, d: 20, material: '与柜体一致', coef: 1.0, qty: 4.8, unit: '米', unitPrice: 150 },
+            ],
+            hardware: [
+                { name: '百隆107°集成阻尼全盖铰链', emoji: '⚙️', w: 0, h: 0, d: 0, techParams: '集成阻尼 · 全盖', coef: 1.0, qty: 18, unit: '个', unitPrice: 77 },
+                { name: '百隆全拉托底轨', emoji: '⚙️', w: 0, h: 0, d: 0, techParams: '全拉 · 400mm', coef: 1.0, qty: 4, unit: '套', unitPrice: 632 },
+                { name: '希勒3.0三边碗碟篮800', emoji: '⚙️', w: 0, h: 0, d: 0, techParams: '800mm 柜宽', coef: 1.0, qty: 1, unit: '套', unitPrice: 1251 },
+                { name: 'L型免拉手', emoji: '⚙️', w: 0, h: 0, d: 0, techParams: '哑黑铝合金', coef: 1.0, qty: 4, unit: '米', unitPrice: 59 },
+            ],
+            sink: [
+                { name: '手工单槽', emoji: '🚰', w: 0, h: 0, d: 0, techParams: '304不锈钢 · 手工槽', coef: 1.0, qty: 1, unit: '个', unitPrice: 500 },
+                { name: '抽拉龙头', emoji: '🚰', w: 0, h: 0, d: 0, techParams: '抽拉式 · 冷热水', coef: 1.0, qty: 1, unit: '个', unitPrice: 350 },
+            ],
+            electric: [
+                { name: '嵌入式蒸烤一体机', emoji: '🔌', w: 595, h: 455, d: 550, techParams: '60cm 嵌入式', coef: 1.0, qty: 1, unit: '台', unitPrice: 3000 },
+            ],
+            extra: [
+                { name: '灶炉开槽费', emoji: '➕', w: 0, h: 0, d: 0, techParams: '台面燃气灶开孔', coef: 1.0, qty: 1, unit: '个', unitPrice: 100 },
+            ],
+        };
+
+        const THOR_KITCHEN_QUOTE_CATEGORIES = buildThorQuoteCategories(THOR_KITCHEN_DEMO_PRODUCTS, {
+            updatedFull: '2026-06-22',
+            status: '待确认',
+            statusClass: 'badge-warning',
+        });
 
         function sumThorQuoteCategories(categories) {
             return categories.reduce((sum, cat) => sum + cat.products.reduce((s, p) => s + p.qty * p.unitPrice * (p.coef ?? 1), 0), 0);
@@ -5235,8 +5244,11 @@
         }
 
         function calcProjectTotal(p) {
-            if (p.quoteCategories?.length) {
-                return p.quoteCategories.reduce((sum, cat) => sum + calcProductsTotal(cat.products), 0);
+            if (isThorQuoteProject(p)) {
+                const cats = p.quoteCategories?.length
+                    ? p.quoteCategories
+                    : normalizeThorQuoteCategories(p.quoteCategories, p);
+                return cats.reduce((sum, cat) => sum + calcProductsTotal(cat.products), 0);
             }
             return calcProductsTotal(p.products || []);
         }
@@ -5335,7 +5347,8 @@
             const p = findProjectById(projectId);
             if (!p) return null;
             const idx = Number(rowIdx);
-            if (p.quoteCategories?.length) {
+            if (isThorQuoteProject(p)) {
+                ensureProjectQuoteCategories(p);
                 const cat = p.quoteCategories.find(c => c.id === categoryId);
                 return cat?.products?.[idx] || null;
             }
@@ -5553,7 +5566,8 @@
         }
 
         function renderQuoteCategoriesHtml(categories, projectId, projectMeta = {}) {
-            return categories.map(cat => {
+            const ordered = normalizeThorQuoteCategories(categories, projectMeta);
+            return ordered.map(cat => {
                 const sub = calcProductsTotal(cat.products);
                 const tableCtx = { projectId, sectionKey: cat.id, categoryId: cat.id, sectionLabel: cat.name };
                 const progress = cat.progress || projectMeta.status || '设计中';
@@ -5614,7 +5628,8 @@
             const p = findProjectById(projectId);
             if (!p) return false;
             const idx = Number(rowIdx);
-            if (p.quoteCategories?.length) {
+            if (isThorQuoteProject(p)) {
+                ensureProjectQuoteCategories(p);
                 const cat = p.quoteCategories.find(c => c.id === categoryId);
                 if (!cat?.products?.[idx]) return false;
                 const name = cat.products[idx].name;
@@ -5818,7 +5833,8 @@
         }
 
         function renderProjectSectionsHtml(p) {
-            const hasQuoteCats = !p.children?.length && p.quoteCategories?.length;
+            if (isThorQuoteProject(p)) ensureProjectQuoteCategories(p);
+            const hasQuoteCats = !p.children?.length && isThorQuoteProject(p);
             const products = p.children?.length ? [] : (hasQuoteCats ? [] : (p.products || []));
             const prod = normalizeMediaSection(p.production, '暂无生产记录');
             const ship = normalizeMediaSection(p.shipping, '暂无货运记录');
