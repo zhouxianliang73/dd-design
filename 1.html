@@ -19,6 +19,7 @@
             --text-muted: #666;
             --text-light: #999;
             --text-faint: #bbb;
+            --text-price: #aaa;
             --text-primary: var(--text-strong);
             --text-secondary: var(--text-muted);
             --text-tertiary: var(--text-light);
@@ -220,6 +221,32 @@
         }
         .card-header .more:hover i {
             transform: translateX(2px);
+        }
+        .card-header .more.favorites-toggle {
+            width: 26px;
+            height: 26px;
+            justify-content: center;
+            padding: 0;
+            gap: 0;
+            background: var(--surface-raised);
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--elevation-1);
+        }
+        .card-header .more.favorites-toggle:hover {
+            box-shadow: var(--elevation-hover);
+        }
+        .card-header .more.favorites-toggle i {
+            font-size: 10px;
+            transition: transform 0.2s ease;
+        }
+        .card-header .more.favorites-toggle:not(.is-expanded) i {
+            transform: rotate(180deg);
+        }
+        .card-header .more.favorites-toggle:hover i {
+            transform: none;
+        }
+        .card-header .more.favorites-toggle:not(.is-expanded):hover i {
+            transform: rotate(180deg);
         }
         .card-header .card-icon {
             margin-right: 8px;
@@ -1539,42 +1566,119 @@
             border: none;
             border-bottom: 1px dashed transparent;
             background: transparent;
-            font-size: var(--fs-lg);
-            font-weight: var(--fw-bold);
-            color: var(--text-strong);
+            font-size: var(--fs-md);
+            font-weight: var(--fw-medium);
+            color: var(--text-muted);
             padding: 2px 4px;
             outline: none;
         }
         .project-name-input:hover,
         .project-name-input:focus {
-            border-bottom-color: var(--border-strong);
+            color: var(--text-default);
+            border-bottom-color: var(--border-default);
         }
-        .project-shell-updated {
-            font-size: 12px;
-            color: var(--text-tertiary);
-            white-space: nowrap;
+        /* 价格三档：小计(浅) · 总计(中) · 合计(深) */
+        .price-line {
+            color: var(--text-price);
+            font-size: var(--fs-sm);
+            font-weight: var(--fw-normal);
+            font-variant-numeric: tabular-nums;
         }
-        .project-shell-total {
-            background: transparent;
+        .price-grand {
+            color: var(--text-light);
+            font-size: var(--fs-base);
+            font-weight: var(--fw-medium);
+            font-variant-numeric: tabular-nums;
+        }
+        .price-sum {
             color: var(--text-strong);
-            padding: 2px 0;
-            border-radius: 0;
             font-size: var(--fs-md);
             font-weight: var(--fw-bold);
             font-variant-numeric: tabular-nums;
+        }
+        .project-shell-total {
+            background: transparent;
+            padding: 0;
+            border: none;
             box-shadow: none;
-            flex-shrink: 0;
-            border-top: 2px solid var(--border-strong);
+        }
+        .project-shell-total.price-grand {
+            font-size: var(--fs-base);
         }
         .project-shell-total.is-plain {
+            font-size: var(--fs-sm);
+        }
+        .project-shell-updated {
+            font-size: var(--fs-xs);
+            color: var(--text-faint);
+            white-space: nowrap;
+            font-weight: var(--fw-normal);
+        }
+        .shell-hd-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+        }
+        .shell-hd-row1 {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px 12px;
+        }
+        .shell-hd-row1-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+        .shell-hd-meta-block {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            width: 100%;
+        }
+        .shell-hd-meta-line {
+            font-size: var(--fs-sm);
+            font-weight: var(--fw-normal);
+            color: var(--text-light);
+            line-height: 1.45;
+        }
+        .shell-hd-meta-line.is-secondary {
+            font-size: var(--fs-xs);
+            color: var(--text-faint);
+        }
+        .meta-sep {
+            margin: 0 5px;
+            color: var(--text-faint);
+        }
+        .text-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 4px;
+            margin: 0;
+            border: none;
             background: transparent;
-            color: var(--text-muted);
-            font-weight: var(--fw-medium);
             box-shadow: none;
-            padding: 4px 0;
-            border-radius: 0;
-            border-top: none;
-            font-size: var(--fs-base);
+            font-family: var(--font);
+            font-size: var(--fs-sm);
+            font-weight: var(--fw-normal);
+            color: var(--text-light);
+            cursor: pointer;
+            transition: color 0.15s, background 0.15s;
+            border-radius: 4px;
+        }
+        .text-action:hover {
+            color: var(--text-strong);
+            background: var(--surface-nested);
+        }
+        .text-action:active {
+            background: var(--surface-inset);
+        }
+        .text-action.is-muted-danger:hover {
+            color: var(--text-strong);
         }
         .project-shell-hd .status-badge {
             padding: 2px 10px;
@@ -1587,23 +1691,6 @@
         }
         .btn-confirm-scheme {
             flex-shrink: 0;
-            background: var(--action-bg);
-            color: var(--action-text);
-            border: 1px solid var(--action-bg);
-            padding: 6px 14px;
-            border-radius: var(--radius-sm);
-            font-size: var(--fs-sm);
-            font-weight: var(--fw-medium);
-            cursor: pointer;
-            box-shadow: var(--elevation-1);
-            transition: background 0.15s, box-shadow 0.15s;
-        }
-        .btn-confirm-scheme:hover {
-            background: var(--action-bg-hover);
-            box-shadow: var(--elevation-hover);
-        }
-        .btn-confirm-scheme:active {
-            box-shadow: var(--shadow-inset);
         }
         .project-shell-info {
             display: grid;
@@ -1619,38 +1706,50 @@
         .shell-expand-btn {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            justify-content: center;
             flex-shrink: 0;
-            padding: 6px 12px;
-            min-height: 32px;
-            border: 1px solid var(--border-default);
-            border-radius: var(--radius-sm);
+            width: 26px;
+            height: 26px;
+            padding: 0;
+            border: 1px solid var(--border-subtle);
+            border-radius: 4px;
             background: var(--surface-raised);
-            color: var(--text-muted);
-            font-size: var(--fs-sm);
-            font-weight: var(--fw-medium);
+            color: transparent;
+            font-size: 0;
             cursor: pointer;
             transition: background 0.15s, box-shadow 0.15s, border-color 0.15s;
             box-shadow: var(--elevation-1);
         }
+        .shell-expand-btn .shell-expand-text,
+        .shell-expand-btn > i {
+            display: none !important;
+        }
+        .shell-expand-btn::after {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-right: 1.5px solid var(--text-light);
+            border-bottom: 1.5px solid var(--text-light);
+            transform: rotate(45deg);
+            margin-top: -2px;
+            transition: transform 0.2s ease, border-color 0.15s;
+        }
         .shell-expand-btn:hover {
             background: var(--surface-nested);
-            border-color: var(--border-strong);
-            color: var(--text-strong);
+            border-color: var(--border-default);
             box-shadow: var(--elevation-hover);
         }
-        .shell-expand-btn i {
-            font-size: 10px;
-            transition: transform 0.2s ease;
+        .shell-expand-btn:hover::after {
+            border-color: var(--text-muted);
         }
         .project-shell.is-open > .project-shell-hd .shell-expand-btn {
             background: var(--surface-inset);
-            border-color: var(--border-strong);
-            color: var(--text-strong);
+            border-color: var(--border-default);
             box-shadow: var(--shadow-inset);
         }
-        .project-shell.is-open > .project-shell-hd .shell-expand-btn i {
-            transform: rotate(180deg);
+        .project-shell.is-open > .project-shell-hd .shell-expand-btn::after {
+            transform: rotate(-135deg);
+            margin-top: 2px;
         }
         .project-sub-list {
             padding: 8px 12px 12px;
@@ -1821,14 +1920,11 @@
             display: block;
         }
         .btn-merge-projects.can-split {
-            border-color: var(--warning);
-            color: var(--warning);
+            color: var(--text-muted);
         }
         .btn-merge-projects.can-split:not(:disabled):hover {
-            background: var(--warning-bg);
-            border-color: var(--warning);
-            color: var(--warning);
-            box-shadow: 0 0 0 3px var(--warning-bg);
+            color: var(--text-strong);
+            background: var(--surface-nested);
         }
         .record-photos {
             display: flex;
@@ -1904,7 +2000,7 @@
                 align-items: flex-start;
             }
             .project-shell-updated,
-            .btn-confirm-scheme {
+            .text-action {
                 margin-left: 0;
             }
         }
@@ -1976,6 +2072,14 @@
             border-bottom: 1px solid var(--gray-100);
             color: var(--gray-800);
             font-size: 13px;
+        }
+        .project-tw td.price-line {
+            color: var(--text-price);
+            font-size: var(--fs-sm);
+            font-weight: var(--fw-normal);
+        }
+        .project-tw td.price-line.qty-zero {
+            color: var(--text-faint);
         }
         .project-tw tr:last-child td {
             border-bottom: none;
@@ -2084,23 +2188,39 @@
             cursor: default;
         }
         .quote-cat-hd {
+            display: block;
+            padding: 12px 16px;
+            cursor: default;
+        }
+        .quote-cat-hd-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+        }
+        .quote-cat-hd-row1 {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            flex-wrap: nowrap;
-            gap: 10px 12px;
+            flex-wrap: wrap;
+            gap: 8px 12px;
+        }
+        .quote-cat-hd-row2 {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
         }
         .quote-cat-hd .proj-section-label {
             flex: 1 1 auto;
             min-width: 0;
-            font-size: 15px;
-            font-weight: 700;
+            font-size: var(--fs-md);
+            font-weight: var(--fw-medium);
+            color: var(--text-muted);
         }
         .quote-cat-meta {
             display: flex;
             align-items: center;
             flex-wrap: wrap;
-            gap: 10px 12px;
+            gap: 8px 10px;
             margin-left: auto;
             justify-content: flex-end;
             flex-shrink: 0;
@@ -2111,21 +2231,12 @@
         .quote-cat-meta .project-shell-total {
             box-shadow: none;
         }
-        .project-shell-body > .comm-pdf-bar {
-            margin: 0 18px 16px;
-            padding-top: 12px;
-            border-top: 1px solid var(--gray-100);
-        }
-        .project-tw .qty-zero {
-            color: var(--text-tertiary);
-        }
         .quote-cat-total {
-            margin-left: auto;
-            margin-right: 8px;
-            font-size: 13px;
-            font-weight: 700;
+            margin-left: 0;
+            font-size: var(--fs-md);
+            font-weight: var(--fw-bold);
             font-variant-numeric: tabular-nums;
-            color: var(--text-primary);
+            color: var(--text-strong);
         }
         .project-tw tr.quote-add-row td {
             padding: 0;
@@ -2285,20 +2396,26 @@
         .quote-sum-row.is-grand {
             margin-top: 8px;
             padding-top: 12px;
-            border-top: 2px solid var(--gray-800);
+            border-top: 1px solid var(--border-default);
             border-bottom: none;
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--text-primary);
+            font-size: var(--fs-base);
+            font-weight: var(--fw-medium);
+            color: var(--text-light);
         }
         .quote-sum-row.is-grand .quote-sum-val {
-            font-size: 18px;
-            color: var(--primary);
+            font-size: var(--fs-base);
+            color: var(--text-light);
+            font-weight: var(--fw-medium);
         }
         .quote-sum-val {
             font-variant-numeric: tabular-nums;
-            font-weight: 600;
-            color: var(--text-primary);
+            font-weight: var(--fw-normal);
+            color: var(--text-price);
+        }
+        .quote-sum-row.is-total .quote-sum-val {
+            color: var(--text-strong);
+            font-size: var(--fs-md);
+            font-weight: var(--fw-bold);
         }
         .quote-terms {
             margin: 0 18px 16px;
@@ -2372,21 +2489,19 @@
         }
         .btn-merge-projects {
             position: relative;
-            transition: all 0.22s ease;
+            transition: color 0.15s, background 0.15s;
         }
         .btn-merge-projects:not(:disabled):hover {
-            border-color: var(--primary);
-            background: var(--primary-10);
-            color: var(--primary);
-            box-shadow: 0 0 0 3px var(--primary-10);
+            color: var(--text-strong);
+            background: var(--surface-nested);
+            box-shadow: none;
         }
         .btn-merge-projects:not(:disabled):active,
         .btn-merge-projects.is-pressed {
-            transform: scale(0.96);
-            background: var(--primary) !important;
-            color: #fff !important;
-            border-color: var(--primary-dark) !important;
-            box-shadow: 0 4px 14px var(--primary-20);
+            transform: none;
+            background: var(--surface-inset) !important;
+            color: var(--text-strong) !important;
+            box-shadow: none !important;
         }
         .btn-merge-projects:disabled {
             opacity: 0.45;
@@ -2941,9 +3056,10 @@
             color: var(--text-primary);
         }
         .favorite-item .fav-price {
-            font-size: 12px;
-            color: var(--primary);
+            font-size: var(--fs-xs);
+            color: var(--text-price);
             margin-top: 2px;
+            font-weight: var(--fw-normal);
         }
 
         /* 收藏标签 — DD 风格 */
@@ -3804,12 +3920,10 @@
                 <div id="projectListRoot" class="project-list"></div>
 
                 <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin:12px 0 16px;">
-                    <span class="text-muted" style="color:var(--text-secondary);font-size:14px;"><i class="fas fa-check-circle" style="color:var(--primary);"></i> 已选 <span id="selectedCount">0</span> 个方案，总价：<strong id="selectedTotal">¥0</strong></span>
-                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <span class="text-muted" style="color:var(--text-secondary);font-size:14px;">已选 <span id="selectedCount">0</span> 个方案，总价：<strong id="selectedTotal" class="price-grand">¥0</strong></span>
+                    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
                         <div class="merge-action-wrap" id="mergeActionWrap">
-                            <button type="button" class="btn btn-outline btn-sm btn-merge-projects" id="mergeProjectsBtn">
-                                <i class="fas fa-object-group"></i> 合并方案
-                            </button>
+                            <button type="button" class="text-action btn-merge-projects" id="mergeProjectsBtn">合并方案</button>
                             <div class="merge-hint" id="mergeHint" role="dialog" aria-label="合并方案预览">
                                 <div class="merge-hint-meta" id="mergeHintMeta">勾选 2 个及以上方案后可合并</div>
                                 <div class="merge-name-row" id="mergeNameRow" hidden>
@@ -3820,7 +3934,7 @@
                                 <div class="merge-hint-action" id="mergeHintAction" hidden>合并后原方案变为子容器</div>
                             </div>
                         </div>
-                        <button type="button" class="btn btn-sm" id="deleteProjectsBtn" style="background:var(--danger-bg);color:var(--danger);border:1px solid transparent;">删除</button>
+                        <button type="button" class="text-action is-muted-danger" id="deleteProjectsBtn">删除</button>
                     </div>
                 </div>
             </div>
@@ -3833,8 +3947,8 @@
             <!-- 收藏 -->
             <div class="card favorites-card">
                 <div class="card-header">
-                    <span><i class="fas fa-heart card-icon danger"></i>我的收藏</span>
-                    <span class="more favorites-toggle" id="favoritesToggleProjects">收起 <i class="fas fa-chevron-up"></i></span>
+                    <span>我的收藏</span>
+                    <span class="more favorites-toggle is-expanded" id="favoritesToggleProjects" aria-label="收起收藏"><i class="fas fa-chevron-up"></i></span>
                 </div>
                 <div class="favorites-grid" id="favoritesGridProjects">
                     <div class="favorite-item"><div class="fav-img">☁️</div><div class="fav-info"><div class="fav-name">云朵沙发</div><div class="fav-price">¥12,000</div></div></div>
@@ -3899,8 +4013,8 @@
             <!-- 收藏 -->
             <div class="card favorites-card">
                 <div class="card-header">
-                    <span><i class="fas fa-heart card-icon danger"></i>我的收藏</span>
-                    <span class="more favorites-toggle" id="favoritesToggleMe">收起 <i class="fas fa-chevron-up"></i></span>
+                    <span>我的收藏</span>
+                    <span class="more favorites-toggle is-expanded" id="favoritesToggleMe" aria-label="收起收藏"><i class="fas fa-chevron-up"></i></span>
                 </div>
                 <div class="favorites-grid" id="favoritesGridMe">
                     <div class="favorite-item"><div class="fav-img">☁️</div><div class="fav-info"><div class="fav-name">云朵沙发</div><div class="fav-price">¥12,000</div></div></div>
@@ -4818,13 +4932,9 @@
                 const parentShell = shell?.closest('.project-sub-list')?.closest('.project-shell');
                 if (parentShell) {
                     parentShell.classList.add('is-open');
-                    const parentText = parentShell.querySelector('[data-toggle-shell-btn] .shell-expand-text');
-                    if (parentText) parentText.textContent = '收起';
                 }
                 if (shell) {
                     shell.classList.add('is-open');
-                    const textEl = shell.querySelector('[data-toggle-shell-btn] .shell-expand-text');
-                    if (textEl) textEl.textContent = '收起';
                 }
                 const sectionSel = `.project-shell[data-project-id="${ctx.projectId}"] [data-section="${ctx.categoryId || ctx.sectionKey}"]`;
                 const section = document.querySelector(sectionSel);
@@ -5486,7 +5596,7 @@
             const subCell = row.querySelector('[data-subtotal-cell]');
             if (subCell) {
                 subCell.textContent = `¥${subtotal.toLocaleString()}`;
-                subCell.style.color = line.qty === 0 ? 'var(--text-tertiary)' : '';
+                subCell.classList.toggle('qty-zero', line.qty === 0);
             }
             ['w', 'h', 'd'].forEach(field => {
                 const inp = row.querySelector(`[data-quote-field="${field}"]`);
@@ -5497,11 +5607,11 @@
             });
             p.price = calcProjectTotal(p);
             const totalEl = shell?.querySelector('.project-shell-total');
-            if (totalEl) totalEl.textContent = `¥${p.price.toLocaleString()}`;
+            if (totalEl) totalEl.textContent = `总计 ¥${p.price.toLocaleString()}`;
             const catTotal = shell?.querySelector(`[data-section="${categoryId}"] .quote-cat-total, [data-section="${categoryId}"] .project-shell-total`);
             if (catTotal && categoryId) {
                 const cat = p.quoteCategories?.find(c => c.id === categoryId);
-                if (cat) catTotal.textContent = `¥${calcProductsTotal(cat.products).toLocaleString()}`;
+                if (cat) catTotal.textContent = `合计 ¥${calcProductsTotal(cat.products).toLocaleString()}`;
             }
         }
 
@@ -5599,11 +5709,17 @@
                 const updated = cat.updatedAt || projectMeta.updatedFull || '—';
                 return `<section class="proj-section quote-cat-section is-fixed" data-section="${cat.id}">
                     <div class="proj-section-hd quote-cat-hd">
-                        <span class="proj-section-label">${cat.icon || '📦'} ${cat.name}</span>
-                        <div class="quote-cat-meta">
-                            <span class="status-badge ${progressClass}">${progress}</span>
-                            <span class="project-shell-updated"><i class="far fa-clock"></i> 更新于 ${updated}</span>
-                            <span class="project-shell-total is-plain quote-cat-total">¥${sub.toLocaleString()}</span>
+                        <div class="quote-cat-hd-stack">
+                            <div class="quote-cat-hd-row1">
+                                <span class="proj-section-label">${cat.name}</span>
+                                <div class="quote-cat-meta">
+                                    <span class="status-badge ${progressClass}">${progress}</span>
+                                    <span class="project-shell-updated">${updated}</span>
+                                </div>
+                            </div>
+                            <div class="quote-cat-hd-row2">
+                                <span class="price-sum quote-cat-total">合计 ¥${sub.toLocaleString()}</span>
+                            </div>
                         </div>
                     </div>
                     <div class="proj-section-bd">${renderQuoteTableHtml(cat.products, tableCtx)}</div>
@@ -5716,8 +5832,8 @@
                     <td class="al-r" data-coef-cell>${coefHtml}</td>
                     <td class="al-r">${qtyCell}</td>
                     <td>${p.unit || '—'}</td>
-                    <td class="al-r">¥${p.unitPrice.toLocaleString()}</td>
-                    <td class="al-r" data-subtotal-cell${isZero ? ' style="color:var(--text-tertiary);"' : ''}>¥${subtotal.toLocaleString()}</td>
+                    <td class="al-r price-line">¥${p.unitPrice.toLocaleString()}</td>
+                    <td class="al-r price-line${isZero ? ' qty-zero' : ''}" data-subtotal-cell>¥${subtotal.toLocaleString()}</td>
                     ${delCell}
                 </tr>`;
             }).join('');
@@ -5866,7 +5982,7 @@
             const quoteHtml = hasQuoteCats ? renderQuoteCategoriesHtml(p.quoteCategories, p.id, p) : `
                 <section class="proj-section proj-collapsible" data-section="products">
                     <div class="proj-section-hd" data-toggle-section>
-                        <span class="proj-section-label">🛒 产品清单</span>
+                        <span class="proj-section-label">产品清单</span>
                         <span class="section-toggle-hint">点击展开</span>
                         <i class="fas fa-chevron-down chevron"></i>
                     </div>
@@ -5888,17 +6004,21 @@
         }
 
         function renderProjectShellMetaHtml(p) {
-            const items = [];
-            if (p.address) items.push({ icon: 'fa-map-marker-alt', text: p.address });
-            if (p.designer) items.push({ icon: 'fa-user', text: p.designer });
-            if (p.eta) items.push({ icon: 'fa-calendar-alt', text: p.eta });
-            if (p.projectType) items.push({ icon: 'fa-box', text: p.projectType });
-            if (p.quoteMeta?.orderNo) items.push({ icon: 'fa-file-alt', text: p.quoteMeta.orderNo });
-            if (p.quoteMeta?.store) items.push({ icon: 'fa-store', text: p.quoteMeta.store });
-            if (!items.length) return '';
-            return items.map(i => `
-                <span class="shell-meta-item"><i class="fas ${i.icon}"></i>${i.text}</span>
-            `).join('');
+            const line1 = [];
+            if (p.address) line1.push(p.address);
+            if (p.designer) line1.push(p.designer);
+            if (p.updatedFull) line1.push(p.updatedFull);
+            const line2 = [];
+            if (p.projectType) line2.push(p.projectType);
+            if (p.quoteMeta?.orderNo) line2.push(p.quoteMeta.orderNo);
+            if (p.quoteMeta?.store) line2.push(p.quoteMeta.store);
+            if (p.eta) line2.push(p.eta);
+            if (!line1.length && !line2.length) return '';
+            const joinLine = parts => parts.map(t => `<span>${t}</span>`).join('<span class="meta-sep">·</span>');
+            return `<div class="shell-hd-meta-block">
+                ${line1.length ? `<div class="shell-hd-meta-line">${joinLine(line1)}</div>` : ''}
+                ${line2.length ? `<div class="shell-hd-meta-line is-secondary">${joinLine(line2)}</div>` : ''}
+            </div>`;
         }
 
         function renderProjectShell(p, opts = {}) {
@@ -5910,34 +6030,30 @@
                 : '';
             const metaHtml = isSub ? '' : renderProjectShellMetaHtml(p);
             const hdInner = isSub
-                ? `<div class="project-shell-title-row">
-                    <span style="font-size:18px;">📋</span>
-                    <input type="text" class="project-name-input" value="${p.name}" data-project-name="${p.id}" />
-                    <span class="status-badge ${p.statusClass}">${p.status}</span>
-                    <span class="project-shell-updated"><i class="far fa-clock"></i> 更新于 ${p.updatedFull || '—'}</span>
-                    <span class="project-shell-total is-plain">¥${p.price.toLocaleString()}</span>
-                    <button type="button" class="shell-expand-btn" data-toggle-shell-btn data-project-id="${p.id}" aria-label="展开或收起方案详情">
-                        <span class="shell-expand-text">详情</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
-                </div>`
-                : `<div class="project-shell-hd-grid">
-                    <div class="shell-hd-left">
-                        ${showCheckbox ? `<label class="project-shell-check" onclick="event.stopPropagation()"><input type="checkbox" class="project-check" data-project-id="${p.id}"${p.checked ? ' checked' : ''} /></label>` : ''}
-                        <span style="font-size:18px;">📋</span>
+                ? `<div class="shell-hd-stack">
+                    <div class="shell-hd-row1">
                         <input type="text" class="project-name-input" value="${p.name}" data-project-name="${p.id}" />
+                        <div class="shell-hd-row1-actions">
+                            <span class="status-badge ${p.statusClass}">${p.status}</span>
+                            <span class="price-grand project-shell-total is-plain">总计 ¥${p.price.toLocaleString()}</span>
+                            <button type="button" class="shell-expand-btn" data-toggle-shell-btn data-project-id="${p.id}" aria-label="展开或收起方案详情"></button>
+                        </div>
                     </div>
-                    ${metaHtml ? `<div class="shell-hd-meta">${metaHtml}</div>` : ''}
-                    <div class="shell-hd-right">
-                        <span class="status-badge ${p.statusClass}">${p.status}</span>
-                        <span class="project-shell-updated"><i class="far fa-clock"></i> ${p.updatedFull || '—'}</span>
-                        <span class="project-shell-total">¥${p.price.toLocaleString()}</span>
-                        ${showConfirm ? `<button type="button" class="btn-confirm-scheme" data-confirm-project="${p.id}">确认方案</button>` : ''}
-                        <button type="button" class="shell-expand-btn" data-toggle-shell-btn data-project-id="${p.id}" aria-label="展开或收起方案详情">
-                            <span class="shell-expand-text">详情</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
+                </div>`
+                : `<div class="shell-hd-stack">
+                    <div class="shell-hd-row1">
+                        <div class="shell-hd-left">
+                            ${showCheckbox ? `<label class="project-shell-check" onclick="event.stopPropagation()"><input type="checkbox" class="project-check" data-project-id="${p.id}"${p.checked ? ' checked' : ''} /></label>` : ''}
+                            <input type="text" class="project-name-input" value="${p.name}" data-project-name="${p.id}" />
+                        </div>
+                        <div class="shell-hd-row1-actions">
+                            <span class="status-badge ${p.statusClass}">${p.status}</span>
+                            ${showConfirm ? `<button type="button" class="text-action btn-confirm-scheme" data-confirm-project="${p.id}">确认方案</button>` : ''}
+                            <span class="price-grand project-shell-total">总计 ¥${p.price.toLocaleString()}</span>
+                            <button type="button" class="shell-expand-btn" data-toggle-shell-btn data-project-id="${p.id}" aria-label="展开或收起方案详情"></button>
+                        </div>
                     </div>
+                    ${metaHtml}
                 </div>`;
 
             return `
@@ -6030,7 +6146,7 @@
             const list = getProjectsForPage('page-projects');
             grid.innerHTML = list.map(p => `
                 <div class="pcard${p.children?.length ? ' is-merged' : ''}" data-project-id="${p.id}">
-                    <div class="img">${p.children?.length ? `📦 合并 ${p.children.length}项` : '📋'}</div>
+                    <div class="img">${p.children?.length ? `合并 ${p.children.length}项` : ''}</div>
                     <div class="info">
                         <div class="pname">${p.name}</div>
                         <div class="meta"><span>${p.designer}</span><span class="badge ${p.statusClass}" style="font-size:10px;">${p.status}</span></div>
@@ -6102,9 +6218,7 @@
             wrap?.classList.toggle('can-merge', canMerge);
             wrap?.classList.toggle('can-split', canSplit);
             btn.disabled = !(canMerge || canSplit);
-            btn.innerHTML = canSplit
-                ? '<i class="fas fa-code-branch"></i> 拆分方案'
-                : '<i class="fas fa-object-group"></i> 合并方案';
+            btn.innerHTML = canSplit ? '拆分方案' : '合并方案';
 
             if (canSplit) {
                 const merged = selected[0];
@@ -6344,8 +6458,6 @@
                     document.querySelectorAll('.project-shell').forEach(el => {
                         el.classList.toggle('is-active', el.dataset.projectId === activeProjectId);
                     });
-                    const textEl = expandBtn.querySelector('.shell-expand-text');
-                    if (textEl) textEl.textContent = shell.classList.contains('is-open') ? '收起' : '详情';
                     return;
                 }
 
@@ -6438,11 +6550,7 @@
         }
 
         function syncExpandButtons() {
-            document.querySelectorAll('[data-toggle-shell-btn]').forEach(btn => {
-                const shell = btn.closest('.project-shell');
-                const textEl = btn.querySelector('.shell-expand-text');
-                if (textEl) textEl.textContent = shell?.classList.contains('is-open') ? '收起' : '详情';
-            });
+            /* 展开状态由 .is-open + CSS 三角箭头表现，无需同步文字 */
         }
 
         function initProjects() {
@@ -6503,9 +6611,8 @@
             if (!grid) return;
             grid.classList.toggle('collapsed');
             const expanded = !grid.classList.contains('collapsed');
-            toggleEl.innerHTML = expanded
-                ? '收起 <i class="fas fa-chevron-up"></i>'
-                : '展开 <i class="fas fa-chevron-down"></i>';
+            toggleEl.classList.toggle('is-expanded', expanded);
+            toggleEl.setAttribute('aria-label', expanded ? '收起收藏' : '展开收藏');
         }
 
         app?.addEventListener('click', (e) => {
