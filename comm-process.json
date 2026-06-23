@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "savedAt": "2026-06-21",
+  "description": "deep design 项目详情 · 沟通记录完整结构",
+  "domTree": {
+    "root": "#commSection",
+    "children": [
+      ".comm-section-header > h3 + #commSectionClose",
+      "#commBlocks > .comm-block[data-comm][data-date]",
+      "#commPdfBar > .comm-pdf-head > #commPdfExport + #commPdfClose"
+    ]
+  },
+  "blockTypes": {
+    "summary": { "fields": ["id", "title", "date", "preview", "detailTitle"] },
+    "images": { "fields": ["id", "title", "date", "preview", "detailTitle", "images[]"] }
+  },
+  "defaultBlocks": [
+    { "id": "client", "type": "summary", "title": "客户沟通总结", "date": "2026-07-14" },
+    { "id": "images", "type": "images", "title": "客户上传图片", "date": "2026-07-14" },
+    { "id": "designer", "type": "summary", "title": "设计师方案总结", "date": "2026-07-13" }
+  ],
+  "pdfExports": ["comm", "products", "scheme", "full"],
+  "jsFunctions": [
+    "getDefaultCommStructure",
+    "loadCommStructure",
+    "saveCommStructure",
+    "renderCommSection",
+    "renderCommBlockHtml",
+    "initCommSection",
+    "initPdfDropdown",
+    "sortCommBlocksByDate（已并入 renderCommSection 排序）"
+  ],
+  "persistence": {
+    "localStorageKey": "deepdesign_comm_structure",
+    "jsonFile": "comm-structure.json",
+    "saveTriggers": ["initCommSection", "关闭沟通记录", "关闭 PDF 栏"]
+  },
+  "sectionState": {
+    "visible": "section.visible",
+    "pdfBarVisible": "section.pdfBarVisible"
+  }
+}

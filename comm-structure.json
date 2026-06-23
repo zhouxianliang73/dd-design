@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "app": "deep design",
+  "projectId": "张先生 · 客厅",
+  "section": {
+    "title": "沟通记录",
+    "visible": true,
+    "pdfBarVisible": true
+  },
+  "blocks": [
+    {
+      "id": "client",
+      "type": "summary",
+      "title": "客户沟通总结",
+      "date": "2026-07-14",
+      "preview": "希望温暖明亮、浅色系沙发，注重耐用性，预算控制在 ¥2 万以内…",
+      "detailTitle": "客户沟通记录详情"
+    },
+    {
+      "id": "images",
+      "type": "images",
+      "title": "客户上传图片",
+      "date": "2026-07-14",
+      "preview": "共 3 张客厅参考图",
+      "detailTitle": "客户上传图片详情",
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=96&h=96&fit=crop",
+          "alt": "参考图1"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=96&h=96&fit=crop",
+          "alt": "参考图2"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1618219908412-a29a1bb17338?w=96&h=96&fit=crop",
+          "alt": "参考图3"
+        }
+      ]
+    },
+    {
+      "id": "designer",
+      "type": "summary",
+      "title": "设计师方案总结",
+      "date": "2026-07-13",
+      "preview": "方案 V1 · 现代简约客厅布局，推荐 3 款沙发与 2 款茶几组合",
+      "detailTitle": "设计师方案详情"
+    }
+  ],
+  "pdfExports": [
+    {
+      "id": "comm",
+      "label": "沟通记录",
+      "sub": "客户总结 · 上传图片 · 方案摘要"
+    },
+    {
+      "id": "products",
+      "label": "产品清单",
+      "sub": "名称、规格、材质、数量与报价"
+    },
+    {
+      "id": "scheme",
+      "label": "方案图片",
+      "sub": "设计师渲染图与参考图合集"
+    },
+    {
+      "id": "full",
+      "label": "完整项目",
+      "sub": "全部内容 + 项目封面"
+    }
+  ],
+  "social": [
+    { "id": "wechat", "label": "微信", "channel": "weixin" },
+    { "id": "whatsapp", "label": "WhatsApp", "channel": "whatsapp" }
+  ]
+}
