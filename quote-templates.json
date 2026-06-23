@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "templates": {
+    "default": {
+      "label": "全案清单",
+      "matchProjectTypes": ["全案设计", "卧室改造", "书房定制", "全屋全案", "合并方案"],
+      "sections": [
+        { "id": "products", "name": "产品清单", "icon": "🛒" }
+      ]
+    },
+    "kitchen": {
+      "label": "不锈钢橱柜",
+      "matchProjectTypes": ["不锈钢橱柜", "不锈钢厨柜"],
+      "sections": [
+        { "id": "cabinet", "name": "柜体", "icon": "🗄️" },
+        { "id": "countertop", "name": "台面", "icon": "▬" },
+        { "id": "panel", "name": "见光板", "icon": "📐" },
+        { "id": "trim", "name": "地脚线/顶封板", "icon": "📏" },
+        { "id": "hardware", "name": "功能配件", "icon": "⚙️" },
+        { "id": "sink", "name": "水槽/龙头", "icon": "🚰" },
+        { "id": "electric", "name": "电器", "icon": "🔌" },
+        { "id": "extra", "name": "增加项目", "icon": "➕" }
+      ]
+    }
+  }
+}

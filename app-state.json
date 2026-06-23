@@ -1,19 +1,23 @@
 {
-  "version": "2026-06-22-b",
+  "version": "2026-06-23",
   "brand": "deep design",
   "mainFiles": {
     "html": "D:\\DD-cursor\\scheme-center\\1.html",
     "md": "D:\\DD-cursor\\scheme-center\\1.md",
     "preview": "file:///D:/DD-cursor/scheme-center/1.html"
   },
+  "dataFiles": {
+    "catalog": "catalog.json",
+    "quoteTemplates": "quote-templates.json"
+  },
   "features": [
-    "媒体版块底部 + 添加图片（客户上传/意见/方案、生产、货运）",
-    "产品清单可编辑数量与尺寸，尺寸偏离选品基准为浅橙色",
-    "尺寸变更自动重算非标系数，系数变红",
-    "项目容器底部 PDF 导出（宽屏整行/窄屏下拉）",
-            "THOR 八类容器与 thor-quote 对齐（THOR_QUOTE_SECTIONS 唯一分类定义）",
-    "选品加入清单保留基准尺寸与贴图",
-    "清单底部 + 选品联动、子容器独立折叠"
+    "统一产品库 catalog.json → 选品中心 + 方案清单",
+    "方案模板 quote-templates.json（全案 / 不锈钢橱柜八类）",
+    "标准 project-shell + proj-section 容器，已去 THOR 品牌耦合",
+    "媒体版块底部 + 添加图片",
+    "产品清单可编辑数量与尺寸，非标系数联动",
+    "项目容器底部 PDF 导出",
+    "清单底部 + 选品联动"
   ],
   "localStorageKeys": {
     "commStructure": "deepdesign_comm_structure"
