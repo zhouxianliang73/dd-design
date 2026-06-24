@@ -2157,8 +2157,9 @@
             text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
         }
         .section-summary {
-            font-size: 13px;
-            color: var(--text-secondary);
+            font-size: var(--fs-sm);
+            color: var(--text-light);
+            font-weight: var(--fw-normal);
             line-height: 1.55;
             margin: 0;
             width: 100%;
@@ -2195,8 +2196,9 @@
         .record-item-bd {
             display: none;
             padding: 10px 12px 12px;
-            font-size: 12px;
-            color: var(--text-secondary);
+            font-size: var(--fs-sm);
+            color: var(--text-light);
+            font-weight: var(--fw-normal);
         }
         .record-item.is-open .record-item-bd {
             display: block;
@@ -2491,11 +2493,15 @@
             text-align: center;
             vertical-align: middle;
             border-bottom: 1px solid var(--gray-100);
-            color: var(--gray-800);
-            font-size: 13px;
+            color: var(--text-light);
+            font-size: var(--fs-sm);
+            font-weight: var(--fw-normal);
+        }
+        .project-tw td.quote-name-cell {
+            font-weight: var(--fw-normal);
         }
         .project-tw td.price-line {
-            color: var(--text-price);
+            color: var(--text-light);
             font-size: var(--fs-sm);
             font-weight: var(--fw-normal);
         }
@@ -2511,53 +2517,71 @@
         .project-tw .al-m,
         .project-tw .al-r {
             text-align: center;
-            font-weight: 600;
+            font-weight: var(--fw-normal);
+        }
+        /* 清单单元格：默认浅灰 · 修改加粗 · 超标准变红 */
+        .project-tw .quote-cell-val,
+        .project-tw .dim-val,
+        .project-tw .dim-inp,
+        .project-tw .qty-inp,
+        .project-tw .coef-val,
+        .project-tw .mat-single,
+        .project-tw .mat-row span {
+            color: var(--text-light);
+            font-size: var(--fs-sm);
+            font-weight: var(--fw-normal);
         }
         .project-tw .mat-row {
             justify-content: center;
+            color: var(--text-light);
         }
         .project-tw .mat-tag {
             text-align: center;
+            color: var(--text-faint);
+            font-weight: var(--fw-normal);
         }
         .project-tw .dim-val {
             display: inline-block;
             min-width: 44px;
             padding: 4px 6px;
             border-radius: 6px;
-            background: var(--gray-100);
-            color: var(--text-tertiary);
-            font-size: 12px;
+            background: var(--surface-inset);
+            border: 1px solid var(--border-subtle);
+            font-variant-numeric: tabular-nums;
         }
         .project-tw .dim-val.non {
-            background: var(--warning-bg);
-            color: var(--warning);
+            color: var(--text-light);
+            background: var(--surface-inset);
         }
         .project-tw .dim-inp,
         .project-tw .qty-inp {
             width: 100%;
             max-width: 58px;
             padding: 4px 4px;
-            border: 1px solid var(--gray-200);
+            border: 1px solid var(--border-subtle);
             border-radius: 6px;
-            background: var(--gray-50);
-            color: var(--text-primary);
-            font-size: 12px;
+            background: var(--surface-inset);
             font-variant-numeric: tabular-nums;
             text-align: center;
             font-family: var(--font);
         }
         .project-tw .dim-inp.is-custom,
-        .project-tw .dim-val.is-custom {
-            background: var(--warning-bg);
-            border-color: #FCD34D;
-            color: #B45309;
+        .project-tw .dim-val.is-custom,
+        .project-tw .qty-inp.is-custom,
+        .project-tw .coef-val.is-custom {
+            color: var(--text-light);
+            font-weight: var(--fw-bold);
+            background: var(--surface-inset);
+            border-color: var(--border-subtle);
         }
         .project-tw .dim-inp.is-ns,
-        .project-tw .dim-val.is-ns {
-            background: var(--danger-bg);
-            border-color: #FCA5A5;
+        .project-tw .dim-val.is-ns,
+        .project-tw .qty-inp.is-ns,
+        .project-tw .coef-val.is-ns {
             color: var(--danger);
-            font-weight: 600;
+            font-weight: var(--fw-bold);
+            background: var(--surface-inset);
+            border-color: var(--border-subtle);
         }
         .project-tw .dim-inp:focus,
         .project-tw .qty-inp:focus {
@@ -2565,14 +2589,15 @@
             border-color: var(--primary);
             box-shadow: 0 0 0 2px var(--primary-10);
         }
-        .project-tw .coef-val.is-ns {
+        .project-tw .coef-val {
             display: inline-block;
             min-width: 36px;
             padding: 4px 6px;
             border-radius: 6px;
-            background: var(--danger-bg);
-            color: var(--danger);
-            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+        .project-tw .coef-val.is-ns {
+            background: var(--surface-inset);
         }
         .media-add-row {
             padding: 4px 0 0;
@@ -6028,7 +6053,9 @@
             if (coefCell) {
                 coefCell.innerHTML = line.nonStandard
                     ? `<span class="coef-val is-ns">${(line.coef ?? 1).toFixed(1)}</span>`
-                    : `<span class="coef-val">${(line.coef ?? 1).toFixed(1)}</span>`;
+                    : isDimCustomized(line)
+                        ? `<span class="coef-val is-custom">${(line.coef ?? 1).toFixed(1)}</span>`
+                        : `<span class="coef-val">${(line.coef ?? 1).toFixed(1)}</span>`;
             }
             const subCell = row.querySelector('[data-subtotal-cell]');
             if (subCell) {
@@ -6239,7 +6266,9 @@
                     : `<span class="${isZero ? 'qty-zero' : ''}">${p.qty}</span>`;
                 const coefHtml = p.nonStandard
                     ? `<span class="coef-val is-ns">${coef.toFixed(1)}</span>`
-                    : `<span class="coef-val">${coef.toFixed(1)}</span>`;
+                    : isDimCustomized(p)
+                        ? `<span class="coef-val is-custom">${coef.toFixed(1)}</span>`
+                        : `<span class="coef-val">${coef.toFixed(1)}</span>`;
                 const delCell = editable
                     ? `<td class="quote-del-cell">
                         <button type="button" class="quote-del-btn" data-delete-quote-row
@@ -6254,7 +6283,7 @@
                     : '';
                 return `<tr${rowAttrs}>
                     <td>${renderProductThumb(p)}</td>
-                    <td style="font-weight:600;">${p.name}</td>
+                    <td class="quote-name-cell">${p.name}</td>
                     <td>${dimCell('w', p.w)}</td>
                     <td>${dimCell('h', p.h)}</td>
                     <td>${dimCell('d', p.d)}</td>
