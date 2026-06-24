@@ -1748,8 +1748,22 @@
         .shell-hd-metrics-actions-mobile {
             display: none;
         }
-        .col-total-desktop {
-            /* desktop total in line2 */
+        .shell-hd-metrics-confirm-mobile {
+            display: none;
+        }
+        .col-total-mobile {
+            display: none;
+        }
+        .shell-metrics-left {
+            text-align: left;
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+        .shell-metrics-right {
+            text-align: right;
+            flex: 0 1 auto;
+            margin-left: auto;
+            white-space: nowrap;
         }
         .shell-hd-metrics-line1,
         .shell-hd-metrics-line2 {
@@ -2291,48 +2305,49 @@
                 font-weight: var(--fw-normal);
                 color: var(--text-light);
             }
+            .shell-hd-metrics-line0 {
+                display: flex !important;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 4px 8px;
+                width: 100%;
+            }
             .shell-hd-metrics-line1,
             .shell-hd-metrics-line2 {
                 display: flex !important;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 4px 8px;
+                width: 100%;
             }
             .shell-hd-metrics-line-confirm {
                 display: none !important;
             }
-            .shell-hd-metrics-line1 {
-                justify-content: space-between;
-                align-items: center;
-                gap: 8px;
-                width: 100%;
-                flex-wrap: nowrap;
+            .shell-hd-metrics-line1 .col-date-desktop {
+                display: none !important;
             }
-            .shell-hd-metrics-line1 .col-designer {
-                flex: 1 1 auto;
-                min-width: 0;
-            }
-            .shell-hd-metrics-actions-mobile {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                flex: 0 0 auto;
-                flex-wrap: nowrap;
-            }
-            .shell-hd-metrics-actions-mobile .col-total-mobile {
-                flex: 0 0 auto;
-                white-space: nowrap;
+            .col-total-mobile {
+                display: block;
             }
             .shell-hd-metrics-confirm-mobile {
-                flex: 0 0 auto;
+                display: block;
             }
-            .shell-hd-metrics-line2 .col-total-desktop {
-                display: none;
+            .shell-hd-metrics-line2 .col-total-desktop,
+            .shell-hd-metrics-line2 .col-total.col-total-desktop {
+                display: none !important;
             }
-            .shell-hd-metrics-line2 {
-                display: flex;
-                width: 100%;
-            }
+            .shell-hd-metrics-line1 .col-designer,
             .shell-hd-metrics-line2 .col-type {
-                flex: 1 1 auto;
-                min-width: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                max-width: 100%;
+            }
+            .shell-hd-metrics-line1 .col-total-mobile,
+            .shell-hd-metrics-line2 .shell-hd-metrics-confirm-mobile {
+                white-space: nowrap;
             }
             .shell-hd-row1-actions:has(.btn-confirm-scheme) {
                 display: flex;
@@ -2353,18 +2368,6 @@
                 flex-direction: column;
                 gap: 6px;
                 width: 100%;
-            }
-            .shell-hd-metrics-line2 .col-type {
-                flex: 1 1 auto;
-                min-width: 0;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
-            .shell-hd-metrics-line1 .col-designer {
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
             }
             .shell-action-slot--confirm {
                 display: none;
@@ -3984,7 +3987,7 @@
     </style>
 </head>
 <body>
-    <!-- ui-shell-header-v18 -->
+    <!-- ui-shell-header-v20 -->
 
     <!-- ============================================================
     APP 容器
@@ -6413,31 +6416,28 @@
             const statusText = mobileOpts.mobileStatusText || '';
             const dateText = mobileOpts.mobileDateText || '';
             const mobileConfirmHtml = mobileOpts.mobileConfirmHtml || '';
+            const totalHtmlMobile = `<span class="${priceClass} project-shell-total shell-meta-price" data-shell-header-total>${priceLabel} ¥${price.toLocaleString()}</span>`;
+            const totalHtmlDesktop = `<span class="${priceClass} project-shell-total shell-meta-price">${priceLabel} ¥${price.toLocaleString()}</span>`;
             const statusRow = statusText
                 ? `<div class="shell-hd-metrics-line0">
-                    <span class="shell-mobile-meta-plain shell-mobile-status">${statusText}</span>
-                    ${dateText ? `<span class="shell-mobile-meta-plain shell-mobile-date">${dateText}</span>` : ''}
+                    <span class="shell-mobile-meta-plain shell-metrics-left shell-mobile-status">${statusText}</span>
+                    ${dateText ? `<span class="shell-mobile-meta-plain shell-metrics-right shell-mobile-date">${dateText}</span>` : ''}
                 </div>`
                 : '';
-            const totalHtml = `<span class="${priceClass} project-shell-total shell-meta-price" data-shell-header-total>${priceLabel} ¥${price.toLocaleString()}</span>`;
-            const mobileActionsHtml = mobileConfirmHtml
-                ? `<div class="shell-hd-metrics-actions-mobile">
-                    ${renderShellMetaCell('col-total col-total-mobile', totalHtml)}
-                    <div class="shell-hd-metrics-confirm-mobile">${mobileConfirmHtml}</div>
-                </div>`
-                : `<div class="shell-hd-metrics-actions-mobile">
-                    ${renderShellMetaCell('col-total col-total-mobile', totalHtml)}
-                </div>`;
+            const confirmCell = mobileConfirmHtml
+                ? `<div class="shell-hd-metrics-confirm-mobile shell-metrics-right">${mobileConfirmHtml}</div>`
+                : '';
             return `<div class="shell-hd-inline-metrics">
                 ${statusRow}
                 <div class="shell-hd-metrics-line1">
-                    ${renderShellMetaCell('col-designer', ctx.designer ? `设计：${ctx.designer}` : '')}
+                    ${renderShellMetaCell('col-designer shell-metrics-left', ctx.designer ? `设计：${ctx.designer}` : '')}
                     ${renderShellMetaCell('col-date col-date-desktop', ctx.date)}
-                    ${mobileActionsHtml}
+                    ${renderShellMetaCell('col-total col-total-mobile shell-metrics-right', totalHtmlMobile)}
                 </div>
                 <div class="shell-hd-metrics-line2">
-                    ${renderShellMetaCell('col-type', ctx.contentLabel)}
-                    ${renderShellMetaCell('col-total col-total-desktop', totalHtml)}
+                    ${renderShellMetaCell('col-type shell-metrics-left', ctx.contentLabel)}
+                    ${renderShellMetaCell('col-total col-total-desktop', totalHtmlDesktop)}
+                    ${confirmCell}
                 </div>
             </div>`;
         }
