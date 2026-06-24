@@ -22,7 +22,7 @@
             --text-light: #999;
             --text-faint: #bbb;
             --meta-col-total: minmax(6.75rem, 7.5rem);
-            --meta-col-designer: minmax(5.5rem, 6.75rem);
+            --meta-col-designer: minmax(4.25rem, 5.5rem);
             --meta-col-status: minmax(3.25rem, 3.75rem);
             --meta-col-date: minmax(5.5rem, 6rem);
             --meta-col-type: minmax(5.5rem, 7em);
@@ -1825,6 +1825,10 @@
         .project-shell-total.shell-meta-price {
             white-space: nowrap;
             display: inline-block;
+        }
+        .shell-hd-inline-metrics .col-total,
+        .shell-hd-inline-metrics .col-total .project-shell-total {
+            color: var(--text-muted);
         }
         .shell-hd-inline-metrics .col-total {
             min-width: 6.75rem;
@@ -3817,7 +3821,7 @@
     </style>
 </head>
 <body>
-    <!-- ui-shell-header-v10 -->
+    <!-- ui-shell-header-v11 -->
 
     <!-- ============================================================
     APP 容器
@@ -6242,7 +6246,7 @@
             const price = Number(ctx.price || 0);
             const priceClass = ctx.priceClass || 'price-grand';
             return `<div class="shell-hd-inline-metrics">
-                ${renderShellMetaCell('col-designer', ctx.designer ? `（设计：）${ctx.designer}` : '')}
+                ${renderShellMetaCell('col-designer', ctx.designer ? `设计：${ctx.designer}` : '')}
                 ${renderShellMetaCell('col-date', ctx.date)}
                 ${renderShellMetaCell('col-type', ctx.contentLabel)}
                 ${renderShellMetaCell(
