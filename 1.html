@@ -2239,7 +2239,7 @@
             .project-shell.is-sub .shell-hd-inline-metrics--empty {
                 display: none;
             }
-            .shell-hd-row1-actions .shell-hd-status {
+            .project-shell:not(.is-sub) .shell-hd-row1-actions .shell-hd-status {
                 display: none;
             }
             .shell-hd-metrics-line0 {
@@ -2285,6 +2285,32 @@
                 display: flex;
                 align-items: center;
                 gap: 6px;
+            }
+            .shell-hd-row1-actions:not(:has(.btn-confirm-scheme)) .shell-hd-status {
+                display: inline-block;
+            }
+            .shell-hd-inline-metrics {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                width: 100%;
+            }
+            .shell-hd-metrics-line2 .col-type {
+                flex: 1 1 auto;
+                min-width: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            .shell-hd-metrics-line2 .col-total {
+                flex: 0 0 auto;
+                white-space: nowrap;
+                text-align: right;
+            }
+            .shell-hd-metrics-line1 .col-designer {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
             }
             .shell-action-slot--confirm {
                 display: none;
@@ -3904,7 +3930,7 @@
     </style>
 </head>
 <body>
-    <!-- ui-shell-header-v13 -->
+    <!-- ui-shell-header-v14 -->
 
     <!-- ============================================================
     APP 容器
@@ -6324,14 +6350,21 @@
             return `<div class="shell-meta-cell ${colClass}">${val}</div>`;
         }
 
-        function renderShellInlineMetrics(ctx = {}) {
+        function renderShellInlineMetrics(ctx = {}, mobileStatusHtml = '') {
             const priceLabel = ctx.priceLabel || '总计';
             const price = Number(ctx.price || 0);
             const priceClass = ctx.priceClass || 'price-grand';
+            const statusRow = mobileStatusHtml
+                ? `<div class="shell-hd-metrics-line0">
+                    <div class="shell-meta-cell col-status-mobile">${mobileStatusHtml}</div>
+                    ${renderShellMetaCell('col-date col-date-mobile', ctx.date)}
+                </div>`
+                : '';
             return `<div class="shell-hd-inline-metrics">
+                ${statusRow}
                 <div class="shell-hd-metrics-line1">
                     ${renderShellMetaCell('col-designer', ctx.designer ? `设计：${ctx.designer}` : '')}
-                    ${renderShellMetaCell('col-date', ctx.date)}
+                    ${renderShellMetaCell('col-date col-date-desktop', ctx.date)}
                 </div>
                 <div class="shell-hd-metrics-line2">
                     ${renderShellMetaCell('col-type', ctx.contentLabel)}
@@ -6415,7 +6448,7 @@
                             designer: p.designer,
                             date: p.updatedFull,
                             contentLabel: p.projectType,
-                        })}
+                        }, statusBadge)}
                         ${actionsHtml}
                     </div>
                 </div>`;
