@@ -1417,6 +1417,33 @@
         /* ============================================================
                    11. 方案中心 (Schemes) — DD 风格
                    ============================================================ */
+        .projects-page-hd {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .projects-page-hd-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .projects-page-hd-title-text {
+            font-weight: var(--fw-bold);
+            font-size: 20px;
+            color: var(--text-primary);
+        }
+        .projects-page-hd-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        .projects-page-hd-actions .view-toggle-wrap {
+            margin-bottom: 0;
+        }
         .view-toggle-wrap {
             margin-bottom: 14px;
         }
@@ -4294,21 +4321,21 @@
         <!-- ========== 页面3: 方案中心 ========== -->
         <div class="page" id="page-projects">
 
-            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px;">
-                <div style="display:flex;align-items:center;gap:12px;">
-                    <span id="projectsPageTitle" style="font-weight:700;font-size:20px;color:var(--text-primary);">DD Deep Design · 项目协作</span>
+            <div class="projects-page-hd">
+                <div class="projects-page-hd-title">
+                    <span id="projectsPageTitle" class="projects-page-hd-title-text">DD Deep Design · 项目协作</span>
                     <span class="badge badge-gold"><i class="fas fa-crown"></i> 会员</span>
                 </div>
-                <button class="btn btn-primary btn-sm" id="newProjectBtn">
-                    <i class="fas fa-plus"></i> 新建方案
-                </button>
-            </div>
-
-            <!-- 视图切换 -->
-            <div class="view-toggle-wrap">
-                <button type="button" class="view-toggle-btn" id="viewToggleBtn" data-view="list" title="切换为图例" aria-label="当前列表视图，点击切换图例">
-                    <i class="fas fa-list" aria-hidden="true"></i>
-                </button>
+                <div class="projects-page-hd-actions">
+                    <button class="btn btn-primary btn-sm" id="newProjectBtn">
+                        <i class="fas fa-plus"></i> 新建方案
+                    </button>
+                    <div class="view-toggle-wrap">
+                        <button type="button" class="view-toggle-btn" id="viewToggleBtn" data-view="list" title="切换为图例" aria-label="当前列表视图，点击切换图例">
+                            <i class="fas fa-list" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <!-- 列表视图 -->
