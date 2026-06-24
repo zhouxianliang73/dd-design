@@ -2091,14 +2091,15 @@
         .proj-section-bd {
             display: none;
             padding: 12px 16px 16px;
-            margin: 0;
-            background: var(--surface-raised);
-            border: none;
-            border-radius: 0;
-            box-shadow: none;
         }
-        .proj-section.is-open .proj-section-bd {
+        /* 仅点击展开子版块时：圆角内缩（对齐 THOR .cat-bd） */
+        .proj-section.proj-collapsible.is-open > .proj-section-bd {
             display: block;
+            margin: 0 12px 12px;
+            background: var(--surface-raised);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-inset);
         }
         /* 收起时强制隐藏正文（含图片条），兼容旧结构里 img-strip 在 bd 外的情况 */
         .proj-section.proj-collapsible:not(.is-open) > .proj-section-bd,
@@ -3251,6 +3252,12 @@
         }
         .project-pdf-bar-wrap {
             display: block;
+            margin: 0 12px 12px;
+            padding: 12px 16px 16px;
+            background: var(--surface-raised);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-inset);
         }
         .comm-pdf-bar.closed {
             display: none;
@@ -6207,7 +6214,7 @@
                 const tableCtx = { projectId, sectionKey: cat.id, categoryId: cat.id, sectionLabel: cat.name };
                 const progress = cat.progress || projectMeta.status || '设计中';
                 const progressClass = cat.progressClass || projectMeta.statusClass || 'badge-info';
-                return `<section class="proj-section quote-cat-section proj-collapsible is-open" data-section="${cat.id}">
+                return `<section class="proj-section quote-cat-section proj-collapsible" data-section="${cat.id}">
                     <div class="proj-section-hd quote-cat-hd" data-toggle-section>
                         <div class="quote-cat-hd-simple">
                             <span class="quote-cat-title">${cat.name}</span>
@@ -6475,7 +6482,7 @@
             const ship = normalizeMediaSection(p.shipping, '暂无货运记录');
             const showComm = !p.children?.length;
             const quoteHtml = hasQuoteCats ? renderQuoteCategoriesHtml(p.quoteCategories, p.id, p) : `
-                <section class="proj-section proj-collapsible is-open" data-section="products">
+                <section class="proj-section proj-collapsible" data-section="products">
                     <div class="proj-section-hd" data-toggle-section>
                         <span class="proj-section-label">产品清单</span>
                         <i class="fas fa-chevron-down chevron"></i>
