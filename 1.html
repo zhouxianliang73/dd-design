@@ -5781,7 +5781,6 @@
                 const tableCtx = { projectId, sectionKey: cat.id, categoryId: cat.id, sectionLabel: cat.name };
                 const progress = cat.progress || projectMeta.status || '设计中';
                 const progressClass = cat.progressClass || projectMeta.statusClass || 'badge-info';
-                const updated = cat.updatedAt || projectMeta.updatedFull || '—';
                 return `<section class="proj-section quote-cat-section is-fixed" data-section="${cat.id}">
                     <div class="proj-section-hd quote-cat-hd">
                         ${renderShellMetaGrid({
@@ -5791,7 +5790,7 @@
                             designer: projectMeta.designer,
                             status: progress,
                             statusClass: progressClass,
-                            date: updated,
+                            date: projectMeta.updatedFull,
                             contentLabel: cat.name,
                             address: projectMeta.address,
                         })}
