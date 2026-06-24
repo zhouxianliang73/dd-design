@@ -1745,8 +1745,11 @@
         .shell-hd-metrics-line0 {
             display: none;
         }
-        .shell-hd-metrics-line-confirm {
+        .shell-hd-metrics-actions-mobile {
             display: none;
+        }
+        .col-total-desktop {
+            /* desktop total in line2 */
         }
         .shell-hd-metrics-line1,
         .shell-hd-metrics-line2 {
@@ -2288,29 +2291,48 @@
                 font-weight: var(--fw-normal);
                 color: var(--text-light);
             }
-            .shell-hd-metrics-line-confirm {
-                display: flex;
-                justify-content: flex-end;
-                align-items: center;
-                width: 100%;
+            .shell-hd-metrics-line1,
+            .shell-hd-metrics-line2 {
+                display: flex !important;
             }
-            .shell-hd-metrics-line1 .col-date-desktop {
-                display: none;
+            .shell-hd-metrics-line-confirm {
+                display: none !important;
             }
             .shell-hd-metrics-line1 {
-                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 8px;
                 width: 100%;
+                flex-wrap: nowrap;
             }
             .shell-hd-metrics-line1 .col-designer {
                 flex: 1 1 auto;
                 min-width: 0;
             }
+            .shell-hd-metrics-actions-mobile {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                flex: 0 0 auto;
+                flex-wrap: nowrap;
+            }
+            .shell-hd-metrics-actions-mobile .col-total-mobile {
+                flex: 0 0 auto;
+                white-space: nowrap;
+            }
+            .shell-hd-metrics-confirm-mobile {
+                flex: 0 0 auto;
+            }
+            .shell-hd-metrics-line2 .col-total-desktop {
+                display: none;
+            }
             .shell-hd-metrics-line2 {
                 display: flex;
-                justify-content: space-between;
-                align-items: baseline;
-                gap: 10px;
                 width: 100%;
+            }
+            .shell-hd-metrics-line2 .col-type {
+                flex: 1 1 auto;
+                min-width: 0;
             }
             .shell-hd-row1-actions:has(.btn-confirm-scheme) {
                 display: flex;
@@ -2338,11 +2360,6 @@
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
-            }
-            .shell-hd-metrics-line2 .col-total {
-                flex: 0 0 auto;
-                white-space: nowrap;
-                text-align: right;
             }
             .shell-hd-metrics-line1 .col-designer {
                 overflow: hidden;
@@ -3967,7 +3984,7 @@
     </style>
 </head>
 <body>
-    <!-- ui-shell-header-v17 -->
+    <!-- ui-shell-header-v18 -->
 
     <!-- ============================================================
     APP 容器
@@ -5996,8 +6013,10 @@
                 if (cls) inp.classList.add(cls);
             });
             p.price = calcProjectTotal(p);
-            const totalEl = shell?.querySelector('[data-shell-header-total]');
-            if (totalEl) totalEl.textContent = `总计 ¥${p.price.toLocaleString()}`;
+            const totalEls = shell?.querySelectorAll('[data-shell-header-total]');
+            totalEls.forEach(el => {
+                el.textContent = `总计 ¥${p.price.toLocaleString()}`;
+            });
             const catTotal = shell?.querySelector(`[data-section="${categoryId}"] .quote-cat-total`);
             if (catTotal && categoryId) {
                 const cat = p.quoteCategories?.find(c => c.id === categoryId);
