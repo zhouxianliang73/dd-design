@@ -4759,8 +4759,18 @@
         }
 
         function catalogItemsByIds(ids) {
-            const map = new Map(catalog.map(c => [c.id, c]));
+            const source = catalog.length ? catalog : fullCatalog;
+            const map = new Map(source.map(c => [c.id, c]));
             return ids.map(id => catalogItemToQuoteLine(map.get(id))).filter(Boolean);
+        }
+
+        function buildKitchenDemoProducts(idsBySection) {
+            const map = new Map(fullCatalog.map(c => [c.id, c]));
+            const out = {};
+            Object.entries(idsBySection || {}).forEach(([secId, idList]) => {
+                out[secId] = idList.map(id => catalogItemToQuoteLine(map.get(id))).filter(Boolean);
+            });
+            return out;
         }
 
         function buildProductsBySectionFromIds(idsBySection) {
@@ -5662,7 +5672,7 @@
             const tpl = getQuoteTemplate(p);
             p.quoteCategories = buildQuoteCategories(
                 tpl.sections,
-                buildProductsBySectionFromIds(KITCHEN_DEMO_LINE_IDS),
+                buildKitchenDemoProducts(KITCHEN_DEMO_LINE_IDS),
                 p
             );
             p.price = calcProjectTotal(p);
