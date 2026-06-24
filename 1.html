@@ -3967,7 +3967,7 @@
     </style>
 </head>
 <body>
-    <!-- ui-shell-header-v16 -->
+    <!-- ui-shell-header-v17 -->
 
     <!-- ============================================================
     APP 容器
@@ -6400,23 +6400,26 @@
                     ${dateText ? `<span class="shell-mobile-meta-plain shell-mobile-date">${dateText}</span>` : ''}
                 </div>`
                 : '';
-            const confirmRow = mobileConfirmHtml
-                ? `<div class="shell-hd-metrics-line-confirm">${mobileConfirmHtml}</div>`
-                : '';
+            const totalHtml = `<span class="${priceClass} project-shell-total shell-meta-price" data-shell-header-total>${priceLabel} ¥${price.toLocaleString()}</span>`;
+            const mobileActionsHtml = mobileConfirmHtml
+                ? `<div class="shell-hd-metrics-actions-mobile">
+                    ${renderShellMetaCell('col-total col-total-mobile', totalHtml)}
+                    <div class="shell-hd-metrics-confirm-mobile">${mobileConfirmHtml}</div>
+                </div>`
+                : `<div class="shell-hd-metrics-actions-mobile">
+                    ${renderShellMetaCell('col-total col-total-mobile', totalHtml)}
+                </div>`;
             return `<div class="shell-hd-inline-metrics">
                 ${statusRow}
                 <div class="shell-hd-metrics-line1">
                     ${renderShellMetaCell('col-designer', ctx.designer ? `设计：${ctx.designer}` : '')}
                     ${renderShellMetaCell('col-date col-date-desktop', ctx.date)}
+                    ${mobileActionsHtml}
                 </div>
                 <div class="shell-hd-metrics-line2">
                     ${renderShellMetaCell('col-type', ctx.contentLabel)}
-                    ${renderShellMetaCell(
-                        'col-total',
-                        `<span class="${priceClass} project-shell-total shell-meta-price" data-shell-header-total>${priceLabel} ¥${price.toLocaleString()}</span>`
-                    )}
+                    ${renderShellMetaCell('col-total col-total-desktop', totalHtml)}
                 </div>
-                ${confirmRow}
             </div>`;
         }
 
