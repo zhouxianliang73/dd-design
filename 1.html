@@ -2123,9 +2123,13 @@
         }
         .proj-section.quote-cat-section.proj-collapsible.is-open > .quote-cat-hd,
         .proj-section.proj-collapsible.is-open[data-section="products"] > .proj-section-hd {
-            background: var(--surface-raised);
+            background: var(--gray-100);
             border-bottom: 1px solid var(--gray-200);
             border-radius: 0;
+        }
+        .proj-section.quote-cat-section.proj-collapsible.is-open > .quote-cat-hd:hover,
+        .proj-section.proj-collapsible.is-open[data-section="products"] > .proj-section-hd:hover {
+            background: var(--gray-100);
         }
         .proj-section.quote-cat-section.proj-collapsible.is-open .project-tw,
         .proj-section.proj-collapsible.is-open[data-section="products"] .project-tw {
@@ -2142,9 +2146,14 @@
         }
         .proj-section.quote-cat-section.proj-collapsible.is-open .project-tw thead th,
         .proj-section.proj-collapsible.is-open[data-section="products"] .project-tw thead th {
-            background: var(--gray-50);
-            border-bottom: 2px solid var(--gray-200);
+            background: var(--gray-100);
+            border-bottom: 1px solid var(--gray-200);
             border-top: none;
+            color: var(--gray-600);
+        }
+        .proj-section.quote-cat-section.proj-collapsible.is-open .project-tw tbody td,
+        .proj-section.proj-collapsible.is-open[data-section="products"] .project-tw tbody td {
+            background: var(--surface-raised);
         }
         /* 收起时强制隐藏正文（含图片条），兼容旧结构里 img-strip 在 bd 外的情况 */
         .proj-section.proj-collapsible:not(.is-open) > .proj-section-bd,
