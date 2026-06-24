@@ -2721,14 +2721,20 @@
             min-width: 0;
         }
         .quote-cat-hd-simple .quote-cat-title {
-            font-size: var(--fs-md);
-            font-weight: var(--fw-medium);
-            color: var(--text-strong);
+            font-size: var(--fs-sm);
+            font-weight: var(--fw-normal);
+            color: var(--text-light);
             flex: 1 1 auto;
             min-width: 0;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+        }
+        .proj-section.proj-collapsible.is-open > .quote-cat-hd .quote-cat-title {
+            color: var(--text-light);
+        }
+        .proj-section.proj-collapsible.is-open > .quote-cat-hd:hover .quote-cat-title {
+            color: var(--text-default);
         }
         .quote-cat-amount {
             flex-shrink: 0;
