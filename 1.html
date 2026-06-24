@@ -1711,6 +1711,9 @@
         .shell-hd-row1-actions:not(:has(.btn-confirm-scheme)) {
             grid-template-columns: var(--shell-action-status) var(--shell-action-expand);
         }
+        .shell-hd-row1-actions--mobile {
+            display: none;
+        }
         .shell-hd-check-spacer {
             display: inline-block;
             width: 16px;
@@ -1738,6 +1741,9 @@
             align-items: center;
             flex: 1 1 auto;
             min-width: 0;
+        }
+        .shell-hd-metrics-line0 {
+            display: none;
         }
         .shell-hd-metrics-line-confirm {
             display: none;
@@ -2248,30 +2254,39 @@
             .project-shell.is-sub .shell-hd-inline-metrics--empty {
                 display: none;
             }
-            .project-shell:not(.is-sub) .shell-hd-row1-actions .shell-hd-status {
-                display: none;
-            }
-            .project-list-toolbar > .text-muted {
-                display: none;
-            }
-            .project-shell:not(.is-sub) .shell-hd-row1-actions .btn-confirm-scheme,
-            .project-shell:not(.is-sub) .shell-hd-row1-actions .shell-action-slot--confirm {
+            .shell-hd-row1-actions--desktop {
                 display: none !important;
             }
-            .project-shell:not(.is-sub) .shell-hd-row1-actions {
+            .shell-hd-row1-actions--mobile {
                 display: flex;
                 align-items: center;
                 justify-content: flex-end;
                 min-width: 22px;
             }
+            .project-list-toolbar > .text-muted {
+                display: none;
+            }
             .shell-hd-metrics-line0 {
                 display: flex;
-                justify-content: flex-end;
+                justify-content: flex-start;
                 align-items: center;
+                gap: 10px;
                 width: 100%;
             }
-            .shell-hd-metrics-line0 .col-status-mobile {
-                flex: 0 0 auto;
+            .shell-mobile-meta-plain {
+                font-size: var(--fs-sm);
+                font-weight: var(--fw-normal);
+                color: var(--text-light);
+                white-space: nowrap;
+            }
+            .project-shell.is-sub .shell-hd-row1-actions .status-badge {
+                padding: 0;
+                border: none;
+                border-radius: 0;
+                background: transparent;
+                font-size: var(--fs-sm);
+                font-weight: var(--fw-normal);
+                color: var(--text-light);
             }
             .shell-hd-metrics-line-confirm {
                 display: flex;
@@ -3952,7 +3967,7 @@
     </style>
 </head>
 <body>
-    <!-- ui-shell-header-v15 -->
+    <!-- ui-shell-header-v16 -->
 
     <!-- ============================================================
     APP 容器
@@ -5981,9 +5996,9 @@
                 if (cls) inp.classList.add(cls);
             });
             p.price = calcProjectTotal(p);
-            const totalEl = shell?.querySelector('.project-shell-total');
+            const totalEl = shell?.querySelector('[data-shell-header-total]');
             if (totalEl) totalEl.textContent = `总计 ¥${p.price.toLocaleString()}`;
-            const catTotal = shell?.querySelector(`[data-section="${categoryId}"] .quote-cat-total, [data-section="${categoryId}"] .project-shell-total`);
+            const catTotal = shell?.querySelector(`[data-section="${categoryId}"] .quote-cat-total`);
             if (catTotal && categoryId) {
                 const cat = p.quoteCategories?.find(c => c.id === categoryId);
                 if (cat) catTotal.textContent = `合计 ¥${calcProductsTotal(cat.products).toLocaleString()}`;
@@ -6376,11 +6391,13 @@
             const priceLabel = ctx.priceLabel || '总计';
             const price = Number(ctx.price || 0);
             const priceClass = ctx.priceClass || 'price-grand';
-            const mobileStatusHtml = mobileOpts.mobileStatusHtml || '';
+            const statusText = mobileOpts.mobileStatusText || '';
+            const dateText = mobileOpts.mobileDateText || '';
             const mobileConfirmHtml = mobileOpts.mobileConfirmHtml || '';
-            const statusRow = mobileStatusHtml
+            const statusRow = statusText
                 ? `<div class="shell-hd-metrics-line0">
-                    <div class="shell-meta-cell col-status-mobile">${mobileStatusHtml}</div>
+                    <span class="shell-mobile-meta-plain shell-mobile-status">${statusText}</span>
+                    ${dateText ? `<span class="shell-mobile-meta-plain shell-mobile-date">${dateText}</span>` : ''}
                 </div>`
                 : '';
             const confirmRow = mobileConfirmHtml
@@ -6396,7 +6413,7 @@
                     ${renderShellMetaCell('col-type', ctx.contentLabel)}
                     ${renderShellMetaCell(
                         'col-total',
-                        `<span class="${priceClass} project-shell-total shell-meta-price">${priceLabel} ¥${price.toLocaleString()}</span>`
+                        `<span class="${priceClass} project-shell-total shell-meta-price" data-shell-header-total>${priceLabel} ¥${price.toLocaleString()}</span>`
                     )}
                 </div>
                 ${confirmRow}
@@ -6449,9 +6466,18 @@
                 : `<span class="shell-action-slot shell-action-slot--confirm" aria-hidden="true"></span>`;
             const expandBtn = `<button type="button" class="shell-expand-btn" data-toggle-shell-btn data-project-id="${p.id}" aria-label="展开或收起方案详情"></button>`;
             const statusSlot = statusBadge || `<span class="shell-action-slot shell-action-slot--status" aria-hidden="true"></span>`;
-            const actionsHtml = `<div class="shell-hd-row1-actions">
+            const actionsDesktopHtml = `<div class="shell-hd-row1-actions shell-hd-row1-actions--desktop">
                             ${statusSlot}
                             ${confirmBtn}
+                            ${expandBtn}
+                        </div>`;
+            const actionsMobileHtml = isSub
+                ? `<div class="shell-hd-row1-actions shell-hd-row1-actions--mobile shell-hd-row1-actions--sub">
+                            ${statusSlot}
+                            ${confirmBtn}
+                            ${expandBtn}
+                        </div>`
+                : `<div class="shell-hd-row1-actions shell-hd-row1-actions--mobile">
                             ${expandBtn}
                         </div>`;
             const hdInner = isSub
@@ -6464,7 +6490,8 @@
                             </div>
                         </div>
                         <div class="shell-hd-inline-metrics shell-hd-inline-metrics--empty" aria-hidden="true"></div>
-                        ${actionsHtml}
+                        ${actionsDesktopHtml}
+                        ${actionsMobileHtml}
                     </div>
                 </div>`
                 : `<div class="shell-hd-stack">
@@ -6476,10 +6503,12 @@
                             date: p.updatedFull,
                             contentLabel: p.projectType,
                         }, {
-                            mobileStatusHtml: statusBadge,
+                            mobileStatusText: p.status || '',
+                            mobileDateText: p.updatedFull || '',
                             mobileConfirmHtml: showConfirm ? confirmBtn : '',
                         })}
-                        ${actionsHtml}
+                        ${actionsDesktopHtml}
+                        ${actionsMobileHtml}
                     </div>
                 </div>`;
 
