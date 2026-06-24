@@ -1639,71 +1639,91 @@
             flex-shrink: 0;
         }
         .shell-hd-meta-grid {
-            display: grid;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
             width: 100%;
-            gap: 6px 14px;
+        }
+        .shell-hd-inline-metrics {
+            display: grid;
             grid-template-columns:
-                var(--meta-col-total)
                 var(--meta-col-designer)
-                var(--meta-col-status)
+                var(--meta-col-date)
+                var(--meta-col-type)
+                var(--meta-col-total);
+            gap: 6px 14px;
+            align-items: center;
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+        .shell-meta-address-row {
+            display: grid;
+            grid-template-columns:
+                var(--meta-col-designer)
                 var(--meta-col-date)
                 var(--meta-col-type)
                 minmax(8rem, 1fr);
-            align-items: end;
+            gap: 6px 14px;
+            align-items: center;
+            width: 100%;
         }
-        .shell-meta-group {
-            display: contents;
+        .shell-meta-address-row .col-address {
+            grid-column: 3 / -1;
+        }
+        .quote-cat-hd-top {
+            display: flex;
+            align-items: center;
+            gap: 8px 12px;
+            width: 100%;
+        }
+        .quote-cat-hd-top .shell-hd-inline-metrics {
+            flex: 1 1 auto;
+        }
+        .quote-cat-hd-top .status-badge {
+            flex-shrink: 0;
+        }
+        .shell-hd-row1-actions .status-badge {
+            flex-shrink: 0;
+            max-width: none;
         }
         .shell-meta-cell {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
             min-width: 0;
-        }
-        .shell-meta-label {
-            font-size: var(--fs-xs);
-            color: var(--text-faint);
-            font-weight: var(--fw-normal);
-            line-height: 1.2;
-            white-space: nowrap;
-        }
-        .shell-meta-value {
             font-size: var(--fs-sm);
             color: var(--text-light);
             font-weight: var(--fw-normal);
             line-height: 1.35;
-            min-width: 0;
         }
-        .col-total .shell-meta-value {
+        .col-total.shell-meta-cell {
             font-variant-numeric: tabular-nums;
         }
-        .col-designer .shell-meta-value {
+        .col-designer.shell-meta-cell {
             max-width: 4em;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
-        .col-status .shell-meta-value {
+        .col-status.shell-meta-cell {
             white-space: nowrap;
         }
-        .col-status .shell-meta-value .status-badge {
+        .col-status.shell-meta-cell .status-badge,
+        .shell-hd-row1-actions .status-badge {
             display: inline-block;
-            max-width: 3em;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            max-width: none;
+            overflow: visible;
+            text-overflow: clip;
             vertical-align: bottom;
         }
-        .col-date .shell-meta-value {
+        .col-date.shell-meta-cell {
             font-variant-numeric: tabular-nums;
             white-space: nowrap;
         }
-        .col-type .shell-meta-value {
+        .col-type.shell-meta-cell {
             max-width: 7em;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
-        .col-address .shell-meta-value {
+        .col-address.shell-meta-cell {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -2042,11 +2062,14 @@
                 flex-basis: 100%;
                 flex-wrap: wrap;
             }
-            .shell-hd-meta-grid {
-                grid-template-columns: repeat(4, minmax(0, 1fr));
+            .shell-hd-inline-metrics {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
-            .col-address {
-                grid-column: 3 / span 2;
+            .shell-meta-address-row {
+                grid-template-columns: minmax(0, 1fr);
+            }
+            .shell-meta-address-row .col-address {
+                grid-column: auto;
             }
             .shell-meta-item {
                 max-width: 100%;
@@ -2065,16 +2088,8 @@
             }
         }
         @media (max-width: 480px) {
-            .shell-hd-meta-grid {
+            .shell-hd-inline-metrics {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-            .col-total,
-            .col-designer,
-            .col-status,
-            .col-date,
-            .col-type,
-            .col-address {
-                grid-column: auto;
             }
         }
         .project-tw {
@@ -2262,7 +2277,7 @@
         }
         .quote-cat-hd {
             display: block;
-            padding: 12px 16px;
+            padding: 14px 20px;
             cursor: default;
         }
         .quote-cat-hd-stack {
@@ -5686,7 +5701,7 @@
             const catTotal = shell?.querySelector(`[data-section="${categoryId}"] .quote-cat-total, [data-section="${categoryId}"] .project-shell-total`);
             if (catTotal && categoryId) {
                 const cat = p.quoteCategories?.find(c => c.id === categoryId);
-                if (cat) catTotal.textContent = `¥${calcProductsTotal(cat.products).toLocaleString()}`;
+                if (cat) catTotal.textContent = `合计 ¥${calcProductsTotal(cat.products).toLocaleString()}`;
             }
         }
 
@@ -5783,17 +5798,18 @@
                 const progressClass = cat.progressClass || projectMeta.statusClass || 'badge-info';
                 return `<section class="proj-section quote-cat-section is-fixed" data-section="${cat.id}">
                     <div class="proj-section-hd quote-cat-hd">
-                        ${renderShellMetaGrid({
-                            priceLabel: '合计',
-                            price: sub,
-                            priceClass: 'price-sum quote-cat-total',
-                            designer: projectMeta.designer,
-                            status: progress,
-                            statusClass: progressClass,
-                            date: projectMeta.updatedFull,
-                            contentLabel: cat.name,
-                            address: projectMeta.address,
-                        })}
+                        <div class="quote-cat-hd-top">
+                            ${renderShellInlineMetrics({
+                                priceLabel: '合计',
+                                price: sub,
+                                priceClass: 'price-sum quote-cat-total',
+                                designer: projectMeta.designer,
+                                date: projectMeta.updatedFull,
+                                contentLabel: cat.name,
+                            })}
+                            <span class="status-badge ${progressClass}">${progress}</span>
+                        </div>
+                        ${renderShellAddressRow(projectMeta.address)}
                     </div>
                     <div class="proj-section-bd">${renderQuoteTableHtml(cat.products, tableCtx)}</div>
                 </section>`;
@@ -6074,42 +6090,39 @@
             `;
         }
 
-        function renderShellMetaCell(colClass, label, valueHtml) {
+        function renderShellMetaCell(colClass, valueHtml) {
             const val = valueHtml == null || valueHtml === '' ? '—' : valueHtml;
-            return `<div class="shell-meta-cell ${colClass}">
-                <span class="shell-meta-label">${label}</span>
-                <span class="shell-meta-value">${val}</span>
-            </div>`;
+            return `<div class="shell-meta-cell ${colClass}">${val}</div>`;
         }
 
-        function renderShellMetaGrid(ctx = {}) {
+        function renderShellInlineMetrics(ctx = {}) {
             const priceLabel = ctx.priceLabel || '总计';
             const price = Number(ctx.price || 0);
             const priceClass = ctx.priceClass || 'price-grand';
-            const metrics = [
-                renderShellMetaCell(
+            return `<div class="shell-hd-inline-metrics">
+                ${renderShellMetaCell('col-designer', ctx.designer)}
+                ${renderShellMetaCell('col-date', ctx.date)}
+                ${renderShellMetaCell('col-type', ctx.contentLabel)}
+                ${renderShellMetaCell(
                     'col-total',
-                    priceLabel,
-                    `<span class="${priceClass} project-shell-total shell-meta-price">¥${price.toLocaleString()}</span>`
-                ),
-                renderShellMetaCell('col-designer', '设计接待', ctx.designer),
-                renderShellMetaCell(
-                    'col-status',
-                    '状态',
-                    ctx.status
-                        ? `<span class="status-badge ${ctx.statusClass || 'badge-info'} shell-meta-status">${ctx.status}</span>`
-                        : ''
-                ),
-                renderShellMetaCell('col-date', '立项日期', ctx.date),
-            ].join('');
-            const content = [
-                renderShellMetaCell('col-type', '设计内容', ctx.contentLabel),
-                renderShellMetaCell('col-address', '项目地址', ctx.address),
-            ].join('');
-            return `<div class="shell-hd-meta-grid">
-                <div class="shell-meta-group shell-meta-metrics">${metrics}</div>
-                <div class="shell-meta-group shell-meta-content">${content}</div>
+                    `<span class="${priceClass} project-shell-total shell-meta-price">${priceLabel} ¥${price.toLocaleString()}</span>`
+                )}
             </div>`;
+        }
+
+        function renderShellAddressRow(address) {
+            if (!address) return '';
+            return `<div class="shell-meta-content shell-meta-address-row">
+                ${renderShellMetaCell('col-address', address)}
+            </div>`;
+        }
+
+        function renderShellMetaRows(ctx = {}) {
+            return renderShellInlineMetrics(ctx) + renderShellAddressRow(ctx.address);
+        }
+
+        function renderShellMetaGrid(ctx = {}) {
+            return `<div class="shell-hd-meta-grid">${renderShellMetaRows(ctx)}</div>`;
         }
 
         function renderProjectShell(p, opts = {}) {
@@ -6119,24 +6132,26 @@
             const childrenHtml = p.children?.length
                 ? `<div class="project-sub-list">${p.children.map(c => renderProjectShell(c, { level: 'sub', showCheckbox: false })).join('')}</div>`
                 : '';
-            const metaHtml = renderShellMetaGrid({
+            const inlineMetrics = renderShellInlineMetrics({
                 price: p.price,
                 designer: p.designer,
-                status: p.status,
-                statusClass: p.statusClass,
                 date: p.updatedFull,
                 contentLabel: p.projectType,
-                address: p.address,
             });
+            const addressRow = renderShellAddressRow(p.address);
+            const statusBadge = p.status
+                ? `<span class="status-badge ${p.statusClass} shell-hd-status">${p.status}</span>`
+                : '';
             const hdInner = isSub
                 ? `<div class="shell-hd-stack">
                     <div class="shell-hd-row1">
                         <input type="text" class="project-name-input" value="${p.name}" data-project-name="${p.id}" />
                         <div class="shell-hd-row1-actions">
+                            ${statusBadge}
                             <button type="button" class="shell-expand-btn" data-toggle-shell-btn data-project-id="${p.id}" aria-label="展开或收起方案详情"></button>
                         </div>
                     </div>
-                    ${metaHtml}
+                    ${inlineMetrics}${addressRow}
                 </div>`
                 : `<div class="shell-hd-stack">
                     <div class="shell-hd-row1">
@@ -6144,12 +6159,14 @@
                             ${showCheckbox ? `<label class="project-shell-check" onclick="event.stopPropagation()"><input type="checkbox" class="project-check" data-project-id="${p.id}"${p.checked ? ' checked' : ''} /></label>` : ''}
                             <input type="text" class="project-name-input" value="${p.name}" data-project-name="${p.id}" />
                         </div>
+                        ${inlineMetrics}
                         <div class="shell-hd-row1-actions">
+                            ${statusBadge}
                             ${showConfirm ? `<button type="button" class="text-action btn-confirm-scheme" data-confirm-project="${p.id}">确认方案</button>` : ''}
                             <button type="button" class="shell-expand-btn" data-toggle-shell-btn data-project-id="${p.id}" aria-label="展开或收起方案详情"></button>
                         </div>
                     </div>
-                    ${metaHtml}
+                    ${addressRow}
                 </div>`;
 
             return `
