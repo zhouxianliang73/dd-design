@@ -1413,6 +1413,32 @@
         /* ============================================================
                    11. 方案中心 (Schemes) — DD 风格
                    ============================================================ */
+        .view-toggle-wrap {
+            margin-bottom: 14px;
+        }
+        .view-toggle-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 32px;
+            padding: 0;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            background: var(--surface-raised);
+            color: var(--text-light);
+            cursor: pointer;
+            box-shadow: var(--elevation-1);
+            transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+        }
+        .view-toggle-btn:hover {
+            color: var(--text-strong);
+            background: var(--surface-nested);
+            box-shadow: var(--elevation-hover);
+        }
+        .view-toggle-btn:active {
+            box-shadow: var(--shadow-inset);
+        }
         .view-toggle {
             display: inline-flex;
             gap: 2px;
@@ -1675,19 +1701,52 @@
             flex: 1 1 auto;
             min-width: 0;
         }
-        .shell-meta-address-row {
-            display: grid;
-            grid-template-columns:
-                var(--meta-col-designer)
-                var(--meta-col-date)
-                var(--meta-col-type)
-                minmax(8rem, 1fr);
-            gap: 6px 14px;
-            align-items: center;
-            width: 100%;
+        .shell-hd-name-col {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 0;
         }
-        .shell-meta-address-row .col-address {
-            grid-column: 3 / -1;
+        .shell-hd-name-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+        .shell-hd-address {
+            font-size: var(--fs-sm);
+            color: var(--text-light);
+            line-height: 1.35;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            padding-left: 0;
+        }
+        .shell-hd-name-col.has-check .shell-hd-address {
+            padding-left: 26px;
+        }
+        .project-shell.is-sub .shell-hd-row1 {
+            grid-template-columns: 1fr auto;
+        }
+        .quote-cat-hd-simple {
+            display: flex;
+            align-items: center;
+            gap: 10px 12px;
+            width: 100%;
+            min-width: 0;
+        }
+        .quote-cat-hd-simple .quote-cat-title {
+            font-size: var(--fs-sm);
+            font-weight: var(--fw-normal);
+            color: var(--text-light);
+            flex: 1 1 auto;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .quote-cat-hd-simple .status-badge {
+            flex-shrink: 0;
         }
         .quote-cat-hd-top {
             display: flex;
@@ -1714,9 +1773,14 @@
         }
         .col-total.shell-meta-cell {
             font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+        .col-total .project-shell-total,
+        .project-shell-total.shell-meta-price {
+            white-space: nowrap;
         }
         .col-designer.shell-meta-cell {
-            max-width: 4em;
+            max-width: 6em;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -2090,11 +2154,8 @@
             .shell-hd-inline-metrics {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
             }
-            .shell-meta-address-row {
-                grid-template-columns: minmax(0, 1fr);
-            }
-            .shell-meta-address-row .col-address {
-                grid-column: auto;
+            .col-total.shell-meta-cell {
+                white-space: nowrap;
             }
             .shell-meta-item {
                 max-width: 100%;
@@ -3706,7 +3767,7 @@
     </style>
 </head>
 <body>
-    <!-- ui-shell-header-v7 -->
+    <!-- ui-shell-header-v8 -->
 
     <!-- ============================================================
     APP 容器
@@ -4024,9 +4085,10 @@
             </div>
 
             <!-- 视图切换 -->
-            <div class="view-toggle">
-                <button class="active" data-view="list"><i class="fas fa-list"></i> 列表</button>
-                <button data-view="grid"><i class="fas fa-th-large"></i> 图例</button>
+            <div class="view-toggle-wrap">
+                <button type="button" class="view-toggle-btn" id="viewToggleBtn" data-view="list" title="切换为图例" aria-label="当前列表视图，点击切换图例">
+                    <i class="fas fa-list" aria-hidden="true"></i>
+                </button>
             </div>
 
             <!-- 列表视图 -->
@@ -5169,12 +5231,24 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        let currentProjectsView = 'list';
+
         function switchView(view) {
-            document.querySelectorAll('.view-toggle button').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.view === view);
-            });
+            currentProjectsView = view;
+            const btn = document.getElementById('viewToggleBtn');
+            if (btn) {
+                btn.dataset.view = view;
+                const icon = btn.querySelector('i');
+                if (icon) icon.className = view === 'list' ? 'fas fa-list' : 'fas fa-th-large';
+                btn.title = view === 'list' ? '切换为图例' : '切换为列表';
+                btn.setAttribute('aria-label', view === 'list' ? '当前列表视图，点击切换图例' : '当前图例视图，点击切换列表');
+            }
             document.getElementById('view-list')?.classList.toggle('active', view === 'list');
             document.getElementById('view-grid')?.classList.toggle('active', view === 'grid');
+        }
+
+        function toggleProjectsView() {
+            switchView(currentProjectsView === 'list' ? 'grid' : 'list');
         }
 
         const PROJECT_TAB_STATUS = {
@@ -5824,18 +5898,10 @@
                 const progressClass = cat.progressClass || projectMeta.statusClass || 'badge-info';
                 return `<section class="proj-section quote-cat-section is-fixed" data-section="${cat.id}">
                     <div class="proj-section-hd quote-cat-hd">
-                        <div class="quote-cat-hd-top">
-                            ${renderShellInlineMetrics({
-                                priceLabel: '合计',
-                                price: sub,
-                                priceClass: 'price-sum quote-cat-total',
-                                designer: projectMeta.designer,
-                                date: projectMeta.updatedFull,
-                                contentLabel: cat.name,
-                            })}
+                        <div class="quote-cat-hd-simple">
+                            <span class="quote-cat-title">${cat.name}</span>
                             <span class="status-badge ${progressClass}">${progress}</span>
                         </div>
-                        ${renderShellAddressRow(projectMeta.address)}
                     </div>
                     <div class="proj-section-bd">${renderQuoteTableHtml(cat.products, tableCtx)}</div>
                 </section>`;
@@ -6126,13 +6192,29 @@
             const price = Number(ctx.price || 0);
             const priceClass = ctx.priceClass || 'price-grand';
             return `<div class="shell-hd-inline-metrics">
-                ${renderShellMetaCell('col-designer', ctx.designer)}
+                ${renderShellMetaCell('col-designer', ctx.designer ? `设计：${ctx.designer}` : '')}
                 ${renderShellMetaCell('col-date', ctx.date)}
                 ${renderShellMetaCell('col-type', ctx.contentLabel)}
                 ${renderShellMetaCell(
                     'col-total',
                     `<span class="${priceClass} project-shell-total shell-meta-price">${priceLabel} ¥${price.toLocaleString()}</span>`
                 )}
+            </div>`;
+        }
+
+        function renderShellNameCol(p, showCheckbox) {
+            const checkHtml = showCheckbox
+                ? `<label class="project-shell-check" onclick="event.stopPropagation()"><input type="checkbox" class="project-check" data-project-id="${p.id}"${p.checked ? ' checked' : ''} /></label>`
+                : '';
+            const addressHtml = p.address
+                ? `<div class="shell-hd-address">${p.address}</div>`
+                : '';
+            return `<div class="shell-hd-left shell-hd-name-col${showCheckbox ? ' has-check' : ''}">
+                <div class="shell-hd-name-row">
+                    ${checkHtml}
+                    <input type="text" class="project-name-input" value="${p.name}" data-project-name="${p.id}" />
+                </div>
+                ${addressHtml}
             </div>`;
         }
 
@@ -6154,47 +6236,47 @@
         function renderProjectShell(p, opts = {}) {
             const isSub = opts.level === 'sub';
             const showCheckbox = !isSub && opts.showCheckbox !== false;
-            const showConfirm = !isSub && ['设计中', '待确认'].includes(p.status);
+            const showConfirm = ['设计中', '待确认'].includes(p.status);
             const childrenHtml = p.children?.length
                 ? `<div class="project-sub-list">${p.children.map(c => renderProjectShell(c, { level: 'sub', showCheckbox: false })).join('')}</div>`
                 : '';
-            const inlineMetrics = renderShellInlineMetrics({
-                price: p.price,
-                designer: p.designer,
-                date: p.updatedFull,
-                contentLabel: p.projectType,
-            });
-            const addressRow = renderShellAddressRow(p.address);
             const statusBadge = p.status
                 ? `<span class="status-badge ${p.statusClass} shell-hd-status">${p.status}</span>`
                 : '';
+            const confirmBtn = showConfirm
+                ? `<button type="button" class="text-action btn-confirm-scheme" data-confirm-project="${p.id}">确认方案</button>`
+                : '';
+            const expandBtn = `<button type="button" class="shell-expand-btn" data-toggle-shell-btn data-project-id="${p.id}" aria-label="展开或收起方案详情"></button>`;
             const hdInner = isSub
                 ? `<div class="shell-hd-stack">
                     <div class="shell-hd-row1">
-                        <div class="shell-hd-left">
-                            <input type="text" class="project-name-input" value="${p.name}" data-project-name="${p.id}" />
+                        <div class="shell-hd-left shell-hd-name-col">
+                            <div class="shell-hd-name-row">
+                                <input type="text" class="project-name-input" value="${p.name}" data-project-name="${p.id}" />
+                            </div>
                         </div>
                         <div class="shell-hd-row1-actions">
                             ${statusBadge}
-                            <button type="button" class="shell-expand-btn" data-toggle-shell-btn data-project-id="${p.id}" aria-label="展开或收起方案详情"></button>
+                            ${confirmBtn}
+                            ${expandBtn}
                         </div>
                     </div>
-                    ${inlineMetrics}${addressRow}
                 </div>`
                 : `<div class="shell-hd-stack">
                     <div class="shell-hd-row1">
-                        <div class="shell-hd-left">
-                            ${showCheckbox ? `<label class="project-shell-check" onclick="event.stopPropagation()"><input type="checkbox" class="project-check" data-project-id="${p.id}"${p.checked ? ' checked' : ''} /></label>` : ''}
-                            <input type="text" class="project-name-input" value="${p.name}" data-project-name="${p.id}" />
-                        </div>
-                        ${inlineMetrics}
+                        ${renderShellNameCol(p, showCheckbox)}
+                        ${renderShellInlineMetrics({
+                            price: p.price,
+                            designer: p.designer,
+                            date: p.updatedFull,
+                            contentLabel: p.projectType,
+                        })}
                         <div class="shell-hd-row1-actions">
                             ${statusBadge}
-                            ${showConfirm ? `<button type="button" class="text-action btn-confirm-scheme" data-confirm-project="${p.id}">确认方案</button>` : ''}
-                            <button type="button" class="shell-expand-btn" data-toggle-shell-btn data-project-id="${p.id}" aria-label="展开或收起方案详情"></button>
+                            ${confirmBtn}
+                            ${expandBtn}
                         </div>
                     </div>
-                    ${addressRow}
                 </div>`;
 
             return `
@@ -6756,9 +6838,9 @@
                 return;
             }
 
-            const viewBtn = target.closest('.view-toggle button');
-            if (viewBtn?.dataset.view) {
-                switchView(viewBtn.dataset.view);
+            const viewBtn = target.closest('#viewToggleBtn');
+            if (viewBtn) {
+                toggleProjectsView();
                 return;
             }
 
