@@ -3330,11 +3330,18 @@
         .project-pdf-bar-wrap {
             display: block;
             margin: 0 12px 12px;
-            padding: 12px 16px 16px;
+            padding: 10px 12px;
             background: var(--surface-raised);
             border: 1px solid var(--border-subtle);
             border-radius: var(--radius-sm);
             box-shadow: var(--shadow-inset);
+            box-sizing: border-box;
+            width: auto;
+            max-width: none;
+        }
+        /* 导出 PDF 与跨平台沟通相邻时仅 1px 间距 */
+        .project-pdf-bar-wrap:has(+ .project-pdf-bar-wrap) {
+            margin-bottom: 1px;
         }
         .comm-pdf-bar.closed {
             display: none;
@@ -3343,14 +3350,14 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 10px 12px;
+            gap: 7px 8px;
             flex-wrap: wrap;
             width: 100%;
         }
         .comm-pdf-bar-label {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             font-size: var(--fs-sm);
             font-weight: var(--fw-normal);
             color: var(--text-light);
@@ -3358,7 +3365,7 @@
             white-space: nowrap;
         }
         .comm-pdf-bar-label i {
-            color: var(--primary);
+            display: none;
         }
         .comm-pdf-export {
             position: relative;
@@ -3368,29 +3375,31 @@
             display: flex;
             justify-content: flex-end;
         }
-        /* 窄屏：下拉菜单 */
+        /* 窄屏：下拉菜单（纯文字，无胶囊） */
         .comm-pdf-trigger {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 8px 14px;
-            border: 1.5px solid var(--gray-200);
-            border-radius: var(--radius-sm);
-            background: var(--gray-50);
-            font-size: 13px;
-            font-weight: 500;
+            gap: 4px;
+            padding: 0;
+            border: none;
+            border-radius: 0;
+            background: transparent;
+            font-size: var(--fs-sm);
+            font-weight: var(--fw-normal);
             color: var(--primary);
             cursor: pointer;
             font-family: var(--font);
-            transition: all 0.2s;
+            transition: color 0.15s;
             width: auto;
-            justify-content: space-between;
+            justify-content: flex-start;
+            box-shadow: none;
         }
         .comm-pdf-trigger:hover,
         .comm-pdf-export.open .comm-pdf-trigger {
-            border-color: var(--primary);
-            background: var(--primary-10);
-            box-shadow: 0 0 0 3px var(--primary-10);
+            border: none;
+            background: transparent;
+            box-shadow: none;
+            color: var(--primary-dark);
         }
         .comm-pdf-trigger .chevron {
             font-size: 10px;
@@ -3402,7 +3411,7 @@
         .comm-pdf-menu {
             display: none;
             position: absolute;
-            top: calc(100% + 6px);
+            top: calc(100% + 4px);
             left: 0;
             right: 0;
             min-width: 220px;
@@ -3417,7 +3426,7 @@
             display: block;
         }
         .comm-pdf-menu-label {
-            padding: 8px 14px 4px;
+            padding: 5px 9px 3px;
             font-size: 11px;
             color: var(--text-tertiary);
             font-weight: 600;
@@ -3430,26 +3439,28 @@
         .comm-pdf-options button {
             display: block;
             width: 100%;
-            padding: 10px 14px;
+            padding: 6px 12px;
             border: none;
+            border-radius: 0;
             background: transparent;
             text-align: left;
-            font-size: 13px;
+            font-size: var(--fs-sm);
+            font-weight: var(--fw-normal);
             color: var(--text-primary);
             cursor: pointer;
             font-family: var(--font);
-            transition: background 0.15s;
+            transition: color 0.15s, background 0.15s;
+            box-shadow: none;
         }
         .comm-pdf-options button:hover {
-            background: var(--primary-10);
+            background: var(--gray-50);
             color: var(--primary);
         }
+        .comm-pdf-options button i {
+            display: none;
+        }
         .comm-pdf-options button .sub {
-            display: block;
-            font-size: 11px;
-            color: var(--text-tertiary);
-            margin-top: 2px;
-            font-weight: 400;
+            display: none;
         }
         /* 宽屏：整行平铺 */
         @container (min-width: 580px) {
@@ -3464,9 +3475,9 @@
                 position: static;
                 flex: 0 1 auto;
                 flex-direction: row;
-                align-items: stretch;
+                align-items: center;
                 justify-content: flex-end;
-                gap: 8px;
+                gap: 12px;
                 box-shadow: none;
                 border: none;
                 background: transparent;
@@ -3482,25 +3493,30 @@
                 flex-direction: row;
                 flex-wrap: wrap;
                 justify-content: flex-end;
-                gap: 8px;
+                align-items: center;
+                gap: 12px;
                 min-width: 0;
             }
             .comm-pdf-bar:not(.force-dropdown) .comm-pdf-options button {
-                flex: 1;
+                flex: 0 0 auto;
+                width: auto;
                 min-width: 0;
-                padding: 8px 10px;
-                border: 1.5px solid var(--gray-200);
-                border-radius: var(--radius-sm);
-                background: var(--gray-50);
-                text-align: center;
+                padding: 0;
+                border: none;
+                border-radius: 0;
+                background: transparent;
+                text-align: left;
+                font-size: var(--fs-sm);
+                font-weight: var(--fw-normal);
+                color: var(--primary);
+                box-shadow: none;
             }
             .comm-pdf-bar:not(.force-dropdown) .comm-pdf-options button:hover {
-                border-color: var(--primary);
-                background: var(--primary-10);
-                box-shadow: 0 0 0 3px var(--primary-10);
-            }
-            .comm-pdf-bar:not(.force-dropdown) .comm-pdf-options button .sub {
-                display: none;
+                border: none;
+                background: transparent;
+                box-shadow: none;
+                color: var(--primary-dark);
+                text-decoration: underline;
             }
         }
         .comm-pdf-close {
@@ -6152,7 +6168,6 @@
             });
             syncExpandButtons();
             initProjectPdfBars(next);
-            renderInlineCommChannels(next);
         }
 
         function updateQuoteRowDom(projectId, categoryId, rowIdx) {
@@ -6209,7 +6224,7 @@
             return `<div class="proj-section-bd project-pdf-bar-wrap">
                 <div class="comm-pdf-bar" data-project-pdf="${projectId}">
                 <div class="comm-pdf-head">
-                    <div class="comm-pdf-bar-label"><i class="fas fa-file-pdf"></i> 导出 PDF</div>
+                    <div class="comm-pdf-bar-label">导出 PDF</div>
                     <div class="comm-pdf-export" data-pdf-export>
                         <button type="button" class="comm-pdf-trigger" data-pdf-trigger>
                             <span>选择导出内容</span>
@@ -6224,23 +6239,46 @@
             </div></div>`;
         }
 
-        function initProjectPdfBars(scope = document) {
-            scope.querySelectorAll('.comm-pdf-bar[data-project-pdf]').forEach(bar => {
-                if (bar.dataset.pdfReady) return;
-                bar.dataset.pdfReady = '1';
-                const exportEl = bar.querySelector('[data-pdf-export]');
-                const trigger = bar.querySelector('[data-pdf-trigger]');
-                const options = bar.querySelector('[data-pdf-options]');
-                if (!exportEl) return;
+        function renderCommPlatformBarHtml(projectId) {
+            const options = commChannels.map(c => `
+                <button type="button" data-comm-channel="${c.id}">${c.label}</button>
+            `).join('');
+            return `<div class="proj-section-bd project-pdf-bar-wrap">
+                <div class="comm-pdf-bar" data-comm-platform="${projectId}">
+                <div class="comm-pdf-head">
+                    <div class="comm-pdf-bar-label">跨平台沟通</div>
+                    <div class="comm-pdf-export" data-comm-export>
+                        <button type="button" class="comm-pdf-trigger" data-comm-trigger>
+                            <span>选择沟通渠道</span>
+                            <i class="fas fa-chevron-down chevron"></i>
+                        </button>
+                        <div class="comm-pdf-menu">
+                            <div class="comm-pdf-menu-label">选择渠道</div>
+                            <div class="comm-pdf-options" data-comm-options>${options}</div>
+                        </div>
+                    </div>
+                </div>
+            </div></div>`;
+        }
 
-                trigger?.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    if (bar.classList.contains('force-dropdown') || bar.offsetWidth < 580) {
-                        exportEl.classList.toggle('open');
-                    }
-                });
+        function initCommActionBar(bar) {
+            if (bar.dataset.actionReady) return;
+            bar.dataset.actionReady = '1';
+            const isPdf = bar.hasAttribute('data-project-pdf');
+            const exportEl = bar.querySelector('[data-pdf-export], [data-comm-export]');
+            const trigger = bar.querySelector('[data-pdf-trigger], [data-comm-trigger]');
+            const options = bar.querySelector('[data-pdf-options], [data-comm-options]');
+            if (!exportEl) return;
 
-                options?.addEventListener('click', (e) => {
+            trigger?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (bar.classList.contains('force-dropdown') || bar.offsetWidth < 580) {
+                    exportEl.classList.toggle('open');
+                }
+            });
+
+            options?.addEventListener('click', (e) => {
+                if (isPdf) {
                     const btn = e.target.closest('[data-pdf]');
                     if (!btn) return;
                     e.stopPropagation();
@@ -6248,25 +6286,33 @@
                     const label = PROJECT_PDF_EXPORTS.find(p => p.id === btn.dataset.pdf)?.label || '文档';
                     const proj = findProjectById(btn.dataset.projectId || bar.dataset.projectPdf);
                     showToast('📄 导出 PDF', `「${proj?.name || '项目'}」· ${label}`);
-                });
-
-                const syncPdfLayout = () => {
+                } else {
+                    const btn = e.target.closest('[data-comm-channel]');
+                    if (!btn) return;
                     exportEl.classList.remove('open');
-                    if (!options || bar.offsetWidth < 580) {
-                        bar.classList.add('force-dropdown');
-                        return;
-                    }
-                    bar.classList.remove('force-dropdown');
-                    const overflows = options.scrollWidth > options.clientWidth + 2;
-                    bar.classList.toggle('force-dropdown', overflows);
-                };
-
-                if ('ResizeObserver' in window) {
-                    new ResizeObserver(syncPdfLayout).observe(bar);
                 }
-                window.addEventListener('resize', syncPdfLayout);
-                syncPdfLayout();
             });
+
+            const syncActionLayout = () => {
+                exportEl.classList.remove('open');
+                if (!options || bar.offsetWidth < 580) {
+                    bar.classList.add('force-dropdown');
+                    return;
+                }
+                bar.classList.remove('force-dropdown');
+                const overflows = options.scrollWidth > options.clientWidth + 2;
+                bar.classList.toggle('force-dropdown', overflows);
+            };
+
+            if ('ResizeObserver' in window) {
+                new ResizeObserver(syncActionLayout).observe(bar);
+            }
+            window.addEventListener('resize', syncActionLayout);
+            syncActionLayout();
+        }
+
+        function initProjectPdfBars(scope = document) {
+            scope.querySelectorAll('.comm-pdf-bar[data-project-pdf], .comm-pdf-bar[data-comm-platform]').forEach(initCommActionBar);
         }
 
         function renderMediaAddRowHtml(ctx) {
@@ -6572,12 +6618,7 @@
                 ${showComm ? renderSummaryStripSection('生产记录', prod.summary, prod.images, renderRecordDetails(prod.records), { projectId: p.id, mediaKey: 'production', sectionLabel: '生产记录' }) : ''}
                 ${showComm ? renderSummaryStripSection('货运记录', ship.summary, ship.images, renderRecordDetails(ship.records), { projectId: p.id, mediaKey: 'shipping', sectionLabel: '货运记录' }) : ''}
                 ${showComm ? renderProjectPdfBarHtml(p.id) : ''}
-                ${showComm && ['设计中', '待确认'].includes(p.status) ? `<div style="padding:12px 18px 16px;border-top:1px solid var(--gray-100);">
-                    <div class="comm-platform-wrap">
-                        <div class="comm-platform-label"><i class="fas fa-layer-group"></i> 跨平台沟通</div>
-                        <div class="social-comm social-comm-inline"></div>
-                    </div>
-                </div>` : ''}
+                ${showComm && ['设计中', '待确认'].includes(p.status) ? renderCommPlatformBarHtml(p.id) : ''}
             `;
         }
 
@@ -6740,19 +6781,6 @@
             root.innerHTML = list.length
                 ? list.map(p => renderProjectShell(p)).join('')
                 : `<div style="text-align:center;padding:32px 16px;color:var(--text-tertiary);font-size:14px;">暂无${pageId === 'page-projects' ? '设计中 / 待确认方案' : '进行中项目'}</div>`;
-            if (pageId === 'page-projects') {
-                renderInlineCommChannels(root);
-            }
-        }
-
-        function renderInlineCommChannels(scope) {
-            scope?.querySelectorAll('.social-comm-inline').forEach(wrap => {
-                wrap.innerHTML = commChannels.map(c => `
-                    <button type="button" class="btn btn-sm ${c.btnClass}" data-comm-channel="${c.id}">
-                        <i class="${c.icon}"></i> ${c.label}
-                    </button>
-                `).join('');
-            });
         }
 
         function renderAllProjectLists() {
