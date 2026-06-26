@@ -101,6 +101,8 @@
             --warning-bg: var(--surface-nested);
             --danger: #666;
             --danger-bg: var(--surface-nested);
+            /* 清单：与基准不同的规格尺寸 — 醒目红，区别于材料 is-custom 灰 */
+            --quote-spec-custom: #d14343;
             --info: #666;
             --info-bg: var(--surface-nested);
 
@@ -1707,6 +1709,8 @@
         .shell-hd-row1 {
             display: grid;
             grid-template-columns: minmax(120px, 22%) minmax(0, 1fr) auto;
+            grid-template-rows: auto;
+            grid-template-areas: "name metrics actions";
             align-items: center;
             gap: 10px 14px;
         }
@@ -1719,14 +1723,35 @@
             max-width: 100%;
         }
         .shell-hd-row1 > .shell-hd-left {
-            grid-column: 1;
+            grid-area: name;
+            align-self: center;
         }
         .shell-hd-row1 > .shell-hd-inline-metrics {
-            grid-column: 2;
+            grid-area: metrics;
         }
-        .shell-hd-row1 > .shell-hd-row1-actions {
-            grid-column: 3;
-            margin-left: 0;
+        .shell-hd-row1 > .shell-hd-row1-actions--desktop {
+            grid-area: actions;
+            align-self: center;
+        }
+        .shell-hd-row1-actions.shell-hd-row1-actions--desktop {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 8px 10px;
+            flex-shrink: 0;
+        }
+        .shell-hd-action-total-wrap {
+            flex-shrink: 0;
+        }
+        .shell-hd-action-total-wrap .project-shell-total.shell-meta-price {
+            padding: 2px 10px;
+            border-radius: var(--radius-full);
+            font-size: var(--fs-xs);
+            font-weight: var(--fw-medium);
+            background: var(--surface-inset);
+            color: var(--text-muted);
+            border: 1px solid var(--border-subtle);
+            white-space: nowrap;
         }
         .shell-hd-row1-actions {
             display: grid;
@@ -1776,14 +1801,10 @@
             width: 100%;
         }
         .shell-hd-inline-metrics {
-            display: grid;
-            grid-template-columns:
-                var(--meta-col-designer)
-                var(--meta-col-date)
-                var(--meta-col-type)
-                var(--meta-col-total);
-            gap: 6px 14px;
-            align-items: center;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            align-items: stretch;
             flex: 1 1 auto;
             min-width: 0;
         }
@@ -1795,6 +1816,15 @@
         }
         .shell-hd-metrics-confirm-mobile {
             display: none;
+        }
+        .shell-hd-metrics-confirm {
+            display: none;
+            flex-shrink: 0;
+            margin-left: auto;
+            text-align: right;
+        }
+        .shell-hd-metrics-confirm .btn-confirm-scheme {
+            white-space: nowrap;
         }
         .col-total-mobile {
             display: none;
@@ -1812,7 +1842,26 @@
         }
         .shell-hd-metrics-line1,
         .shell-hd-metrics-line2 {
-            display: contents;
+            width: 100%;
+        }
+        .shell-hd-metrics-line1 {
+            display: grid;
+            grid-template-columns:
+                var(--meta-col-designer)
+                var(--meta-col-date)
+                minmax(0, 1fr);
+            gap: 6px 14px;
+            align-items: center;
+        }
+        .shell-hd-metrics-line1 .col-total-desktop,
+        .shell-hd-metrics-line1 .col-type-mobile {
+            display: none;
+        }
+        .shell-hd-metrics-line2 {
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
         }
         .shell-hd-name-col {
             display: grid;
@@ -1852,6 +1901,11 @@
         }
         .project-shell.is-sub .shell-hd-row1 {
             grid-template-columns: minmax(120px, 22%) minmax(0, 1fr) auto;
+            grid-template-rows: auto;
+            grid-template-areas: "name actions";
+        }
+        .project-shell.is-sub .shell-hd-row1 > .shell-hd-inline-metrics--empty {
+            display: none;
         }
         .quote-cat-hd-top {
             display: flex;
@@ -2145,9 +2199,10 @@
             width: 100%;
         }
         /* 沟通 / 生产 / 货运：内容区白底（标题行已是表头色） */
-        .proj-section.proj-collapsible.is-open .proj-section-bd .img-strip-wrap {
+        .proj-section.proj-collapsible.is-open .proj-section-bd .img-strip-wrap,
+        .proj-section.proj-collapsible.is-open .proj-section-bd .media-strip-wrap {
             background: var(--surface-raised);
-            padding: 10px 12px;
+            padding: 12px 16px;
             margin: 0;
             border-bottom: 1px solid var(--gray-100);
             box-sizing: border-box;
@@ -2162,6 +2217,18 @@
             margin: 0;
             background: var(--surface-raised);
         }
+        .proj-section.proj-collapsible.is-open .proj-section-bd .section-text-card {
+            margin: 0;
+            padding: 0;
+            border: none;
+            border-bottom: 1px solid var(--gray-100);
+            border-radius: 0;
+            background: var(--surface-raised);
+        }
+        .proj-section.proj-collapsible.is-open .proj-section-bd .section-text-card .section-summary {
+            padding: 10px 12px;
+            margin: 0;
+        }
         .proj-section.proj-collapsible.is-open .proj-section-bd .record-item {
             margin: 8px 12px 0;
             background: var(--surface-raised);
@@ -2172,10 +2239,124 @@
         .proj-section.proj-collapsible.is-open .proj-section-bd .media-add-row {
             padding: 8px 12px 0;
         }
-        /* 收起时强制隐藏正文（含图片条），兼容旧结构里 img-strip 在 bd 外的情况 */
-        .proj-section.proj-collapsible:not(.is-open) > .proj-section-bd,
+        /* 收起时强制隐藏正文；媒体版块保留一行预览条 */
+        .proj-section.proj-collapsible:not(.is-open) > .proj-section-bd {
+            display: none !important;
+        }
         .proj-section.proj-collapsible:not(.is-open) > .img-strip-wrap {
             display: none !important;
+        }
+        /* ── 媒体条 · 与清单同宽四格（mode E 横滑）────────────────── */
+        .media-layout-wrap {
+            width: 100%;
+            --layout-cols: 4;
+            --layout-gutter: 12px;
+            --quote-col-unit: calc((100% - (var(--layout-cols) - 1) * var(--layout-gutter)) / var(--layout-cols));
+            box-sizing: border-box;
+        }
+        .quote-list-wrap {
+            --quote-col-unit: calc((100% - (var(--layout-cols) - 1) * var(--layout-gutter)) / var(--layout-cols));
+        }
+        .media-strip-row {
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
+            gap: var(--layout-gutter);
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            width: 100%;
+            scrollbar-width: thin;
+        }
+        .media-strip-row--empty {
+            padding: 12px;
+            text-align: center;
+            font-size: var(--fs-sm);
+            color: var(--text-tertiary);
+            border: 1px dashed var(--gray-300);
+            border-radius: var(--radius-sm);
+            background: var(--gray-50);
+        }
+        .media-strip-item {
+            flex: 0 0 var(--quote-col-unit);
+            min-width: var(--quote-col-unit);
+            max-width: var(--quote-col-unit);
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            background: var(--surface-raised);
+            padding: 0;
+            cursor: pointer;
+            text-align: left;
+            font: inherit;
+            color: inherit;
+        }
+        .media-strip-item--preview {
+            cursor: inherit;
+            pointer-events: none;
+        }
+        .media-section-preview {
+            display: none;
+            padding: 12px 16px;
+            background: var(--surface-raised);
+            cursor: pointer;
+            user-select: none;
+            border-bottom: 1px solid var(--gray-100);
+            box-sizing: border-box;
+        }
+        .media-section-preview:hover {
+            background: var(--primary-10);
+        }
+        .proj-section.proj-media-section:not(.is-open) .media-section-preview {
+            display: block;
+        }
+        .proj-section.proj-media-section.is-open .media-section-preview {
+            display: none;
+        }
+        .media-strip-thumb {
+            flex: 3 1 0;
+            min-height: 0;
+            position: relative;
+            background: var(--gray-100);
+            width: 100%;
+        }
+        .media-strip-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .media-strip-cap {
+            flex: 1 1 0;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 1px;
+            padding: 3px 6px;
+            background: var(--surface-inset);
+            border-top: 1px solid var(--border-subtle);
+            overflow: hidden;
+        }
+        .media-strip-date {
+            font-size: 10px;
+            font-weight: var(--fw-medium);
+            color: var(--text-muted);
+            line-height: 1.25;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .media-strip-note {
+            font-size: 10px;
+            color: var(--text-light);
+            line-height: 1.25;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .img-strip-wrap {
             padding: 0 0 10px;
@@ -2246,6 +2427,80 @@
             margin: 0;
             width: 100%;
             box-sizing: border-box;
+        }
+        .section-text-card {
+            padding: 10px 12px;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-sm);
+            background: var(--surface-raised);
+            box-sizing: border-box;
+            width: 100%;
+        }
+        .section-text-card .section-summary {
+            line-height: 1.55;
+        }
+        .section-summary.is-reminded {
+            color: var(--quote-spec-custom);
+            font-weight: var(--fw-medium);
+        }
+        /* 客户意见 · 按日期分条 */
+        .feedback-date-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+        .feedback-date-block {
+            border-bottom: 1px solid var(--gray-100);
+            background: var(--surface-raised);
+        }
+        .feedback-date-block:last-child {
+            border-bottom: none;
+        }
+        .feedback-date-label {
+            padding: 8px 16px 0;
+            font-size: var(--fs-xs);
+            font-weight: var(--fw-medium);
+            color: var(--text-faint);
+            font-variant-numeric: tabular-nums;
+        }
+        .feedback-date-block .media-strip-wrap {
+            padding: 8px 16px 0;
+            border-bottom: none;
+            background: transparent;
+        }
+        .feedback-date-block--text .section-text-card {
+            margin: 0;
+            border: none;
+            border-radius: 0;
+            background: transparent;
+        }
+        .feedback-date-block--text .section-summary {
+            padding: 6px 16px 12px;
+        }
+        .feedback-date-block--annotated .section-text-card {
+            margin: 0;
+            border: none;
+            border-top: 1px solid var(--gray-100);
+            border-radius: 0;
+            background: transparent;
+        }
+        .feedback-date-block--annotated .section-summary {
+            padding: 8px 16px 12px;
+        }
+        .feedback-preview-text {
+            font-size: var(--fs-sm);
+            color: var(--text-light);
+            line-height: 1.45;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            padding: 2px 0;
+        }
+        .proj-section.proj-feedback-section:not(.is-open) .media-section-preview {
+            display: block;
+        }
+        .proj-section.proj-feedback-section:not(.is-open) .media-section-preview--text {
+            padding: 10px 16px;
         }
         .proj-section-bd .project-tw,
         .proj-section-bd .img-strip-wrap,
@@ -2335,6 +2590,88 @@
             border-radius: 50%;
             font-size: 22px;
             cursor: pointer;
+        }
+        /* 生产/货运 · 分类容器（一行预览，点击展开） */
+        .media-cat-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+        .media-cat-block {
+            border-bottom: 1px solid var(--gray-100);
+            background: var(--surface-raised);
+        }
+        .media-cat-block:last-child {
+            border-bottom: none;
+        }
+        .media-cat-card-hd {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px 0;
+            cursor: pointer;
+            user-select: none;
+        }
+        .media-cat-card-hd .chevron {
+            margin-left: 4px;
+            font-size: 11px;
+            color: var(--text-faint);
+            transition: transform 0.2s;
+            flex-shrink: 0;
+        }
+        .media-cat-block.is-open .media-cat-card-hd .chevron {
+            transform: rotate(180deg);
+        }
+        .media-cat-label {
+            font-size: var(--fs-sm);
+            font-weight: var(--fw-medium);
+            color: var(--text-muted);
+        }
+        .media-cat-count {
+            font-size: var(--fs-xs);
+            color: var(--text-faint);
+            font-variant-numeric: tabular-nums;
+        }
+        .media-cat-actions {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+        .media-cat-actions .media-add-btn {
+            flex-shrink: 0;
+        }
+        .media-cat-preview {
+            padding: 8px 16px 12px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .media-cat-preview:hover {
+            background: var(--primary-10);
+        }
+        .media-cat-block.is-open .media-cat-preview {
+            display: none;
+        }
+        .media-cat-block:not(.is-open) .media-cat-bd {
+            display: none !important;
+        }
+        .media-cat-bd {
+            padding: 0 16px 12px;
+        }
+        .media-cat-bd .media-strip-wrap {
+            padding: 0;
+            margin: 0;
+            border: none;
+            background: transparent;
+        }
+        .media-cat-empty {
+            font-size: var(--fs-sm);
+            color: var(--text-faint);
+            padding: 8px 0;
+        }
+        .proj-categorized-media .media-add-row {
+            padding: 8px 16px 12px;
         }
         .social-comm-inline {
             display: flex;
@@ -2443,21 +2780,32 @@
                 display: block;
             }
             .shell-hd-metrics-confirm-mobile {
+                display: none;
+            }
+            .shell-hd-metrics-confirm {
                 display: block;
             }
-            .shell-hd-metrics-line2 .col-total-desktop,
-            .shell-hd-metrics-line2 .col-total.col-total-desktop {
+            .shell-hd-metrics-line1 .col-type-desktop {
                 display: none !important;
             }
+            .shell-hd-metrics-line1 .col-type-mobile {
+                display: none !important;
+            }
+            .shell-hd-metrics-line2 {
+                display: flex !important;
+            }
+            .shell-hd-metrics-line2 .col-type-mobile {
+                display: block;
+            }
             .shell-hd-metrics-line1 .col-designer,
-            .shell-hd-metrics-line2 .col-type {
+            .shell-hd-metrics-line2 .col-type-mobile {
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
                 max-width: 100%;
             }
             .shell-hd-metrics-line1 .col-total-mobile,
-            .shell-hd-metrics-line2 .shell-hd-metrics-confirm-mobile {
+            .shell-hd-metrics-line2 .shell-hd-metrics-confirm {
                 white-space: nowrap;
             }
             .shell-hd-row1-actions:has(.btn-confirm-scheme) {
@@ -2513,6 +2861,639 @@
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: thin;
+        }
+        /* ── 清单产品 · 展示分层 + 四格版面（见 WORKSPACE.md 总纲）────
+         * 大行：模式 A = CSS grid 4 列（格1 图 | 格2-4 文），--layout-cols: 4
+         * 小行：①2+2 ②2+2 ③1列 ④1列 ⑤1+2+1（收藏|非标|总价）
+         * 结构：左 .quote-card-media-wrap | 右 .quote-card-body（固定 5 行）
+         * 行容器：flex 横向，align-items: stretch → 图高随文字区上下对齐
+         * 图区：定宽（手机 128px / PC 120px），min-height 128px，object-fit: cover
+         *       删除用右上角 .quote-card-media-del（×），不占文字行
+         * 文区 5 行（.quote-cart-row + 变体，统一 display:grid，勿对 title 行用 flex）：
+         *   ① quote-cart-row-title  名称 | 数量步进器
+         *   ② quote-cart-row-spec   规格 | 单位
+         *   ③ quote-cart-row-mat    材料（单行满宽，合并单位列；超出省略）
+         *   ④ quote-cart-row-price  单价
+         *   ⑤ quote-cart-row-fav    移入收藏 | 橙色总价
+         * 双列行：grid-template-columns: minmax(0,1fr) auto
+         * 单列行：grid-template-columns: minmax(0,1fr)
+         * 渲染：renderQuoteProductCardsHtml()；小图/详情视图待增
+         * ─────────────────────────────────────────────────────────── */
+        .quote-list-wrap {
+            width: 100%;
+            --layout-cols: 4;
+            --layout-gutter: 12px;
+        }
+        .quote-card-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            padding: 0;
+            box-sizing: border-box;
+            width: 100%;
+            background: #fff;
+        }
+        .quote-list-table {
+            display: none !important;
+        }
+        .quote-line-card {
+            box-sizing: border-box;
+            min-width: 0;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: repeat(var(--layout-cols), 1fr);
+            gap: var(--layout-gutter);
+            align-items: stretch;
+            padding: 12px 16px;
+            border: none;
+            border-bottom: 1px solid #f0f0f0;
+            border-radius: 0;
+            box-shadow: none;
+            background: #fff;
+        }
+        .quote-line-card:last-child {
+            border-bottom: none;
+        }
+        .quote-card-media-wrap {
+            grid-column: 1;
+            position: relative;
+            min-width: 0;
+            min-height: 72px;
+            align-self: stretch;
+        }
+        .quote-card-media-del {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            z-index: 2;
+            width: 22px;
+            height: 22px;
+            padding: 0;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.94);
+            color: #999;
+            font-size: 15px;
+            font-weight: 400;
+            line-height: 1;
+            cursor: pointer;
+            font-family: var(--font);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+        }
+        .quote-card-media-del:hover {
+            color: var(--danger);
+            border-color: var(--danger);
+            background: #fff;
+        }
+        .quote-card-media {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+            background: var(--gray-100);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .quote-card-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .quote-card-media--emoji .ic-emoji {
+            font-size: clamp(28px, 12vw, 48px);
+            line-height: 1;
+        }
+        .quote-card-body {
+            grid-column: 2 / span 3;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 0;
+            align-self: stretch;
+        }
+        .quote-cart-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            line-height: 1.4;
+            margin: 0;
+            min-width: 0;
+        }
+        .quote-cart-row-title {
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: center;
+            font-size: inherit;
+            color: inherit;
+        }
+        .quote-cart-row-title .quote-cart-title {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .quote-cart-row-title .quote-qty-stepper {
+            flex-shrink: 0;
+        }
+        .quote-cart-qty-plain {
+            font-size: 14px;
+            color: #333;
+            font-variant-numeric: tabular-nums;
+            flex-shrink: 0;
+        }
+        .quote-cart-row {
+            display: grid;
+            align-items: center;
+            gap: 6px 16px;
+            width: 100%;
+            font-size: 13px;
+            color: #666;
+            line-height: 1.4;
+        }
+        .quote-cart-row-spec {
+            grid-template-columns: minmax(0, 1fr) auto;
+        }
+        /* 材料：单行满宽（合并规格行右侧「单位」列），超出省略不换行 */
+        .quote-cart-row-mat {
+            grid-template-columns: minmax(0, 1fr);
+        }
+        .quote-cart-row-mat .quote-cart-cell-mat {
+            grid-column: 1 / -1;
+            min-width: 0;
+            max-width: 100%;
+            flex-wrap: nowrap;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        .quote-cart-cell-mat .quote-cart-lbl,
+        .quote-cart-cell-mat .quote-mat-prefix,
+        .quote-cart-cell-mat .quote-mat-sep {
+            flex-shrink: 0;
+        }
+        .quote-cart-cell-mat .quote-tap-edit,
+        .quote-cart-cell-mat .quote-mat-val,
+        .quote-cart-cell-mat .quote-cart-mat-val,
+        .quote-cart-cell-mat .quote-tap-display,
+        .quote-cart-cell-mat .quote-tap-inp {
+            flex: 0 1 auto;
+            min-width: 0;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .quote-cart-row-price {
+            grid-template-columns: minmax(0, 1fr);
+        }
+        .quote-cart-row-fav {
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+        }
+        .quote-cart-cell-fav-left {
+            justify-content: flex-start;
+        }
+        .quote-cart-cell-fav-center {
+            justify-content: center;
+            text-align: center;
+        }
+        .quote-cart-mat-val {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .quote-cart-cell {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            min-width: 0;
+            white-space: nowrap;
+        }
+        .quote-cart-cell-right {
+            justify-content: flex-end;
+        }
+        .quote-cart-lbl {
+            flex-shrink: 0;
+            color: #999;
+            font-size: 13px;
+        }
+        .quote-cart-lbl::after {
+            content: '：';
+        }
+        .quote-cart-spec-val {
+            display: inline-flex;
+            align-items: center;
+            flex-wrap: nowrap;
+            gap: 0;
+            min-width: 0;
+            overflow: visible;
+        }
+        .quote-cart-cell-fav {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            min-width: 0;
+        }
+        .quote-cart-ns-inline {
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+            flex-shrink: 0;
+        }
+        .quote-cart-lbl--ns-desktop {
+            display: none;
+        }
+        @media (min-width: 641px) {
+            .quote-cart-lbl--ns-mobile {
+                display: none;
+            }
+            .quote-cart-lbl--ns-desktop {
+                display: inline;
+            }
+        }
+        .quote-cart-lbl--inline {
+            font-size: 12px;
+        }
+        .quote-line-card .quote-dim-inp {
+            width: 2.8em;
+            min-width: 28px;
+            max-width: 4.5em;
+            text-align: center;
+            padding: 2px 1px;
+            border: none;
+            border-bottom: 1px dashed #ccc;
+            background: transparent;
+            font-size: inherit;
+            color: inherit;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        .quote-line-card .quote-dim-inp:focus {
+            border-bottom: 1px solid var(--primary);
+            background: var(--primary-10);
+            outline: none;
+        }
+        .quote-line-card .quote-dim-inp.is-custom,
+        .quote-line-card .quote-dim-inp.is-ns,
+        .quote-line-card .dim-val.is-custom,
+        .quote-line-card .dim-val.is-ns,
+        .quote-line-card .quote-coef-inp.is-ns,
+        .quote-line-card .coef-val.is-ns {
+            color: var(--quote-spec-custom);
+            font-weight: var(--fw-bold);
+        }
+        .quote-line-card .quote-coef-inp {
+            width: 2.6em;
+            min-width: 32px;
+            max-width: 4em;
+            text-align: center;
+            padding: 2px 1px;
+            border: none;
+            border-bottom: 1px dashed #ccc;
+            background: transparent;
+            font-size: inherit;
+            font-variant-numeric: tabular-nums;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        .quote-line-card .quote-coef-inp:focus {
+            border-bottom: 1px solid var(--primary);
+            background: var(--primary-10);
+            outline: none;
+        }
+        .quote-mat-prefix,
+        .quote-mat-sep {
+            color: #666;
+            flex-shrink: 0;
+        }
+        .quote-tap-edit {
+            display: inline;
+        }
+        .quote-tap-edit.is-editing .quote-tap-display {
+            display: none;
+        }
+        .quote-tap-edit:not(.is-editing) .quote-tap-inp {
+            display: none !important;
+        }
+        .quote-tap-edit.is-editing .quote-tap-inp {
+            display: inline-block !important;
+        }
+        .quote-tap-display {
+            cursor: text;
+            border-bottom: 1px dashed #ddd;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+        .quote-tap-display:focus {
+            outline: none;
+            border-bottom-color: var(--primary);
+            background: var(--primary-10);
+        }
+        .quote-tap-inp.quote-mat-inp {
+            min-width: 4em;
+            max-width: 100%;
+            border: none;
+            border-bottom: 1px solid var(--primary);
+            background: var(--primary-10);
+            padding: 0 2px;
+            font-size: inherit;
+            font-family: inherit;
+            color: inherit;
+            outline: none;
+            border-radius: 0;
+        }
+        .quote-line-card .quote-tap-display.is-custom,
+        .quote-line-card .quote-mat-val.is-custom,
+        .quote-line-card .quote-tap-inp.is-custom,
+        .quote-line-card .coef-val.is-custom {
+            color: var(--text-light);
+            font-weight: var(--fw-bold);
+        }
+        .quote-line-card .quote-tap-display.is-ns {
+            color: var(--danger);
+            font-weight: var(--fw-bold);
+        }
+        .quote-tap-edit.is-editing .quote-tap-inp.dim-inp {
+            width: 2.8em;
+            min-width: 28px;
+            text-align: center;
+            border-bottom: 1px solid var(--primary);
+            background: var(--primary-10);
+        }
+        .quote-cart-unit {
+            color: #666;
+        }
+        .quote-cart-unit-price {
+            color: #333;
+            font-variant-numeric: tabular-nums;
+        }
+        .quote-qty-stepper {
+            display: inline-flex;
+            align-items: center;
+            border: 1px solid #e5e5e5;
+            border-radius: 4px;
+            overflow: hidden;
+            background: #fff;
+        }
+        .quote-qty-stepper .quote-qty-step {
+            width: 28px;
+            height: 28px;
+            padding: 0;
+            border: none;
+            background: #f5f5f5;
+            color: #666;
+            font-size: 14px;
+            line-height: 1;
+            cursor: pointer;
+            font-family: var(--font);
+        }
+        .quote-qty-stepper .quote-qty-step:hover {
+            background: #ebebeb;
+            color: #333;
+        }
+        .quote-qty-stepper .qty-inp.quote-card-inp {
+            width: 44px;
+            height: 28px;
+            text-align: center;
+            border: none;
+            border-left: 1px solid #e5e5e5;
+            border-right: 1px solid #e5e5e5;
+            border-radius: 0;
+            background: #fff;
+            font-size: 13px;
+            color: #333;
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+        .quote-qty-stepper .qty-inp.quote-card-inp::-webkit-outer-spin-button,
+        .quote-qty-stepper .qty-inp.quote-card-inp::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .quote-fav-link {
+            padding: 0;
+            border: none;
+            background: transparent;
+            font-size: 12px;
+            color: #999;
+            cursor: pointer;
+            font-family: var(--font);
+            white-space: nowrap;
+        }
+        .quote-fav-link:hover {
+            color: #ff5000;
+        }
+        .quote-cart-total-inline {
+            font-size: 18px;
+            font-weight: 700;
+            color: #ff5000;
+            font-variant-numeric: tabular-nums;
+            line-height: 1.2;
+        }
+        .quote-cart-total-inline.qty-zero {
+            color: #ccc;
+        }
+        .quote-spec-sep {
+            color: #bbb;
+            margin: 0 1px;
+        }
+        .quote-card-add {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 16px;
+            border-top: 1px solid #f0f0f0;
+        }
+        .quote-card-add .quote-add-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            width: auto;
+            height: auto;
+            padding: 6px 12px;
+            border: 1px dashed var(--gray-300);
+            border-radius: var(--radius-sm);
+            background: var(--gray-50);
+            color: var(--text-tertiary);
+            font-size: var(--fs-sm);
+            cursor: pointer;
+        }
+        .quote-line-card .dim-inp,
+        .quote-line-card .qty-inp {
+            max-width: 100%;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .quote-line-card .dim-val {
+            padding: 0;
+            font-size: 11px;
+        }
+        .quote-line-card .dim-inp.quote-card-inp,
+        .quote-line-card .qty-inp.quote-card-inp {
+            -moz-appearance: textfield;
+            appearance: textfield;
+            border: none;
+            background: transparent;
+            padding: 0;
+            margin: 0;
+            width: auto;
+            min-width: 0;
+            max-width: 100%;
+            outline: none;
+            box-shadow: none;
+            font-size: inherit;
+            font-family: inherit;
+            color: inherit;
+            line-height: inherit;
+            text-align: left;
+            border-radius: 0;
+        }
+        .quote-line-card .dim-inp.quote-card-inp::-webkit-outer-spin-button,
+        .quote-line-card .dim-inp.quote-card-inp::-webkit-inner-spin-button,
+        .quote-line-card .qty-inp.quote-card-inp::-webkit-outer-spin-button,
+        .quote-line-card .qty-inp.quote-card-inp::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .quote-line-card .dim-inp.quote-card-inp:focus,
+        .quote-line-card .qty-inp.quote-card-inp:focus {
+            outline: none;
+            box-shadow: none;
+            background: transparent;
+        }
+        .quote-cart-spec-val .dim-inp.quote-card-inp {
+            width: 2.8em;
+            min-width: 20px;
+            text-align: center;
+        }
+        .quote-qty-stepper .qty-inp.quote-card-inp {
+            width: 44px;
+            height: 28px;
+            text-align: center;
+            border-left: 1px solid #e5e5e5;
+            border-right: 1px solid #e5e5e5;
+            background: #fff;
+        }
+        .quote-line-card .dim-val {
+            border: none;
+            background: transparent;
+            padding: 0;
+            min-width: 0;
+            font-size: 11px;
+        }
+        @media (min-width: 1024px) {
+            .quote-list-wrap {
+                --layout-gutter: 16px;
+            }
+            .media-layout-wrap {
+                --layout-gutter: 16px;
+            }
+            .media-section-preview,
+            .proj-section.proj-collapsible.is-open .proj-section-bd .media-strip-wrap,
+            .proj-section.proj-collapsible.is-open .proj-section-bd .img-strip-wrap {
+                padding: 16px 20px;
+            }
+            .quote-line-card {
+                padding: 16px 20px;
+            }
+            .quote-cart-title {
+                font-size: 17px;
+            }
+            .quote-cart-row {
+                font-size: 13px;
+            }
+            .quote-cart-total-inline {
+                font-size: 20px;
+            }
+            .quote-card-add {
+                padding: 16px 20px;
+            }
+        }
+        @media (min-width: 641px) {
+            .media-strip-item {
+                aspect-ratio: 4 / 3;
+            }
+        }
+        @media (max-width: 640px) {
+            .media-layout-wrap {
+                --layout-cols: 4;
+                --layout-gutter: 12px;
+            }
+            .media-section-preview,
+            .proj-section.proj-collapsible.is-open .proj-section-bd .media-strip-wrap,
+            .proj-section.proj-collapsible.is-open .proj-section-bd .img-strip-wrap {
+                padding: 12px 16px;
+            }
+            .media-strip-row {
+                gap: var(--layout-gutter);
+                overflow-x: auto;
+            }
+            /* 缩略图 = 清单格1 宽，正方形，与产品图同尺 */
+            .media-strip-item {
+                aspect-ratio: unset;
+            }
+            .media-strip-thumb {
+                flex: none;
+                width: 100%;
+                aspect-ratio: 1 / 1;
+                height: auto;
+            }
+            .media-strip-cap {
+                flex: none;
+                height: calc(var(--quote-col-unit) / 3);
+                min-height: 0;
+                max-height: calc(var(--quote-col-unit) / 3);
+                padding: 2px 4px;
+            }
+            .media-strip-date,
+            .media-strip-note {
+                font-size: 9px;
+                line-height: 1.2;
+            }
+            .img-strip-bar {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 8px;
+                border: none;
+                background: transparent;
+                border-radius: 0;
+            }
+            .img-strip-cell {
+                border-radius: var(--radius-sm);
+                border: 1px solid var(--gray-200);
+            }
+            .img-strip-cell.is-empty {
+                display: none;
+            }
+            .img-strip-bar--empty {
+                display: block;
+                padding: 12px;
+                text-align: center;
+                font-size: var(--fs-sm);
+                color: var(--text-tertiary);
+                border: 1px dashed var(--gray-300);
+                border-radius: var(--radius-sm);
+                background: var(--gray-50);
+            }
+            .proj-section.proj-collapsible.is-open .proj-section-bd .img-strip-wrap {
+                padding: 8px 12px;
+                border-bottom: none;
+            }
+            .proj-section.proj-collapsible.is-open .proj-section-bd .section-text-card {
+                margin: 8px 12px 0;
+                border: 1px solid var(--gray-200);
+                border-radius: var(--radius-sm);
+                background: var(--surface-raised);
+            }
+            .proj-section.proj-collapsible.is-open .proj-section-bd .section-text-card .section-summary {
+                padding: 10px 12px;
+            }
         }
         .project-tw table {
             border-collapse: collapse;
@@ -2636,7 +3617,8 @@
             background: var(--surface-inset);
         }
         .project-tw .dim-inp,
-        .project-tw .qty-inp {
+        .project-tw .qty-inp,
+        .project-tw .coef-inp {
             width: 100%;
             max-width: 58px;
             padding: 4px 4px;
@@ -2647,8 +3629,20 @@
             text-align: center;
             font-family: var(--font);
         }
+        .project-tw .coef-inp {
+            max-width: 52px;
+        }
         .project-tw .dim-inp.is-custom,
         .project-tw .dim-val.is-custom,
+        .project-tw .dim-inp.is-ns,
+        .project-tw .dim-val.is-ns,
+        .project-tw .coef-inp.is-ns,
+        .project-tw .coef-val.is-ns {
+            color: var(--quote-spec-custom);
+            font-weight: var(--fw-bold);
+            background: var(--surface-inset);
+            border-color: var(--border-subtle);
+        }
         .project-tw .qty-inp.is-custom,
         .project-tw .coef-val.is-custom {
             color: var(--text-light);
@@ -2656,17 +3650,15 @@
             background: var(--surface-inset);
             border-color: var(--border-subtle);
         }
-        .project-tw .dim-inp.is-ns,
-        .project-tw .dim-val.is-ns,
-        .project-tw .qty-inp.is-ns,
-        .project-tw .coef-val.is-ns {
+        .project-tw .qty-inp.is-ns {
             color: var(--danger);
             font-weight: var(--fw-bold);
             background: var(--surface-inset);
             border-color: var(--border-subtle);
         }
         .project-tw .dim-inp:focus,
-        .project-tw .qty-inp:focus {
+        .project-tw .qty-inp:focus,
+        .project-tw .coef-inp:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 2px var(--primary-10);
@@ -2680,9 +3672,25 @@
         }
         .project-tw .coef-val.is-ns {
             background: var(--surface-inset);
+            color: var(--quote-spec-custom);
         }
         .media-add-row {
             padding: 4px 0 0;
+        }
+        .media-add-row--dual {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .media-add-row--dual .media-add-btn {
+            width: auto;
+            min-width: 28px;
+            padding: 0 8px;
+            gap: 4px;
+        }
+        .media-add-btn span {
+            font-size: 11px;
+            line-height: 1;
         }
         .media-add-btn {
             display: inline-flex;
@@ -4688,7 +5696,7 @@
         let channelsRegistry = {};
         let channelBrand = null;
         let activeChannel = null;
-        const entryContext = { channel: 'custom', invite: null, project: null };
+        const entryContext = { channel: 'custom', invite: null, project: null, preview: null };
 
         const KITCHEN_DEMO_LINE_IDS = {
             cabinet: ['k-cab-001', 'k-cab-002', 'k-cab-003', 'k-cab-004', 'k-cab-005', 'k-cab-006'],
@@ -4818,6 +5826,7 @@
             if (p.get('channel')) entryContext.channel = p.get('channel');
             entryContext.invite = p.get('invite');
             entryContext.project = p.get('project');
+            entryContext.preview = p.get('preview');
         }
 
         function applyChannelCatalogFilter() {
@@ -5663,35 +6672,35 @@
         };
 
         const IMG_SAMPLES = [
-            { url: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=320&h=180&fit=crop', alt: '参考图1', date: '07-14 10:32' },
-            { url: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=320&h=180&fit=crop', alt: '参考图2', date: '07-14 11:05' },
-            { url: 'https://images.unsplash.com/photo-1618219908412-a29a1bb17338?w=320&h=180&fit=crop', alt: '参考图3', date: '07-14 14:20' },
-            { url: 'https://images.unsplash.com/photo-1617806118233-18e1de247200?w=320&h=180&fit=crop', alt: '参考图4', date: '07-14 16:48' },
-            { url: 'https://images.unsplash.com/photo-1615874959477-df969061e1bc?w=320&h=180&fit=crop', alt: '参考图5', date: '07-14 18:02' },
+            { url: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=320&h=180&fit=crop', alt: '参考图1', note: '客厅整体氛围参考', date: '2026-07-14 10:32' },
+            { url: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=320&h=180&fit=crop', alt: '参考图2', note: '沙发款式偏好', date: '2026-07-14 11:05' },
+            { url: 'https://images.unsplash.com/photo-1618219908412-a29a1bb17338?w=320&h=180&fit=crop', alt: '参考图3', note: '浅灰色调墙面', date: '2026-07-14 14:20' },
+            { url: 'https://images.unsplash.com/photo-1617806118233-18e1de247200?w=320&h=180&fit=crop', alt: '参考图4', note: '茶几与边几组合', date: '2026-07-14 16:48' },
+            { url: 'https://images.unsplash.com/photo-1615874959477-df969061e1bc?w=320&h=180&fit=crop', alt: '参考图5', note: '灯光层次参考', date: '2026-07-14 18:02' },
         ];
 
         const SCHEME_SAMPLES = [
-            { url: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=320&h=180&fit=crop', alt: '方案1', date: '07-13 09:15' },
-            { url: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=320&h=180&fit=crop', alt: '方案2', date: '07-13 11:40' },
-            { url: 'https://images.unsplash.com/photo-1615874959477-df969061e1bc?w=320&h=180&fit=crop', alt: '方案3', date: '07-13 15:22' },
-            { url: 'https://images.unsplash.com/photo-1617806118233-18e1de247200?w=320&h=180&fit=crop', alt: '方案4', date: '07-13 17:08' },
-            { url: 'https://images.unsplash.com/photo-1618219908412-a29a1bb17338?w=320&h=180&fit=crop', alt: '方案5', date: '07-13 19:30' },
+            { url: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=320&h=180&fit=crop', alt: '方案1', note: '初稿客厅效果图', date: '2026-07-13 09:15' },
+            { url: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=320&h=180&fit=crop', alt: '方案2', note: '调整后的电视墙', date: '2026-07-13 11:40' },
+            { url: 'https://images.unsplash.com/photo-1615874959477-df969061e1bc?w=320&h=180&fit=crop', alt: '方案3', note: '餐厅视角', date: '2026-07-13 15:22' },
+            { url: 'https://images.unsplash.com/photo-1617806118233-18e1de247200?w=320&h=180&fit=crop', alt: '方案4', note: '材质小样对照', date: '2026-07-13 17:08' },
+            { url: 'https://images.unsplash.com/photo-1618219908412-a29a1bb17338?w=320&h=180&fit=crop', alt: '方案5', note: '最终确认稿', date: '2026-07-13 19:30' },
         ];
 
         const FEEDBACK_SAMPLES = [
-            { url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=320&h=180&fit=crop', alt: '意见1', date: '07-14 15:10' },
-            { url: 'https://images.unsplash.com/photo-1567538096631-e0c55bd6774e?w=320&h=180&fit=crop', alt: '意见2', date: '07-14 15:32' },
-            { url: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=320&h=180&fit=crop', alt: '意见3', date: '07-14 16:05' },
-            { url: 'https://images.unsplash.com/photo-1618219908412-a29a1bb17338?w=320&h=180&fit=crop', alt: '意见4', date: '07-14 16:40' },
-            { url: 'https://images.unsplash.com/photo-1615874959477-df969061e1bc?w=320&h=180&fit=crop', alt: '意见5', date: '07-14 17:18' },
+            { url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=320&h=180&fit=crop', alt: '意见1', note: '不喜欢深色木饰面', date: '2026-07-14 15:10' },
+            { url: 'https://images.unsplash.com/photo-1567538096631-e0c55bd6774e?w=320&h=180&fit=crop', alt: '意见2', note: '沙发要浅色系', date: '2026-07-14 15:32' },
+            { url: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=320&h=180&fit=crop', alt: '意见3', note: '预算控制在2万内', date: '2026-07-14 16:05' },
+            { url: 'https://images.unsplash.com/photo-1618219908412-a29a1bb17338?w=320&h=180&fit=crop', alt: '意见4', note: '希望耐用易打理', date: '2026-07-14 16:40' },
+            { url: 'https://images.unsplash.com/photo-1615874959477-df969061e1bc?w=320&h=180&fit=crop', alt: '意见5', note: '整体要明亮', date: '2026-07-14 17:18' },
         ];
 
         const KITCHEN_DEMO_IMAGES = [
-            { url: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=320&h=180&fit=crop', alt: '厨房整体1', date: '06-20 09:30' },
-            { url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=320&h=180&fit=crop', alt: '厨房整体2', date: '06-20 10:15' },
-            { url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=320&h=180&fit=crop', alt: '橱柜细节1', date: '06-20 11:02' },
-            { url: 'https://images.unsplash.com/photo-1600566753190-17f0baa4402a?w=320&h=180&fit=crop', alt: '橱柜细节2', date: '06-20 14:20' },
-            { url: 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=320&h=180&fit=crop', alt: '台面参考', date: '06-20 16:45' },
+            { url: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=320&h=180&fit=crop', alt: '厨房整体1', note: 'L型布局参考', date: '2026-06-20 09:30' },
+            { url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=320&h=180&fit=crop', alt: '厨房整体2', note: '高柜与电器位', date: '2026-06-20 10:15' },
+            { url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=320&h=180&fit=crop', alt: '橱柜细节1', note: '大千云纹门板', date: '2026-06-20 11:02' },
+            { url: 'https://images.unsplash.com/photo-1600566753190-17f0baa4402a?w=320&h=180&fit=crop', alt: '橱柜细节2', note: '台面琉晶丝纹', date: '2026-06-20 14:20' },
+            { url: 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=320&h=180&fit=crop', alt: '台面参考', note: '水槽与龙头位置', date: '2026-06-20 16:45' },
         ];
 
         const PROJECT_PDF_EXPORTS = [
@@ -5708,6 +6717,35 @@
             production: { label: '生产记录', pool: 'cabinet' },
             shipping: { label: '货运记录', pool: 'cabinet' },
         };
+
+        const PRODUCTION_CATEGORIES = [
+            { id: 'orderMaterial', label: '下单组料' },
+            { id: 'cutting', label: '拆板' },
+            { id: 'manufacture', label: '生产' },
+            { id: 'install', label: '安装' },
+        ];
+
+        const SHIPPING_CATEGORIES = [
+            { id: 'waybill', label: '货单' },
+            { id: 'preLoad', label: '上车前照片' },
+            { id: 'container', label: '上集装箱照片' },
+        ];
+
+        const PRODUCTION_DEFAULT_CATEGORY = 'manufacture';
+        const SHIPPING_DEFAULT_CATEGORY = 'waybill';
+
+        function buildDemoCategoryImages(source, start, count, notePrefix) {
+            if (!source?.length || count <= 0) return [];
+            return Array.from({ length: count }, (_, i) => {
+                const img = source[(start + i) % source.length];
+                return {
+                    url: img.url,
+                    alt: img.alt,
+                    note: `${notePrefix}${i + 1}`,
+                    date: img.date || '2026-07-16',
+                };
+            });
+        }
 
         let pendingMediaUpload = null;
 
@@ -5778,6 +6816,55 @@
             p.price = calcProjectTotal(p);
         }
 
+        const SHADE_UMBRELLA_IMG = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=320&h=180&fit=crop';
+
+        function initShadeUmbrellaDemo() {
+            const p = projectsData.find(x => x.id === 'p-shade-umbrella');
+            if (!p) return;
+            const tpl = getQuoteTemplate(p);
+            p.quoteCategories = buildQuoteCategories(tpl.sections, {
+                shade: [
+                    {
+                        name: '顺怡发 · 中柱伞 Φ3.0m',
+                        emoji: '⛱️',
+                        w: 3000, h: 2800, d: 3000,
+                        materialBody: '涤纶（待确认 Sunbrella）',
+                        materialDoor: '铝合金 + 注水底座',
+                        coef: 1.0, qty: 1, unit: '把', unitPrice: 0,
+                        image: SHADE_UMBRELLA_IMG,
+                        note: '待厂家正式报价',
+                    },
+                    {
+                        name: '顺怡发 · 香蕉伞 3.5×2.5m',
+                        emoji: '⛱️',
+                        w: 3500, h: 2600, d: 2500,
+                        materialBody: '待确认',
+                        materialDoor: '待确认',
+                        coef: 1.0, qty: 1, unit: '把', unitPrice: 0,
+                        image: SHADE_UMBRELLA_IMG,
+                    },
+                    {
+                        name: '【待录入】第二供应商 · 侧挂伞',
+                        emoji: '☀️',
+                        w: 0, h: 0, d: 0,
+                        materialBody: '—',
+                        materialDoor: '—',
+                        coef: 1.0, qty: 0, unit: '把', unitPrice: 0,
+                    },
+                ],
+                logistics: [
+                    {
+                        name: '运费+安装（待报价）',
+                        emoji: '🚚',
+                        w: 0, h: 0, d: 0,
+                        techParams: '佛山 → 项目地，含卸货',
+                        coef: 1.0, qty: 1, unit: '项', unitPrice: 0,
+                    },
+                ],
+            }, p);
+            p.price = calcProjectTotal(p);
+        }
+
         let activeProjectId = 'p1';
         let mergeSuggestedName = '';
 
@@ -5803,6 +6890,29 @@
                     clientUploadSummary: '共 5 张客厅参考图，涵盖整体风格与软装偏好',
                     clientImages: IMG_SAMPLES,
                     clientFeedbackSummary: '希望温暖明亮、浅色系沙发，注重耐用性，预算控制在 ¥2 万以内；不喜欢深色木饰面，偏好布艺与浅灰色调。',
+                    clientFeedbackByDate: [
+                        {
+                            date: '2026-07-14',
+                            summary: '已在参考图上圈选沙发区域：要浅灰布艺，不要深色木饰面。',
+                            remindCount: 0,
+                            images: [
+                                { url: FEEDBACK_SAMPLES[0].url, alt: '标注图1', note: '标注：沙发区域', date: '2026-07-14' },
+                                { url: FEEDBACK_SAMPLES[1].url, alt: '标注图2', note: '标注：色调参考', date: '2026-07-14' },
+                            ],
+                        },
+                        {
+                            date: '2026-07-10',
+                            summary: '预算请控制在 ¥2 万以内——第三次提醒，请务必在报价中体现。',
+                            remindCount: 3,
+                            images: [],
+                        },
+                        {
+                            date: '2026-07-08',
+                            summary: '希望温暖明亮、整体偏北欧，注重耐用与易打理。',
+                            remindCount: 0,
+                            images: [],
+                        },
+                    ],
                     clientFeedbackImages: FEEDBACK_SAMPLES,
                     designerSummary: '方案 V1 · 现代简约客厅布局，推荐 3 款沙发与 2 款茶几组合',
                     designerImages: SCHEME_SAMPLES,
@@ -5870,6 +6980,39 @@
                 shipping: [],
             },
             {
+                id: 'p-shade-umbrella',
+                name: '户外遮阳伞 · 供应商比价',
+                designer: 'HILL',
+                status: '待确认',
+                statusClass: 'badge-warning',
+                price: 0,
+                address: '微信 · 佛山顺怡发遮阳伞沟通(直泰)',
+                projectType: '户外遮阳寻源',
+                quoteTemplate: 'outdoor-shade-compare',
+                quoteLineSchema: 'outdoor-shade',
+                eta: '—',
+                updatedFull: '2026-06-25',
+                checked: true,
+                quoteMeta: {
+                    orderNo: 'SRC-SHADE-001',
+                    quoteDate: '2026-06-25',
+                    salesperson: 'HILL',
+                    store: '直泰 · 佛山供应链',
+                },
+                quoteCategories: [],
+                products: [],
+                comm: {
+                    clientUploadSummary: '群「佛山顺怡发遮阳伞沟通(直泰)」— 待厂家补产品图与正式报价单',
+                    clientImages: [],
+                    clientFeedbackSummary: '关键点：① 长沙朋友 10 号来访/湖南设计线 ② 群内交叉讨论澳洲酒柜（非遮阳品类，已过滤）③ 顺怡发尚未提供遮阳伞规格与单价，比价表待填。',
+                    clientFeedbackImages: [],
+                    designerSummary: '下一步：向顺怡发索要伞型清单+伞布等级+单价+MOQ+交期；第二家供应商入群后追加清单行。',
+                    designerImages: [],
+                },
+                production: [],
+                shipping: [],
+            },
+            {
                 id: 'p3',
                 name: 'Lisa · 主卧',
                 designer: '顾欣',
@@ -5893,10 +7036,15 @@
                     designerSummary: '主卧方案已确认，进入生产',
                     designerImages: SCHEME_SAMPLES,
                 },
-                production: [
-                    { title: '开料完成', date: '2026-07-12', photos: ['开料 07/12', '封边 07/14'] },
-                    { title: '组装中', date: '2026-07-15', photos: ['钻孔 07/15', '试装 07/16'] },
-                ],
+                production: {
+                    summary: '开料与组装进行中',
+                    categories: {
+                        orderMaterial: buildDemoCategoryImages(KITCHEN_DEMO_IMAGES, 0, 2, '组料'),
+                        cutting: buildDemoCategoryImages(KITCHEN_DEMO_IMAGES, 2, 2, '拆板'),
+                        manufacture: buildDemoCategoryImages(KITCHEN_DEMO_IMAGES, 3, 2, '生产'),
+                        install: [],
+                    },
+                },
                 shipping: [],
             },
             {
@@ -5923,13 +7071,23 @@
                     designerSummary: '书房方案已交付生产',
                     designerImages: SCHEME_SAMPLES,
                 },
-                production: [
-                    { title: '生产完成', date: '2026-07-16', photos: ['质检通过', '包装完成'] },
-                ],
-                shipping: [
-                    { title: '已揽收', date: '2026-07-18', tracking: 'SF1234567890 · 顺丰速运' },
-                    { title: '运输中', date: '2026-07-19', tracking: '预计 07-22 送达' },
-                ],
+                production: {
+                    summary: '生产完成，质检包装完毕',
+                    categories: {
+                        orderMaterial: buildDemoCategoryImages(KITCHEN_DEMO_IMAGES, 0, 2, '组料'),
+                        cutting: buildDemoCategoryImages(KITCHEN_DEMO_IMAGES, 1, 2, '拆板'),
+                        manufacture: buildDemoCategoryImages(KITCHEN_DEMO_IMAGES, 2, 3, '生产'),
+                        install: buildDemoCategoryImages(KITCHEN_DEMO_IMAGES, 4, 1, '安装'),
+                    },
+                },
+                shipping: {
+                    summary: '顺丰运输中，预计 07-22 送达',
+                    categories: {
+                        waybill: buildDemoCategoryImages(IMG_SAMPLES, 0, 2, '货单'),
+                        preLoad: buildDemoCategoryImages(IMG_SAMPLES, 2, 3, '装车前'),
+                        container: buildDemoCategoryImages(IMG_SAMPLES, 3, 2, '集装箱'),
+                    },
+                },
             },
             {
                 id: 'p5',
@@ -5954,12 +7112,23 @@
                     designerSummary: '全案交付完成',
                     designerImages: SCHEME_SAMPLES,
                 },
-                production: [
-                    { title: '全部完工', date: '2026-06-25', photos: ['安装完成', '客户验收'] },
-                ],
-                shipping: [
-                    { title: '已签收', date: '2026-06-28', tracking: '客户已确认收货' },
-                ],
+                production: {
+                    summary: '全屋安装验收完成',
+                    categories: {
+                        orderMaterial: buildDemoCategoryImages(KITCHEN_DEMO_IMAGES, 0, 1, '组料'),
+                        cutting: buildDemoCategoryImages(KITCHEN_DEMO_IMAGES, 1, 1, '拆板'),
+                        manufacture: buildDemoCategoryImages(KITCHEN_DEMO_IMAGES, 2, 2, '生产'),
+                        install: buildDemoCategoryImages(IMG_SAMPLES, 0, 3, '安装'),
+                    },
+                },
+                shipping: {
+                    summary: '客户已签收',
+                    categories: {
+                        waybill: buildDemoCategoryImages(IMG_SAMPLES, 0, 1, '货单'),
+                        preLoad: buildDemoCategoryImages(IMG_SAMPLES, 1, 2, '装车前'),
+                        container: buildDemoCategoryImages(IMG_SAMPLES, 3, 2, '集装箱'),
+                    },
+                },
             },
         ];
 
@@ -5989,11 +7158,14 @@
             if (p.baseH === undefined) p.baseH = p.h;
             if (p.baseD === undefined) p.baseD = p.d;
             if (p.baseCoef === undefined) p.baseCoef = p.coef ?? 1;
+            if (p.baseMaterialBody === undefined) p.baseMaterialBody = p.materialBody ?? '';
+            if (p.baseMaterialDoor === undefined) p.baseMaterialDoor = p.materialDoor ?? '';
+            if (p.baseMaterial === undefined) p.baseMaterial = p.material ?? '';
+            if (p.baseTechParams === undefined) p.baseTechParams = p.techParams ?? '';
         }
 
         function hasEditableDims(p) {
-            return (Number(p.baseW) || Number(p.baseH) || Number(p.baseD)) > 0
-                || (Number(p.w) || Number(p.h) || Number(p.d)) > 0;
+            return true;
         }
 
         const DIM_BASE_MAP = { w: 'baseW', h: 'baseH', d: 'baseD' };
@@ -6047,30 +7219,172 @@
             return ['w', 'h', 'd'].some(field => isDimFieldChanged(p, field));
         }
 
+        const MAT_BASE_MAP = {
+            materialBody: 'baseMaterialBody',
+            materialDoor: 'baseMaterialDoor',
+            material: 'baseMaterial',
+            techParams: 'baseTechParams',
+        };
+
+        function isMatFieldChanged(p, field) {
+            ensureProductBaseline(p);
+            const baseKey = MAT_BASE_MAP[field];
+            if (!baseKey) return false;
+            return String(p[field] ?? '') !== String(p[baseKey] ?? '');
+        }
+
+        function getMatValClass(p, field) {
+            return isMatFieldChanged(p, field) ? 'is-custom' : '';
+        }
+
+        function isMaterialCustomized(p) {
+            return Object.keys(MAT_BASE_MAP).some(field => isMatFieldChanged(p, field));
+        }
+
+        function isCoefChanged(p) {
+            ensureProductBaseline(p);
+            return Math.abs((p.coef ?? 1) - (p.baseCoef ?? 1)) > 1e-9;
+        }
+
+        function getCoefInputClass(p) {
+            if (p.nonStandard || isCoefChanged(p)) return ' is-ns';
+            if (isDimCustomized(p)) return ' is-custom';
+            return '';
+        }
+
+        function getCoefValClass(p) {
+            return getCoefInputClass(p).trim();
+        }
+
+        function renderQuoteCoefField(p, ctx, idx) {
+            const coef = p.coef ?? 1;
+            const valCls = getCoefValClass(p);
+            if (!ctx?.projectId) {
+                return `<span class="coef-val${valCls ? ` ${valCls}` : ''}" data-coef-cell>${coef.toFixed(1)}</span>`;
+            }
+            const catId = ctx.categoryId || 'products';
+            const inpCls = getCoefInputClass(p);
+            return `<input type="number" class="coef-inp quote-card-inp quote-coef-inp${inpCls}" data-quote-field="coef" data-coef-cell data-project-id="${ctx.projectId}" data-category-id="${catId}" data-row-idx="${idx}" value="${coef.toFixed(1)}" min="0.1" step="0.1" inputmode="decimal" aria-label="调整系数" />`;
+        }
+
+        function renderQuoteNsCoefHtml(p, ctx = null, idx = 0) {
+            return renderQuoteCoefField(p, ctx, idx);
+        }
+
+        function renderQuoteDimInputField(p, field, val, ctx, idx) {
+            if (!ctx?.projectId) {
+                const cls = getDimValClass(p, field);
+                return `<span class="dim-val${cls ? ` ${cls}` : ''}">${formatDim(val)}</span>`;
+            }
+            const catId = ctx.categoryId || 'products';
+            const inpCls = getDimInputClass(p, field);
+            return `<input type="number" class="dim-inp quote-card-inp quote-dim-inp${inpCls}" data-quote-field="${field}" data-project-id="${ctx.projectId}" data-category-id="${catId}" data-row-idx="${idx}" value="${Number(val) || 0}" min="0" step="1" inputmode="numeric" aria-label="编辑${field}" />`;
+        }
+
+        function renderQuoteTapTextField(p, field, val, ctx, idx) {
+            const text = val || '—';
+            if (!ctx?.projectId) {
+                const cls = getMatValClass(p, field);
+                return `<span class="quote-mat-val${cls ? ` ${cls}` : ''}">${text}</span>`;
+            }
+            const catId = ctx.categoryId || 'products';
+            const cls = getMatValClass(p, field);
+            const safe = String(val ?? '').replace(/"/g, '&quot;');
+            return `<span class="quote-tap-edit" data-quote-tap-edit>
+                <span class="quote-tap-display quote-mat-val${cls ? ` ${cls}` : ''}" data-quote-field-display="${field}" tabindex="0" role="button" aria-label="点击编辑材料">${text}</span>
+                <input type="text" class="quote-mat-inp quote-tap-inp quote-card-inp${cls ? ` ${cls}` : ''}" data-quote-field="${field}" data-project-id="${ctx.projectId}" data-category-id="${catId}" data-row-idx="${idx}" value="${safe}" hidden />
+            </span>`;
+        }
+
+        function activateQuoteTapEdit(wrap) {
+            if (!wrap || wrap.classList.contains('is-editing')) return;
+            const inp = wrap.querySelector('[data-quote-field]');
+            const display = wrap.querySelector('[data-quote-field-display]');
+            if (!inp || !display) return;
+            wrap.classList.add('is-editing');
+            inp.hidden = false;
+            display.hidden = true;
+            inp.focus();
+            if (typeof inp.select === 'function') inp.select();
+        }
+
+        function deactivateQuoteTapEdit(wrap) {
+            if (!wrap) return;
+            const inp = wrap.querySelector('[data-quote-field]');
+            const display = wrap.querySelector('[data-quote-field-display]');
+            if (!inp || !display) return;
+            wrap.classList.remove('is-editing');
+            inp.hidden = true;
+            display.hidden = false;
+            const field = inp.dataset.quoteField;
+            if (['w', 'h', 'd'].includes(field)) {
+                display.textContent = formatDim(inp.value);
+            } else {
+                display.textContent = inp.value.trim() || '—';
+            }
+        }
+
+        function refreshQuoteTapFieldsInRow(row, line) {
+            row.querySelectorAll('.quote-tap-edit').forEach(wrap => {
+                if (wrap.classList.contains('is-editing')) return;
+                const inp = wrap.querySelector('[data-quote-field]');
+                const display = wrap.querySelector('[data-quote-field-display]');
+                if (!inp || !display) return;
+                const field = inp.dataset.quoteField;
+                if (['w', 'h', 'd'].includes(field)) {
+                    inp.value = Number(line[field]) || 0;
+                    display.textContent = formatDim(line[field]);
+                    display.classList.remove('is-custom', 'is-ns');
+                    const cls = getDimValClass(line, field);
+                    if (cls) display.classList.add(cls);
+                    inp.classList.remove('is-custom', 'is-ns');
+                    const icls = getDimInputClass(line, field).trim();
+                    if (icls) inp.classList.add(icls);
+                } else {
+                    inp.value = line[field] ?? '';
+                    display.textContent = line[field] || '—';
+                    display.classList.remove('is-custom');
+                    const cls = getMatValClass(line, field);
+                    if (cls) display.classList.add(cls);
+                    inp.classList.remove('is-custom');
+                    if (cls) inp.classList.add(cls);
+                }
+            });
+        }
+
         function syncProductNonStandard(p) {
             ensureProductBaseline(p);
             if (!hasEditableDims(p)) {
                 p.nonStandard = false;
                 p.dimNs = { w: false, h: false, d: false };
+                if (!p.coefManual) p.coef = p.baseCoef ?? 1;
                 return;
             }
             if (!isDimCustomized(p)) {
-                p.coef = p.baseCoef ?? 1;
-                p.nonStandard = false;
+                if (!p.coefManual) {
+                    p.coef = p.baseCoef ?? 1;
+                    p.nonStandard = false;
+                } else {
+                    p.nonStandard = isCoefChanged(p);
+                }
                 p.dimNs = { w: false, h: false, d: false };
                 return;
             }
-            const maxDev = Math.max(
-                getDimDeviation(p, 'w'),
-                getDimDeviation(p, 'h'),
-                getDimDeviation(p, 'd'),
-                0
-            );
-            const nextCoef = maxDev > DIM_DEV_THRESHOLD
-                ? Math.round((1 + maxDev) * 10) / 10
-                : (p.baseCoef ?? 1);
-            p.coef = nextCoef;
-            p.nonStandard = nextCoef !== (p.baseCoef ?? 1);
+            if (!p.coefManual) {
+                const maxDev = Math.max(
+                    getDimDeviation(p, 'w'),
+                    getDimDeviation(p, 'h'),
+                    getDimDeviation(p, 'd'),
+                    0
+                );
+                const nextCoef = maxDev > DIM_DEV_THRESHOLD
+                    ? Math.round((1 + maxDev) * 10) / 10
+                    : (p.baseCoef ?? 1);
+                p.coef = nextCoef;
+                p.nonStandard = nextCoef !== (p.baseCoef ?? 1);
+            } else {
+                p.nonStandard = isCoefChanged(p);
+            }
             syncDimNonStandardFlags(p);
         }
 
@@ -6098,46 +7412,48 @@
         function getMediaImageList(project, mediaKey) {
             if (!project) return [];
             if (mediaKey === 'production') {
-                const prod = project.production;
-                if (Array.isArray(prod)) return recordsToStripImages(prod);
-                return prod?.images || recordsToStripImages(prod?.records) || [];
+                const normalized = normalizeProductionMedia(project.production);
+                return PRODUCTION_CATEGORIES.flatMap(c => normalized.categories[c.id] || []);
             }
             if (mediaKey === 'shipping') {
-                const ship = project.shipping;
-                if (Array.isArray(ship)) return recordsToStripImages(ship);
-                return ship?.images || recordsToStripImages(ship?.records) || [];
+                const normalized = normalizeShippingMedia(project.shipping);
+                return SHIPPING_CATEGORIES.flatMap(c => normalized.categories[c.id] || []);
             }
             return project.comm?.[mediaKey] || [];
         }
 
         function setMediaImageList(project, mediaKey, images) {
             if (mediaKey === 'production') {
-                if (Array.isArray(project.production)) {
-                    project.production = { summary: project.production.map(r => r.title).join('；'), images, records: project.production };
-                } else if (!project.production || typeof project.production !== 'object') {
-                    project.production = { summary: '生产记录', images, records: [] };
-                } else {
-                    project.production.images = images;
-                }
+                const normalized = normalizeProductionMedia(project.production);
+                normalized.categories[PRODUCTION_DEFAULT_CATEGORY] = images;
+                normalized.summary = normalized.summary || '生产记录';
+                project.production = normalized;
                 return;
             }
             if (mediaKey === 'shipping') {
-                if (Array.isArray(project.shipping)) {
-                    project.shipping = { summary: project.shipping.map(r => r.title).join('；'), images, records: project.shipping };
-                } else if (!project.shipping || typeof project.shipping !== 'object') {
-                    project.shipping = { summary: '货运记录', images, records: [] };
-                } else {
-                    project.shipping.images = images;
-                }
+                const normalized = normalizeShippingMedia(project.shipping);
+                normalized.categories[SHIPPING_DEFAULT_CATEGORY] = images;
+                normalized.summary = normalized.summary || '货运记录';
+                project.shipping = normalized;
                 return;
             }
             if (!project.comm) project.comm = {};
             project.comm[mediaKey] = images;
         }
 
-        function addMediaImage(projectId, mediaKey, imageObj) {
+        function addMediaImage(projectId, mediaKey, imageObj, categoryId) {
             const p = findProjectById(projectId);
             if (!p) return false;
+            if (mediaKey === 'production') {
+                addMediaImageToCategory(p, 'production', categoryId || PRODUCTION_DEFAULT_CATEGORY, imageObj);
+                p.updatedFull = new Date().toISOString().slice(0, 10);
+                return true;
+            }
+            if (mediaKey === 'shipping') {
+                addMediaImageToCategory(p, 'shipping', categoryId || SHIPPING_DEFAULT_CATEGORY, imageObj);
+                p.updatedFull = new Date().toISOString().slice(0, 10);
+                return true;
+            }
             const list = [...getMediaImageList(p, mediaKey)];
             list.unshift(imageObj);
             setMediaImageList(p, mediaKey, list.slice(0, 20));
@@ -6176,31 +7492,48 @@
             if (!line || !p) return;
             syncProductNonStandard(line);
             const shell = document.querySelector(`.project-shell[data-project-id="${projectId}"]`);
-            const row = shell?.querySelector(`tr[data-quote-row="${rowIdx}"][data-category-id="${categoryId || 'products'}"]`);
-            if (!row) {
+            const catId = categoryId || 'products';
+            const rows = shell?.querySelectorAll(`[data-quote-row="${rowIdx}"][data-category-id="${catId}"]`);
+            if (!rows?.length) {
                 refreshProjectShell(projectId);
                 return;
             }
             const subtotal = calcLineSubtotal(line);
-            const coefCell = row.querySelector('[data-coef-cell]');
-            if (coefCell) {
-                coefCell.innerHTML = line.nonStandard
-                    ? `<span class="coef-val is-ns">${(line.coef ?? 1).toFixed(1)}</span>`
-                    : isDimCustomized(line)
-                        ? `<span class="coef-val is-custom">${(line.coef ?? 1).toFixed(1)}</span>`
-                        : `<span class="coef-val">${(line.coef ?? 1).toFixed(1)}</span>`;
-            }
-            const subCell = row.querySelector('[data-subtotal-cell]');
-            if (subCell) {
-                subCell.textContent = `¥${subtotal.toLocaleString()}`;
-                subCell.classList.toggle('qty-zero', line.qty === 0);
-            }
-            ['w', 'h', 'd'].forEach(field => {
-                const inp = row.querySelector(`[data-quote-field="${field}"]`);
-                if (!inp) return;
-                inp.classList.remove('is-custom', 'is-ns');
-                const cls = getDimInputClass(line, field).trim();
-                if (cls) inp.classList.add(cls);
+            rows.forEach(row => {
+                const coefInp = row.querySelector('[data-quote-field="coef"]');
+                if (coefInp) {
+                    if (document.activeElement !== coefInp) {
+                        coefInp.value = (line.coef ?? 1).toFixed(1);
+                    }
+                    coefInp.classList.remove('is-custom', 'is-ns');
+                    const icls = getCoefInputClass(line).trim();
+                    if (icls) coefInp.classList.add(icls);
+                } else {
+                    const coefCell = row.querySelector('[data-coef-cell]');
+                    if (coefCell) {
+                        coefCell.outerHTML = renderQuoteCoefField(line, { projectId, categoryId: catId }, rowIdx);
+                    }
+                }
+                const subCell = row.querySelector('[data-subtotal-cell]');
+                if (subCell) {
+                    subCell.textContent = `¥${subtotal.toLocaleString()}`;
+                    subCell.classList.toggle('qty-zero', line.qty === 0);
+                }
+                const qtyInp = row.querySelector('[data-quote-field="qty"]');
+                if (qtyInp && document.activeElement !== qtyInp) {
+                    qtyInp.value = line.qty;
+                }
+                refreshQuoteTapFieldsInRow(row, line);
+                ['w', 'h', 'd'].forEach(field => {
+                    const inp = row.querySelector(`[data-quote-field="${field}"]`);
+                    if (!inp || inp.closest('.quote-tap-edit')) return;
+                    if (document.activeElement !== inp) {
+                        inp.value = Number(line[field]) || 0;
+                    }
+                    inp.classList.remove('is-custom', 'is-ns');
+                    const icls = getDimInputClass(line, field).trim();
+                    if (icls) inp.classList.add(icls);
+                });
             });
             p.price = calcProjectTotal(p);
             const totalEls = shell?.querySelectorAll('[data-shell-header-total]');
@@ -6317,11 +7650,29 @@
 
         function renderMediaAddRowHtml(ctx) {
             const label = (ctx.sectionLabel || MEDIA_SECTION_KEYS[ctx.mediaKey]?.label || '图片').replace(/"/g, '&quot;');
+            const commonAttrs = `data-project-id="${ctx.projectId}" data-media-key="${ctx.mediaKey}" data-section-label="${label}"`;
+            const catAttr = ctx.categoryId ? ` data-category-id="${ctx.categoryId}"` : '';
+            const enableCamera = ctx.enableCamera || ctx.mediaKey === 'production' || ctx.mediaKey === 'shipping';
+            if (enableCamera) {
+                const catHint = ctx.categoryId ? ` · ${ctx.categoryLabel || ctx.categoryId}` : '';
+                return `<div class="media-add-row media-add-row--dual">
+                    <button type="button" class="media-add-btn media-add-btn--camera" data-add-image-camera
+                        ${commonAttrs}${catAttr}
+                        aria-label="拍照 · ${label}${catHint}"
+                        title="拍照 · ${label}${catHint}">
+                        <i class="fas fa-camera"></i><span>拍照</span>
+                    </button>
+                    <button type="button" class="media-add-btn" data-add-image
+                        ${commonAttrs}${catAttr}
+                        aria-label="从相册选择 · ${label}${catHint}"
+                        title="从相册选择 · ${label}${catHint}">
+                        <i class="fas fa-image"></i><span>相册</span>
+                    </button>
+                </div>`;
+            }
             return `<div class="media-add-row">
                 <button type="button" class="media-add-btn" data-add-image
-                    data-project-id="${ctx.projectId}"
-                    data-media-key="${ctx.mediaKey}"
-                    data-section-label="${label}"
+                    ${commonAttrs}${catAttr}
                     aria-label="添加图片 · ${label}"
                     title="添加图片 · ${label}">
                     <i class="fas fa-plus"></i>
@@ -6381,11 +7732,51 @@
             return v === 0 || v === '0' ? '—' : (v ?? '—');
         }
 
+        function formatMaterialShort(p) {
+            if (p.techParams) return p.techParams;
+            if (p.materialBody && p.materialDoor) return `${p.materialBody};${p.materialDoor}`;
+            if (p.materialBody) return p.materialBody;
+            if (p.materialDoor) return p.materialDoor;
+            return p.material || '—';
+        }
+
+        function getQuoteBodyMaterial(p) {
+            return p.materialBody || p.material || p.techParams || '—';
+        }
+
+        function getQuoteDoorMaterial(p) {
+            return p.materialDoor || '—';
+        }
+
+        function renderQuoteQtyStepperHtml(p, ctx, idx) {
+            if (!ctx?.projectId) {
+                return `<span class="${p.qty === 0 ? 'qty-zero' : ''}">${p.qty}</span>`;
+            }
+            const catId = ctx.categoryId || 'products';
+            const pid = ctx.projectId;
+            return `<div class="quote-qty-stepper">
+                <button type="button" class="quote-qty-step" data-qty-step="minus"
+                    data-project-id="${pid}" data-category-id="${catId}" data-row-idx="${idx}" aria-label="减少">-</button>
+                <input type="number" class="qty-inp quote-card-inp" data-quote-field="qty"
+                    data-project-id="${pid}" data-category-id="${catId}" data-row-idx="${idx}"
+                    value="${p.qty}" min="0" step="any" inputmode="decimal" />
+                <button type="button" class="quote-qty-step" data-qty-step="plus"
+                    data-project-id="${pid}" data-category-id="${catId}" data-row-idx="${idx}" aria-label="增加">+</button>
+            </div>`;
+        }
+
         function renderProductThumb(p) {
             if (p.image) {
                 return `<div class="ic"><img src="${p.image}" alt="${p.name}" loading="lazy" referrerpolicy="no-referrer" /></div>`;
             }
             return `<div class="ic"><span class="ic-emoji">${p.emoji || '📦'}</span></div>`;
+        }
+
+        function renderProductThumbCard(p) {
+            if (p.image) {
+                return `<div class="quote-card-media"><img src="${p.image}" alt="${p.name}" loading="lazy" referrerpolicy="no-referrer" /></div>`;
+            }
+            return `<div class="quote-card-media quote-card-media--emoji"><span class="ic-emoji">${p.emoji || '📦'}</span></div>`;
         }
 
         function deleteProductLine(projectId, categoryId, rowIdx) {
@@ -6412,11 +7803,10 @@
             return products.map((p, idx) => {
                 ensureProductBaseline(p);
                 syncProductNonStandard(p);
-                const coef = p.coef ?? 1;
                 const subtotal = calcLineSubtotal(p);
                 const isZero = p.qty === 0;
                 const editable = !!(ctx?.projectId);
-                const catId = ctx?.categoryId || 'products';
+                const catId = ctx.categoryId || 'products';
                 const rowAttrs = editable
                     ? ` data-quote-row="${idx}" data-project-id="${ctx.projectId}" data-category-id="${catId}"`
                     : '';
@@ -6431,11 +7821,7 @@
                 const qtyCell = editable
                     ? `<input type="number" class="qty-inp" data-quote-field="qty" data-project-id="${ctx.projectId}" data-category-id="${catId}" data-row-idx="${idx}" value="${p.qty}" min="0" step="any" />`
                     : `<span class="${isZero ? 'qty-zero' : ''}">${p.qty}</span>`;
-                const coefHtml = p.nonStandard
-                    ? `<span class="coef-val is-ns">${coef.toFixed(1)}</span>`
-                    : isDimCustomized(p)
-                        ? `<span class="coef-val is-custom">${coef.toFixed(1)}</span>`
-                        : `<span class="coef-val">${coef.toFixed(1)}</span>`;
+                const coefHtml = renderQuoteCoefField(p, editable ? ctx : null, idx);
                 const delCell = editable
                     ? `<td class="quote-del-cell">
                         <button type="button" class="quote-del-btn" data-delete-quote-row
@@ -6465,6 +7851,146 @@
             }).join('');
         }
 
+        function getQuoteMaterialLabels(projectId) {
+            const p = projectId ? findProjectById(projectId) : null;
+            if (p?.quoteLineSchema === 'outdoor-shade') {
+                return { spec: '伞面规格', body: '伞布/面料', door: '骨架/底座' };
+            }
+            return { spec: '规格', body: '柜体材料', door: '柜门材料' };
+        }
+
+        function getQuoteMaterialShortLabels(projectId) {
+            const p = projectId ? findProjectById(projectId) : null;
+            if (p?.quoteLineSchema === 'outdoor-shade') {
+                return { body: '伞布', door: '骨架' };
+            }
+            return { body: '柜体', door: '柜门' };
+        }
+
+        function hasQuoteSplitMaterials(p) {
+            return !!(p.materialBody && p.materialDoor);
+        }
+
+        function formatQuoteMaterialLine(p, projectId) {
+            if (p.techParams) return p.techParams;
+            if (hasQuoteSplitMaterials(p)) {
+                const labels = getQuoteMaterialShortLabels(projectId);
+                return `${labels.body}、${p.materialBody}，${labels.door}、${p.materialDoor}`;
+            }
+            return p.materialBody || p.materialDoor || p.material || '—';
+        }
+
+        function renderQuoteMaterialRowsHtml(p, projectId, ctx, idx) {
+            const labels = getQuoteMaterialShortLabels(projectId);
+            if (p.techParams) {
+                return `<div class="quote-cart-row quote-cart-row-mat">
+                        <div class="quote-cart-cell quote-cart-cell-mat">
+                            <span class="quote-cart-lbl">材料</span>
+                            ${renderQuoteTapTextField(p, 'techParams', p.techParams, ctx, idx)}
+                        </div>
+                    </div>`;
+            }
+            if (hasQuoteSplitMaterials(p)) {
+                return `<div class="quote-cart-row quote-cart-row-mat">
+                        <div class="quote-cart-cell quote-cart-cell-mat">
+                            <span class="quote-cart-lbl">材料</span>
+                            <span class="quote-mat-prefix">${labels.body}、</span>
+                            ${renderQuoteTapTextField(p, 'materialBody', p.materialBody, ctx, idx)}
+                            <span class="quote-mat-sep">，${labels.door}、</span>
+                            ${renderQuoteTapTextField(p, 'materialDoor', p.materialDoor, ctx, idx)}
+                        </div>
+                    </div>`;
+            }
+            const matField = p.materialBody ? 'materialBody' : (p.materialDoor ? 'materialDoor' : 'material');
+            const matVal = p[matField] || p.material || '—';
+            return `<div class="quote-cart-row quote-cart-row-mat">
+                        <div class="quote-cart-cell quote-cart-cell-mat">
+                            <span class="quote-cart-lbl">材料</span>
+                            ${ctx?.projectId
+                                ? renderQuoteTapTextField(p, matField, matVal, ctx, idx)
+                                : `<span class="quote-cart-mat-val">${matVal}</span>`}
+                        </div>
+                    </div>`;
+        }
+
+        function renderQuoteProductCardsHtml(products, ctx = null) {
+            return products.map((p, idx) => {
+                ensureProductBaseline(p);
+                syncProductNonStandard(p);
+                const subtotal = calcLineSubtotal(p);
+                const isZero = p.qty === 0;
+                const editable = !!(ctx?.projectId);
+                const catId = ctx?.categoryId || 'products';
+                const rowAttrs = editable
+                    ? ` data-quote-row="${idx}" data-project-id="${ctx.projectId}" data-category-id="${catId}"`
+                    : '';
+                const dimCell = (field, val) => renderQuoteDimInputField(p, field, val, ctx, idx);
+                const delBtn = editable
+                    ? `<button type="button" class="quote-card-media-del" data-delete-quote-row
+                            data-project-id="${ctx.projectId}"
+                            data-category-id="${catId}"
+                            data-row-idx="${idx}"
+                            aria-label="删除 ${p.name}"
+                            title="删除">×</button>`
+                    : '';
+                const coefHtml = renderQuoteCoefField(p, ctx, idx);
+                const matLabels = getQuoteMaterialLabels(ctx?.projectId);
+                const dimsHtml = `${dimCell('w', p.w)}*${dimCell('h', p.h)}*${dimCell('d', p.d)}`;
+                const qtyStepper = renderQuoteQtyStepperHtml(p, ctx, idx);
+                const materialRows = renderQuoteMaterialRowsHtml(p, ctx?.projectId, ctx, idx);
+                const favBtn = editable
+                    ? `<button type="button" class="quote-fav-link" data-quote-favorite
+                            data-project-id="${ctx.projectId}"
+                            data-category-id="${catId}"
+                            data-row-idx="${idx}">移入收藏</button>`
+                    : '';
+                return `<div class="quote-line-card"${rowAttrs}>
+                    <div class="quote-card-media-wrap">
+                        ${renderProductThumbCard(p)}
+                        ${delBtn}
+                    </div>
+                    <div class="quote-card-body">
+                        <div class="quote-cart-row quote-cart-row-title">
+                            <div class="quote-cart-cell">
+                                <span class="quote-cart-title">${p.name}</span>
+                            </div>
+                            <div class="quote-cart-cell quote-cart-cell-right">${qtyStepper}</div>
+                        </div>
+                        <div class="quote-cart-row quote-cart-row-spec">
+                            <div class="quote-cart-cell">
+                                <span class="quote-cart-lbl">${matLabels.spec}</span>
+                                <span class="quote-cart-spec-val">${dimsHtml}</span>
+                            </div>
+                            <div class="quote-cart-cell quote-cart-cell-right">
+                                <span class="quote-cart-lbl">单位</span>
+                                <span class="quote-cart-unit">${p.unit || 'mm'}</span>
+                            </div>
+                        </div>
+                        ${materialRows}
+                        <div class="quote-cart-row quote-cart-row-price">
+                            <div class="quote-cart-cell">
+                                <span class="quote-cart-lbl">单价</span>
+                                <span class="quote-cart-unit-price">¥${p.unitPrice.toLocaleString()}</span>
+                            </div>
+                        </div>
+                        <div class="quote-cart-row quote-cart-row-fav">
+                            <div class="quote-cart-cell quote-cart-cell-fav-left">${favBtn}</div>
+                            <div class="quote-cart-cell quote-cart-cell-fav-center">
+                                <span class="quote-cart-ns-inline">
+                                    <span class="quote-cart-lbl quote-cart-lbl--inline quote-cart-lbl--ns-mobile">非标</span>
+                                    <span class="quote-cart-lbl quote-cart-lbl--inline quote-cart-lbl--ns-desktop">调整系数</span>
+                                    ${coefHtml}
+                                </span>
+                            </div>
+                            <div class="quote-cart-cell quote-cart-cell-right">
+                                <span class="quote-cart-total-inline price-line${isZero ? ' qty-zero' : ''}" data-subtotal-cell>¥${subtotal.toLocaleString()}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
         function renderQuoteAddRowHtml(ctx) {
             const label = (ctx.sectionLabel || sectionLabel(ctx.sectionKey) || '产品清单').replace(/"/g, '&quot;');
             return `<tr class="quote-add-row">
@@ -6483,20 +8009,25 @@
             </tr>`;
         }
 
+        function renderQuoteAddCardHtml(ctx) {
+            const label = (ctx.sectionLabel || sectionLabel(ctx.sectionKey) || '产品清单').replace(/"/g, '&quot;');
+            return `<div class="quote-card-add">
+                <button type="button" class="quote-add-btn" data-goto-shop
+                    data-project-id="${ctx.projectId}"
+                    data-section-key="${ctx.sectionKey}"
+                    data-section-label="${label}"
+                    ${ctx.categoryId ? `data-category-id="${ctx.categoryId}"` : ''}
+                    aria-label="前往选品中心 · ${label}"
+                    title="从选品中心添加 · ${label}">
+                    <i class="fas fa-plus"></i> 从选品中心添加
+                </button>
+            </div>`;
+        }
+
         function renderQuoteTableHtml(products, ctx = null) {
-            const addRow = ctx?.projectId ? renderQuoteAddRowHtml(ctx) : '';
-            return `<div class="project-tw"><table>
-                <colgroup>
-                    <col class="col-p"><col class="col-s"><col class="col-w"><col class="col-h"><col class="col-d">
-                    <col class="col-m"><col class="col-r"><col class="col-q"><col class="col-u"><col class="col-pr"><col class="col-t"><col class="col-x">
-                </colgroup>
-                <thead>
-                    <tr>
-                        <th>图</th><th>名称</th><th colspan="3">尺寸(宽×高×深)</th><th>材料</th><th>非标系数</th><th>数量</th><th>单位</th><th>单价</th><th>小计</th><th></th>
-                    </tr>
-                </thead>
-                <tbody>${renderQuoteProductRowsHtml(products, ctx)}${addRow}</tbody>
-            </table></div>`;
+            const addCard = ctx?.projectId ? renderQuoteAddCardHtml(ctx) : '';
+            const cards = renderQuoteProductCardsHtml(products, ctx);
+            return `<div class="quote-list-wrap"><div class="quote-card-stack">${cards}${addCard}</div></div>`;
         }
 
         function padImagesToFive(images) {
@@ -6505,15 +8036,60 @@
             return list.slice(0, 5);
         }
 
+        function parseMediaSortTime(img) {
+            const raw = String(img?.date || img?.sortDate || '').trim();
+            if (!raw) return 0;
+            if (/^\d{4}-\d{2}-\d{2}/.test(raw)) {
+                const t = Date.parse(raw.replace(' ', 'T'));
+                return Number.isFinite(t) ? t : 0;
+            }
+            const md = raw.match(/^(\d{2})-(\d{2})(?:\s+\d{2}:\d{2})?$/);
+            if (md) {
+                const year = img?.dateYear || new Date().getFullYear();
+                return new Date(year, Number(md[1]) - 1, Number(md[2])).getTime();
+            }
+            const t = Date.parse(raw);
+            return Number.isFinite(t) ? t : 0;
+        }
+
+        function formatMediaDateYmd(img) {
+            const t = parseMediaSortTime(img);
+            if (!t) return '—';
+            const d = new Date(t);
+            return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+        }
+
+        function sortMediaImagesByDate(images) {
+            return [...(images || [])]
+                .filter(img => img && img.url)
+                .sort((a, b) => parseMediaSortTime(b) - parseMediaSortTime(a));
+        }
+
+        function renderMediaStripItemHtml(img, interactive) {
+            const noteLine = (img.note || img.caption || img.alt || '—').replace(/"/g, '&quot;');
+            const dateLine = formatMediaDateYmd(img);
+            const inner = `<div class="media-strip-thumb"><img src="${img.url}" alt="${noteLine}" loading="lazy" referrerpolicy="no-referrer" /></div>
+                <div class="media-strip-cap">
+                    <span class="media-strip-date">${dateLine}</span>
+                    <span class="media-strip-note">${img.note || img.caption || img.alt || '—'}</span>
+                </div>`;
+            if (interactive) {
+                return `<button type="button" class="media-strip-item" data-lightbox="${img.url}">${inner}</button>`;
+            }
+            return `<div class="media-strip-item media-strip-item--preview">${inner}</div>`;
+        }
+
+        function renderMediaStripRow(images, opts = {}) {
+            const list = sortMediaImagesByDate(images);
+            const interactive = opts.interactive !== false;
+            if (!list.length) {
+                return `<div class="media-layout-wrap"><div class="media-strip-row media-strip-row--empty"><span class="media-strip-empty-hint">暂无图片</span></div></div>`;
+            }
+            return `<div class="media-layout-wrap"><div class="media-strip-row">${list.map(img => renderMediaStripItemHtml(img, interactive)).join('')}</div></div>`;
+        }
+
         function renderImageStripBar(images) {
-            const slots = padImagesToFive(images);
-            return `<div class="img-strip-bar">${slots.map(img => img
-                ? `<button type="button" class="img-strip-cell" data-lightbox="${img.url}">
-                    <img src="${img.url}" alt="${img.alt || ''}" loading="lazy" referrerpolicy="no-referrer" />
-                    <span class="img-strip-glass">${img.date || '—'}</span>
-                   </button>`
-                : `<span class="img-strip-cell is-empty"></span>`
-            ).join('')}</div>`;
+            return renderMediaStripRow(images, { interactive: true });
         }
 
         function recordsToStripImages(records) {
@@ -6528,11 +8104,75 @@
                     result.push({
                         url: sample.url,
                         alt: label,
+                        note: label,
                         date: date.includes('-') && date.length <= 10 ? date : date,
                     });
                 });
             });
             return result;
+        }
+
+        function normalizeCategorizedMedia(data, categoryDefs, fallbackSummary) {
+            const categories = Object.fromEntries(categoryDefs.map(c => [c.id, []]));
+            if (!data) return { summary: fallbackSummary, categories };
+            if (data.categories && typeof data.categories === 'object') {
+                categoryDefs.forEach(c => {
+                    categories[c.id] = sortMediaImagesByDate(data.categories[c.id] || []);
+                });
+                return { summary: data.summary || fallbackSummary, categories };
+            }
+            if (Array.isArray(data)) {
+                categoryDefs.forEach(c => { categories[c.id] = []; });
+                const imgs = recordsToStripImages(data);
+                if (imgs.length) categories[categoryDefs[2]?.id || categoryDefs[0].id].push(...imgs);
+                return {
+                    summary: data.map(r => r.title).join('；') || fallbackSummary,
+                    categories,
+                };
+            }
+            const legacyImages = sortMediaImagesByDate(data.images || recordsToStripImages(data.records) || []);
+            if (legacyImages.length) {
+                const targetId = categoryDefs.find(c => c.id === 'manufacture' || c.id === 'waybill')?.id || categoryDefs[0].id;
+                categories[targetId] = legacyImages;
+            }
+            return { summary: data.summary || fallbackSummary, categories };
+        }
+
+        function normalizeProductionMedia(data) {
+            return normalizeCategorizedMedia(data, PRODUCTION_CATEGORIES, '暂无生产记录');
+        }
+
+        function normalizeShippingMedia(data) {
+            return normalizeCategorizedMedia(data, SHIPPING_CATEGORIES, '暂无货运记录');
+        }
+
+        function getCategorizedMediaImages(project, sectionKey, categoryId) {
+            const normalized = sectionKey === 'production'
+                ? normalizeProductionMedia(project.production)
+                : normalizeShippingMedia(project.shipping);
+            return normalized.categories[categoryId] || [];
+        }
+
+        function addMediaImageToCategory(project, sectionKey, categoryId, imageObj) {
+            if (sectionKey === 'production') {
+                if (!project.production || typeof project.production !== 'object' || Array.isArray(project.production)) {
+                    project.production = normalizeProductionMedia(project.production);
+                }
+                if (!project.production.categories) project.production.categories = {};
+                const list = [...(project.production.categories[categoryId] || []), imageObj];
+                project.production.categories[categoryId] = list.slice(0, 30);
+                return true;
+            }
+            if (sectionKey === 'shipping') {
+                if (!project.shipping || typeof project.shipping !== 'object' || Array.isArray(project.shipping)) {
+                    project.shipping = normalizeShippingMedia(project.shipping);
+                }
+                if (!project.shipping.categories) project.shipping.categories = {};
+                const list = [...(project.shipping.categories[categoryId] || []), imageObj];
+                project.shipping.categories[categoryId] = list.slice(0, 30);
+                return true;
+            }
+            return false;
         }
 
         function normalizeMediaSection(data, fallbackSummary) {
@@ -6567,17 +8207,149 @@
             `).join('');
         }
 
-        function renderSummaryStripSection(title, summary, images, extraHtml = '', mediaCtx = null) {
-            const addRow = mediaCtx ? renderMediaAddRowHtml(mediaCtx) : '';
+        function normalizeClientFeedbackEntries(comm) {
+            if (!comm) return [];
+            if (Array.isArray(comm.clientFeedbackByDate) && comm.clientFeedbackByDate.length) {
+                return [...comm.clientFeedbackByDate]
+                    .filter(entry => entry && (entry.summary || entry.images?.length))
+                    .sort((a, b) => parseMediaSortTime({ date: b.date }) - parseMediaSortTime({ date: a.date }));
+            }
+            const summary = comm.clientFeedbackSummary || comm.clientSummary || '';
+            const images = (comm.clientFeedbackImages || []).filter(img => img && img.url);
+            if (!summary && !images.length) return [];
+            return [{
+                date: images[0]?.date || '',
+                summary: summary || '暂无客户意见',
+                remindCount: comm.clientFeedbackRemindCount || 0,
+                images,
+            }];
+        }
+
+        function renderFeedbackDateBlock(entry) {
+            const dateLabel = entry.date ? formatMediaDateYmd({ date: entry.date }) : '—';
+            const reminded = Number(entry.remindCount || 0) >= 2;
+            const summaryCls = reminded ? 'section-summary is-reminded' : 'section-summary';
+            const images = (entry.images || []).filter(img => img && img.url);
+            const summaryHtml = entry.summary || '—';
+            if (images.length) {
+                return `<article class="feedback-date-block feedback-date-block--annotated${reminded ? ' is-reminded' : ''}">
+                    <div class="feedback-date-label">${dateLabel}</div>
+                    <div class="media-strip-wrap img-strip-wrap">${renderMediaStripRow(images, { interactive: true })}</div>
+                    <div class="section-text-card"><p class="${summaryCls}">${summaryHtml}</p></div>
+                </article>`;
+            }
+            return `<article class="feedback-date-block feedback-date-block--text${reminded ? ' is-reminded' : ''}">
+                <div class="feedback-date-label">${dateLabel}</div>
+                <div class="section-text-card"><p class="${summaryCls}">${summaryHtml}</p></div>
+            </article>`;
+        }
+
+        function renderClientFeedbackSection(comm, projectId) {
+            const entries = normalizeClientFeedbackEntries(comm);
+            const mediaCtx = { projectId, mediaKey: 'clientFeedbackImages', sectionLabel: '客户意见总结' };
+            const addRow = renderMediaAddRowHtml(mediaCtx);
+            const blocksHtml = entries.length
+                ? entries.map(renderFeedbackDateBlock).join('')
+                : `<div class="feedback-date-block feedback-date-block--text"><div class="section-text-card"><p class="section-summary">暂无客户意见</p></div></div>`;
+            const annotatedEntry = entries.find(e => (e.images || []).some(img => img?.url));
+            const previewImages = annotatedEntry?.images || [];
+            const previewHtml = previewImages.length
+                ? renderMediaStripRow(previewImages, { interactive: false })
+                : `<div class="feedback-preview-text">${entries[0]?.summary || '暂无客户意见'}</div>`;
+            const previewCls = previewImages.length ? 'media-section-preview' : 'media-section-preview media-section-preview--text';
+            const sectionCls = previewImages.length ? 'proj-media-section' : 'proj-feedback-section';
             return `
-                <section class="proj-section proj-collapsible"${mediaCtx?.mediaKey ? ` data-media-section="${mediaCtx.mediaKey}"` : ''}>
+                <section class="proj-section proj-collapsible ${sectionCls}" data-media-section="clientFeedback">
+                    <div class="proj-section-hd" data-toggle-section>
+                        <span class="proj-section-label">客户意见总结</span>
+                        <i class="fas fa-chevron-down chevron"></i>
+                    </div>
+                    <div class="${previewCls}" data-toggle-section aria-label="展开客户意见总结">
+                        ${previewHtml}
+                    </div>
+                    <div class="proj-section-bd">
+                        <div class="feedback-date-stack">${blocksHtml}</div>
+                        ${addRow}
+                    </div>
+                </section>
+            `;
+        }
+
+        function renderMediaCategoryBlock(cat, images, ctx) {
+            const count = images.length;
+            const preview = count
+                ? renderMediaStripRow(images.slice(0, 4), { interactive: false })
+                : `<div class="media-cat-empty">暂无图片</div>`;
+            const expanded = count
+                ? `<div class="media-strip-wrap img-strip-wrap">${renderMediaStripRow(images, { interactive: true })}</div>`
+                : `<div class="media-cat-empty">暂无图片</div>`;
+            const label = (ctx.sectionLabel || '').replace(/"/g, '&quot;');
+            const commonAttrs = `data-project-id="${ctx.projectId}" data-media-key="${ctx.mediaKey}" data-section-label="${label}" data-category-id="${cat.id}" data-category-label="${cat.label}"`;
+            const actions = `<div class="media-cat-actions">
+                    <button type="button" class="media-add-btn" data-add-image-camera ${commonAttrs}
+                        aria-label="拍照 · ${cat.label}" title="拍照 · ${cat.label}"><i class="fas fa-camera"></i></button>
+                    <button type="button" class="media-add-btn" data-add-image ${commonAttrs}
+                        aria-label="相册 · ${cat.label}" title="相册 · ${cat.label}"><i class="fas fa-plus"></i></button>
+                </div>`;
+            return `<div class="media-cat-block media-cat-collapsible">
+                <div class="media-cat-card-hd" data-toggle-media-cat aria-label="展开${cat.label}">
+                    <span class="media-cat-label">${cat.label}</span>
+                    <span class="media-cat-count">${count} 张</span>
+                    ${actions}
+                    <i class="fas fa-chevron-down chevron"></i>
+                </div>
+                <div class="media-cat-preview" data-toggle-media-cat aria-label="展开${cat.label}">${preview}</div>
+                <div class="media-cat-bd">${expanded}</div>
+            </div>`;
+        }
+
+        function renderCategorizedMediaSection(title, categoryDefs, normalized, projectId, sectionKey) {
+            const mediaKey = sectionKey;
+            const addRow = renderMediaAddRowHtml({ projectId, mediaKey, sectionLabel: title });
+            const cardsHtml = categoryDefs.map(cat =>
+                renderMediaCategoryBlock(cat, normalized.categories[cat.id] || [], {
+                    projectId,
+                    mediaKey: sectionKey,
+                    sectionLabel: title,
+                })
+            ).join('');
+            const firstWithImages = categoryDefs.find(c => (normalized.categories[c.id] || []).length);
+            const previewHtml = firstWithImages
+                ? renderMediaStripRow(normalized.categories[firstWithImages.id].slice(0, 4), { interactive: false })
+                : `<div class="feedback-preview-text">${normalized.summary || '暂无记录'}</div>`;
+            return `
+                <section class="proj-section proj-collapsible proj-media-section proj-categorized-media" data-section="${sectionKey}" data-media-section="${sectionKey}">
                     <div class="proj-section-hd" data-toggle-section>
                         <span class="proj-section-label">${title}</span>
                         <i class="fas fa-chevron-down chevron"></i>
                     </div>
+                    <div class="media-section-preview" data-toggle-section aria-label="展开${title}">
+                        ${previewHtml}
+                    </div>
                     <div class="proj-section-bd">
-                        <div class="img-strip-wrap" data-img-strip>${renderImageStripBar(images)}</div>
-                        <p class="section-summary">${summary || '暂无记录'}</p>
+                        <div class="media-cat-stack">${cardsHtml}</div>
+                        ${addRow}
+                    </div>
+                </section>
+            `;
+        }
+
+        function renderSummaryStripSection(title, summary, images, extraHtml = '', mediaCtx = null) {
+            const addRow = mediaCtx ? renderMediaAddRowHtml(mediaCtx) : '';
+            const previewStrip = renderMediaStripRow(images, { interactive: false });
+            const expandedStrip = renderMediaStripRow(images, { interactive: true });
+            return `
+                <section class="proj-section proj-collapsible proj-media-section"${mediaCtx?.mediaKey ? ` data-media-section="${mediaCtx.mediaKey}"` : ''}>
+                    <div class="proj-section-hd" data-toggle-section>
+                        <span class="proj-section-label">${title}</span>
+                        <i class="fas fa-chevron-down chevron"></i>
+                    </div>
+                    <div class="media-section-preview" data-toggle-section aria-label="展开${title}">
+                        ${previewStrip}
+                    </div>
+                    <div class="proj-section-bd">
+                        <div class="media-strip-wrap img-strip-wrap" data-img-strip>${expandedStrip}</div>
+                        <div class="section-text-card"><p class="section-summary">${summary || '暂无记录'}</p></div>
                         ${extraHtml}
                         ${addRow}
                     </div>
@@ -6588,11 +8360,9 @@
         function renderCommSectionsHtml(comm, projectId) {
             if (!comm) return '';
             const uploadSummary = comm.clientUploadSummary || '客户提交的参考图片';
-            const feedbackSummary = comm.clientFeedbackSummary || comm.clientSummary || '暂无客户意见';
-            const feedbackImages = comm.clientFeedbackImages || FEEDBACK_SAMPLES;
             return `
                 ${renderSummaryStripSection('客户上传图片', uploadSummary, comm.clientImages, '', { projectId, mediaKey: 'clientImages', sectionLabel: '客户上传图片' })}
-                ${renderSummaryStripSection('客户意见总结', feedbackSummary, feedbackImages, '', { projectId, mediaKey: 'clientFeedbackImages', sectionLabel: '客户意见总结' })}
+                ${renderClientFeedbackSection(comm, projectId)}
                 ${renderSummaryStripSection('设计师方案总结', comm.designerSummary, comm.designerImages, '', { projectId, mediaKey: 'designerImages', sectionLabel: '设计师方案总结' })}
             `;
         }
@@ -6601,8 +8371,8 @@
             if (usesGroupedQuoteSections(p)) ensureProjectQuoteCategories(p);
             const hasQuoteCats = !p.children?.length && usesGroupedQuoteSections(p);
             const products = p.children?.length ? [] : (hasQuoteCats ? [] : (p.products || []));
-            const prod = normalizeMediaSection(p.production, '暂无生产记录');
-            const ship = normalizeMediaSection(p.shipping, '暂无货运记录');
+            const prod = normalizeProductionMedia(p.production);
+            const ship = normalizeShippingMedia(p.shipping);
             const showComm = !p.children?.length;
             const quoteHtml = hasQuoteCats ? renderQuoteCategoriesHtml(p.quoteCategories, p.id, p) : `
                 <section class="proj-section proj-collapsible" data-section="products">
@@ -6615,8 +8385,8 @@
             return `
                 ${quoteHtml}
                 ${showComm ? renderCommSectionsHtml(p.comm, p.id) : ''}
-                ${showComm ? renderSummaryStripSection('生产记录', prod.summary, prod.images, renderRecordDetails(prod.records), { projectId: p.id, mediaKey: 'production', sectionLabel: '生产记录' }) : ''}
-                ${showComm ? renderSummaryStripSection('货运记录', ship.summary, ship.images, renderRecordDetails(ship.records), { projectId: p.id, mediaKey: 'shipping', sectionLabel: '货运记录' }) : ''}
+                ${showComm ? renderCategorizedMediaSection('生产记录', PRODUCTION_CATEGORIES, prod, p.id, 'production') : ''}
+                ${showComm ? renderCategorizedMediaSection('货运记录', SHIPPING_CATEGORIES, ship, p.id, 'shipping') : ''}
                 ${showComm ? renderProjectPdfBarHtml(p.id) : ''}
                 ${showComm && ['设计中', '待确认'].includes(p.status) ? renderCommPlatformBarHtml(p.id) : ''}
             `;
@@ -6627,34 +8397,38 @@
             return `<div class="shell-meta-cell ${colClass}">${val}</div>`;
         }
 
-        function renderShellInlineMetrics(ctx = {}, mobileOpts = {}) {
+        function renderShellHeaderTotalHtml(price, priceLabel = '总计', priceClass = 'price-grand') {
+            return `<span class="${priceClass} project-shell-total shell-meta-price" data-shell-header-total>${priceLabel} ¥${Number(price || 0).toLocaleString()}</span>`;
+        }
+
+        function renderShellInlineMetrics(ctx = {}, opts = {}) {
             const priceLabel = ctx.priceLabel || '总计';
             const price = Number(ctx.price || 0);
             const priceClass = ctx.priceClass || 'price-grand';
-            const statusText = mobileOpts.mobileStatusText || '';
-            const dateText = mobileOpts.mobileDateText || '';
-            const mobileConfirmHtml = mobileOpts.mobileConfirmHtml || '';
-            const totalHtmlMobile = `<span class="${priceClass} project-shell-total shell-meta-price" data-shell-header-total>${priceLabel} ¥${price.toLocaleString()}</span>`;
-            const totalHtmlDesktop = `<span class="${priceClass} project-shell-total shell-meta-price">${priceLabel} ¥${price.toLocaleString()}</span>`;
+            const statusText = opts.mobileStatusText || '';
+            const dateText = opts.mobileDateText || '';
+            const confirmHtml = opts.confirmHtml || '';
+            const totalHtmlMobile = renderShellHeaderTotalHtml(price, priceLabel, priceClass);
             const statusRow = statusText
                 ? `<div class="shell-hd-metrics-line0">
                     <span class="shell-mobile-meta-plain shell-metrics-left shell-mobile-status">${statusText}</span>
                     ${dateText ? `<span class="shell-mobile-meta-plain shell-metrics-right shell-mobile-date">${dateText}</span>` : ''}
                 </div>`
                 : '';
-            const confirmCell = mobileConfirmHtml
-                ? `<div class="shell-hd-metrics-confirm-mobile shell-metrics-right">${mobileConfirmHtml}</div>`
+            const confirmCell = confirmHtml
+                ? `<div class="shell-hd-metrics-confirm">${confirmHtml}</div>`
                 : '';
+            const typeLabel = ctx.contentLabel || '';
             return `<div class="shell-hd-inline-metrics">
                 ${statusRow}
                 <div class="shell-hd-metrics-line1">
                     ${renderShellMetaCell('col-designer shell-metrics-left', ctx.designer ? `设计：${ctx.designer}` : '')}
                     ${renderShellMetaCell('col-date col-date-desktop', ctx.date)}
+                    ${renderShellMetaCell('col-type col-type-desktop shell-metrics-left', typeLabel)}
                     ${renderShellMetaCell('col-total col-total-mobile shell-metrics-right', totalHtmlMobile)}
                 </div>
                 <div class="shell-hd-metrics-line2">
-                    ${renderShellMetaCell('col-type shell-metrics-left', ctx.contentLabel)}
-                    ${renderShellMetaCell('col-total col-total-desktop', totalHtmlDesktop)}
+                    ${renderShellMetaCell('col-type col-type-mobile shell-metrics-left', typeLabel)}
                     ${confirmCell}
                 </div>
             </div>`;
@@ -6706,7 +8480,11 @@
                 : `<span class="shell-action-slot shell-action-slot--confirm" aria-hidden="true"></span>`;
             const expandBtn = `<button type="button" class="shell-expand-btn" data-toggle-shell-btn data-project-id="${p.id}" aria-label="展开或收起方案详情"></button>`;
             const statusSlot = statusBadge || `<span class="shell-action-slot shell-action-slot--status" aria-hidden="true"></span>`;
+            const totalActionHtml = !isSub
+                ? `<span class="shell-hd-action-total-wrap">${renderShellHeaderTotalHtml(p.price)}</span>`
+                : '';
             const actionsDesktopHtml = `<div class="shell-hd-row1-actions shell-hd-row1-actions--desktop">
+                            ${totalActionHtml}
                             ${statusSlot}
                             ${confirmBtn}
                             ${expandBtn}
@@ -6745,7 +8523,7 @@
                         }, {
                             mobileStatusText: p.status || '',
                             mobileDateText: p.updatedFull || '',
-                            mobileConfirmHtml: showConfirm ? confirmBtn : '',
+                            confirmHtml: showConfirm ? confirmBtn : '',
                         })}
                         ${actionsDesktopHtml}
                         ${actionsMobileHtml}
@@ -6795,23 +8573,49 @@
             /* 版块展开仅由 .is-open + 三角箭头表现 */
         }
 
+        function processMediaUploadFile(file, ctx) {
+            if (!file || !ctx) return;
+            const url = URL.createObjectURL(file);
+            const ok = addMediaImage(ctx.projectId, ctx.mediaKey, {
+                url,
+                alt: file.name.replace(/\.[^.]+$/, ''),
+                date: formatNowStripDate(),
+                note: ctx.categoryLabel || '',
+            }, ctx.categoryId || null);
+            if (!ok) return;
+            refreshProjectShell(ctx.projectId);
+            const sectionName = ctx.sectionLabel || MEDIA_SECTION_KEYS[ctx.mediaKey]?.label || '版块';
+            const catPart = ctx.categoryLabel ? ` · ${ctx.categoryLabel}` : '';
+            showToast('✅ 图片已添加', `已加入「${sectionName}${catPart}」`);
+        }
+
         function initMediaImageUpload() {
             document.getElementById('mediaImageFileInput')?.addEventListener('change', (e) => {
                 const file = e.target.files?.[0];
                 const ctx = pendingMediaUpload;
                 pendingMediaUpload = null;
                 e.target.value = '';
-                if (!file || !ctx) return;
-                const url = URL.createObjectURL(file);
-                const ok = addMediaImage(ctx.projectId, ctx.mediaKey, {
-                    url,
-                    alt: file.name.replace(/\.[^.]+$/, ''),
-                    date: formatNowStripDate(),
-                });
-                if (!ok) return;
-                refreshProjectShell(ctx.projectId);
-                showToast('✅ 图片已添加', `已加入「${ctx.sectionLabel || MEDIA_SECTION_KEYS[ctx.mediaKey]?.label || '版块'}」`);
+                e.target.removeAttribute('capture');
+                processMediaUploadFile(file, ctx);
             });
+        }
+
+        function triggerMediaImagePick(btn, useCamera) {
+            pendingMediaUpload = {
+                projectId: btn.dataset.projectId,
+                mediaKey: btn.dataset.mediaKey,
+                sectionLabel: btn.dataset.sectionLabel,
+                categoryId: btn.dataset.categoryId || null,
+                categoryLabel: btn.dataset.categoryLabel || null,
+            };
+            const input = document.getElementById('mediaImageFileInput');
+            if (!input) return;
+            if (useCamera) {
+                input.setAttribute('capture', 'environment');
+            } else {
+                input.removeAttribute('capture');
+            }
+            input.click();
         }
 
         function renderProjectGrid() {
@@ -7073,6 +8877,13 @@
                     return;
                 }
 
+                const mediaCatToggle = e.target.closest('[data-toggle-media-cat]');
+                if (mediaCatToggle) {
+                    e.stopPropagation();
+                    mediaCatToggle.closest('.media-cat-block')?.classList.toggle('is-open');
+                    return;
+                }
+
                 const gotoShopBtn = e.target.closest('[data-goto-shop]');
                 if (gotoShopBtn) {
                     e.stopPropagation();
@@ -7082,6 +8893,16 @@
                         categoryId: gotoShopBtn.dataset.categoryId || gotoShopBtn.dataset.sectionKey || 'products',
                         sectionLabel: gotoShopBtn.dataset.sectionLabel,
                     });
+                    return;
+                }
+
+                const tapDisplay = e.target.closest('[data-quote-field-display]');
+                if (tapDisplay) {
+                    e.stopPropagation();
+                    document.querySelectorAll('.quote-tap-edit.is-editing').forEach(w => {
+                        if (w !== tapDisplay.closest('.quote-tap-edit')) deactivateQuoteTapEdit(w);
+                    });
+                    activateQuoteTapEdit(tapDisplay.closest('.quote-tap-edit'));
                     return;
                 }
 
@@ -7101,15 +8922,39 @@
                     return;
                 }
 
+                const qtyStepBtn = e.target.closest('[data-qty-step]');
+                if (qtyStepBtn) {
+                    e.stopPropagation();
+                    const projectId = qtyStepBtn.dataset.projectId;
+                    const categoryId = qtyStepBtn.dataset.categoryId || 'products';
+                    const rowIdx = qtyStepBtn.dataset.rowIdx;
+                    const line = findProductLine(projectId, categoryId, rowIdx);
+                    if (!line) return;
+                    const delta = qtyStepBtn.dataset.qtyStep === 'plus' ? 1 : -1;
+                    line.qty = Math.max(0, (Number(line.qty) || 0) + delta);
+                    updateQuoteRowDom(projectId, categoryId, rowIdx);
+                    return;
+                }
+
+                const favBtn = e.target.closest('[data-quote-favorite]');
+                if (favBtn) {
+                    e.stopPropagation();
+                    const line = findProductLine(favBtn.dataset.projectId, favBtn.dataset.categoryId, favBtn.dataset.rowIdx);
+                    showToast('⭐ 已加入收藏', line?.name ? `「${line.name}」` : '已移入收藏夹');
+                    return;
+                }
+
                 const addImgBtn = e.target.closest('[data-add-image]');
                 if (addImgBtn) {
                     e.stopPropagation();
-                    pendingMediaUpload = {
-                        projectId: addImgBtn.dataset.projectId,
-                        mediaKey: addImgBtn.dataset.mediaKey,
-                        sectionLabel: addImgBtn.dataset.sectionLabel,
-                    };
-                    document.getElementById('mediaImageFileInput')?.click();
+                    triggerMediaImagePick(addImgBtn, false);
+                    return;
+                }
+
+                const cameraBtn = e.target.closest('[data-add-image-camera]');
+                if (cameraBtn) {
+                    e.stopPropagation();
+                    triggerMediaImagePick(cameraBtn, true);
                     return;
                 }
 
@@ -7188,8 +9033,20 @@
                     if (!line) return;
                     const field = quoteField.dataset.quoteField;
                     const raw = quoteField.value;
-                    const val = field === 'qty' ? parseFloat(raw) : parseInt(raw, 10);
-                    line[field] = Number.isFinite(val) ? val : 0;
+                    if (['materialBody', 'materialDoor', 'material', 'techParams'].includes(field)) {
+                        line[field] = raw.trim();
+                    } else if (field === 'coef') {
+                        const val = parseFloat(raw);
+                        line.coef = Number.isFinite(val) && val > 0
+                            ? Math.round(val * 10) / 10
+                            : (line.baseCoef ?? 1);
+                        line.coefManual = true;
+                        line.nonStandard = isCoefChanged(line);
+                    } else {
+                        const val = field === 'qty' ? parseFloat(raw) : parseInt(raw, 10);
+                        line[field] = Number.isFinite(val) ? val : 0;
+                        if (['w', 'h', 'd'].includes(field)) line.coefManual = false;
+                    }
                     updateQuoteRowDom(quoteField.dataset.projectId, quoteField.dataset.categoryId, quoteField.dataset.rowIdx);
                     return;
                 }
@@ -7197,6 +9054,38 @@
                 if (!nameInput) return;
                 const p = findProjectById(nameInput.dataset.projectName);
                 if (p) p.name = nameInput.value.trim() || p.name;
+            });
+
+            app?.addEventListener('focusout', (e) => {
+                const wrap = e.target.closest('.quote-tap-edit.is-editing');
+                if (!wrap) return;
+                if (wrap.contains(e.relatedTarget)) return;
+                deactivateQuoteTapEdit(wrap);
+            });
+
+            app?.addEventListener('keydown', (e) => {
+                const tapDisplay = e.target.closest('[data-quote-field-display]');
+                if (tapDisplay && (e.key === 'Enter' || e.key === ' ')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    document.querySelectorAll('.quote-tap-edit.is-editing').forEach(w => {
+                        if (w !== tapDisplay.closest('.quote-tap-edit')) deactivateQuoteTapEdit(w);
+                    });
+                    activateQuoteTapEdit(tapDisplay.closest('.quote-tap-edit'));
+                    return;
+                }
+                if (e.key !== 'Enter') return;
+                const inp = e.target.closest('.quote-tap-edit.is-editing [data-quote-field]');
+                if (!inp) return;
+                e.preventDefault();
+                deactivateQuoteTapEdit(inp.closest('.quote-tap-edit'));
+                inp.blur();
+            });
+
+            app?.addEventListener('mousedown', (e) => {
+                if (e.target.closest('.quote-tap-edit, [data-quote-field-display], .quote-tap-inp, .quote-dim-inp, .quote-coef-inp, [data-quote-field="w"], [data-quote-field="h"], [data-quote-field="d"], [data-quote-field="coef"]')) {
+                    e.stopPropagation();
+                }
             });
         }
 
@@ -7246,6 +9135,7 @@
                 (p.quoteCategories || []).forEach(cat => (cat.products || []).forEach(prod => ensureProductBaseline(prod)));
             });
             initKitchenDemoProject();
+            initShadeUmbrellaDemo();
             renderProjects();
             syncExpandButtons();
         }
@@ -7490,6 +9380,15 @@
             renderDesigners();
             initProjects();
             initProjectShellInteractions();
+            if (entryContext.preview === 'shade' || entryContext.project === 'p-shade-umbrella') {
+                activeProjectId = 'p-shade-umbrella';
+                switchPage('page-projects');
+                requestAnimationFrame(() => {
+                    const shell = document.querySelector('[data-project-id="p-shade-umbrella"]');
+                    shell?.classList.add('is-open');
+                    shell?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            }
             initMediaImageUpload();
             initCommChannels();
             initMergeProjects();

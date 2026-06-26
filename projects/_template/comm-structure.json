@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "app": "deep design",
+  "projectId": "项目名称",
+  "section": {
+    "title": "沟通记录",
+    "visible": true,
+    "pdfBarVisible": true
+  },
+  "blocks": [],
+  "pdfExports": [
+    { "id": "comm", "label": "沟通记录", "sub": "客户总结 · 上传图片 · 方案摘要" },
+    { "id": "products", "label": "产品清单", "sub": "名称、规格、材质、数量与报价" },
+    { "id": "scheme", "label": "方案图片", "sub": "设计师渲染图与参考图合集" },
+    { "id": "full", "label": "完整项目", "sub": "全部内容 + 项目封面" }
+  ],
+  "social": [
+    { "id": "wechat", "label": "微信", "channel": "weixin" },
+    { "id": "whatsapp", "label": "WhatsApp", "channel": "whatsapp" }
+  ]
+}

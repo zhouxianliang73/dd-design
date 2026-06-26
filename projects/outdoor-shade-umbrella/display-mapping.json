@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "schema": "outdoor-shade",
+  "description": "遮阳伞行在现有清单卡片中的字段含义（不改 DOM，只改标签文案）",
+  "cardLabels": {
+    "spec": "伞面规格",
+    "bodyMaterial": "伞布/面料",
+    "doorMaterial": "骨架/底座",
+    "unitDefault": "mm"
+  },
+  "lineFields": {
+    "name": "供应商 · 型号",
+    "w": "伞面宽或直径 (mm)",
+    "h": "高度 (mm)",
+    "d": "深度/跨度 (mm)",
+    "materialBody": "伞布（涤纶/Sunbrella 等）",
+    "materialDoor": "伞骨+底座（铝/铁/注水）",
+    "unit": "把 / 套",
+    "unitPrice": "出厂单价",
+    "qty": "数量",
+    "coef": "非标系数（定制加价）"
+  },
+  "comparisonColumns": [
+    "supplier",
+    "model",
+    "canopy_size",
+    "fabric",
+    "frame",
+    "base",
+    "unit_price",
+    "moq",
+    "lead_time_days",
+    "freight",
+    "total",
+    "quote_date",
+    "notes"
+  ]
+}

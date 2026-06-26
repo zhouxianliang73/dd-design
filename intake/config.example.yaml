@@ -1,0 +1,46 @@
+# 群聊 → 项目映射。复制为 config.local.yaml 后填写实际群名。
+version: 1
+root: D:/dd-cursor/scheme-center
+
+# 角色识别：发原始图/尺寸/需求 → client；发方案/PDF/报价 → team
+roles:
+  client_signals:
+    - 尺寸
+    - 户型
+    - 参考
+    - 预算
+    - 风格
+  team_signals:
+    - 方案
+    - 报价
+    - quotation
+    - 效果图
+    - 深化
+
+# 报价文件识别（文件名或消息文本命中即归入 quotes/）
+quote_keywords:
+  - 报价
+  - quotation
+  - quote
+  - price
+  - 价目
+  - 清单
+
+channels:
+  whatsapp:
+    enabled: true
+    # OpenClaw / 手动 JSONL 均可写入
+    groups:
+      - match: AliReza
+        project_slug: alireza-entry-cabinet
+      - match: USdanielBar
+        project_slug: us-daniel-bar
+      - match: Kuwait
+        project_slug: kuwait-jewelry-display
+  wechat:
+    enabled: true
+    groups:
+      - match: 材料
+        project_slug: _inbox-materials
+      - match: 户外厨房
+        project_slug: _inbox-outdoor-kitchen

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "slug": "project-slug",
+  "name": "项目名称",
+  "client": "",
+  "projectType": "全案定制",
+  "channel": "custom",
+  "status": "需求沟通",
+  "sources": [],
+  "createdAt": "",
+  "updatedAt": "",
+  "roles": {
+    "client": [],
+    "team": []
+  },
+  "notes": ""
+}

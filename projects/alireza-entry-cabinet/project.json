@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "slug": "alireza-entry-cabinet",
+  "name": "AliReza · 玄关柜",
+  "client": "AliReza",
+  "projectType": "全屋定制",
+  "channel": "custom",
+  "status": "方案中",
+  "sources": [
+    {
+      "channel": "whatsapp",
+      "chat": "AliReza Entry Cabinet"
+    }
+  ],
+  "createdAt": "2026-06-09T00:00:00Z",
+  "updatedAt": "2026-06-25T15:34:00Z",
+  "roles": {
+    "client": [
+      "AliReza"
+    ],
+    "team": [
+      "Zhangjun"
+    ]
+  },
+  "specs": {
+    "width_mm": 3188,
+    "height_mm": 2718,
+    "depth_max_mm": 381,
+    "style": "Classic American",
+    "finish": "暖橡木色 + 古铜五金",
+    "features": [
+      "换鞋凳",
+      "鞋架",
+      "挂衣柜",
+      "全身镜",
+      "拱形元素"
+    ]
+  },
+  "notes": "伊朗客户；业主发原始图与尺寸，服务团队发方案 PDF"
+}

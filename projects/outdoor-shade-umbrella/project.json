@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "slug": "outdoor-shade-umbrella",
+  "name": "户外遮阳伞 · 供应商比价",
+  "client": "直泰供应链",
+  "projectType": "户外遮阳寻源",
+  "channel": "outdoor-living",
+  "quoteTemplate": "outdoor-shade-compare",
+  "quoteLineSchema": "outdoor-shade",
+  "status": "待确认",
+  "sources": [
+    {
+      "channel": "wechat",
+      "account": "zxl13823197801",
+      "chat": "佛山顺怡发遮阳伞沟通(直泰)"
+    }
+  ],
+  "suppliers": [
+    { "id": "shunyifa", "name": "佛山顺怡发", "category": "shade", "quoteStatus": "待正式报价" }
+  ],
+  "updatedAt": "2026-06-25",
+  "notes": "清单行复用 scheme-center 产品卡片；伞布/骨架字段见 display-mapping.json"
+}

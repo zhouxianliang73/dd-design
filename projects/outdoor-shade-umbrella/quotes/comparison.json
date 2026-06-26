@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "category": "shade",
+  "currency": "CNY",
+  "updatedAt": "2026-06-25",
+  "rows": [
+    {
+      "supplier": "佛山顺怡发",
+      "model": "中柱伞 Φ3.0m",
+      "canopy_size": "Φ3000",
+      "fabric": "涤纶（待确认 Sunbrella 升级）",
+      "frame": "铝合金",
+      "base": "注水底座（待确认）",
+      "unit_price": null,
+      "moq": null,
+      "lead_time_days": null,
+      "freight": null,
+      "total": null,
+      "quote_date": null,
+      "notes": "微信群暂无正式报价单，待厂家补 Excel/PDF"
+    },
+    {
+      "supplier": "佛山顺怡发",
+      "model": "香蕉伞 3.5×2.5m",
+      "canopy_size": "3500×2500",
+      "fabric": "待确认",
+      "frame": "待确认",
+      "base": "待确认",
+      "unit_price": null,
+      "notes": "占位行，收到报价后填入 scheme-center 清单"
+    },
+    {
+      "supplier": "【待录入】",
+      "model": "第二家遮阳伞",
+      "canopy_size": "—",
+      "fabric": "—",
+      "frame": "—",
+      "base": "—",
+      "unit_price": null,
+      "notes": "后续从微信/WhatsApp 其他群追加"
+    }
+  ]
+}

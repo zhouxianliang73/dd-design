@@ -22,5 +22,15 @@
   "localStorageKeys": {
     "commStructure": "deepdesign_comm_structure"
   },
-  "commStructureFile": "comm-structure.json"
+  "commStructureFile": "comm-structure.json",
+  "intake": {
+    "config": "intake/config.yaml",
+    "script": "intake/process_intake.py",
+    "projectsDir": "projects",
+    "commands": {
+      "list": "python intake/process_intake.py list",
+      "message": "python intake/process_intake.py message --channel whatsapp --chat \"群名\" --sender 发送者 --text \"内容\"",
+      "batch": "python intake/process_intake.py batch path/to/messages.jsonl"
+    }
+  }
 }

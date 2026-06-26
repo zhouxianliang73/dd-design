@@ -8,6 +8,14 @@
         { "id": "products", "name": "产品清单", "icon": "🛒" }
       ]
     },
+    "outdoor-shade-compare": {
+      "label": "户外遮阳伞比价",
+      "matchProjectTypes": ["户外遮阳寻源", "遮阳伞寻源", "户外遮阳"],
+      "sections": [
+        { "id": "shade", "name": "遮阳伞报价对比", "icon": "☀️" },
+        { "id": "logistics", "name": "运费/安装", "icon": "🚚" }
+      ]
+    },
     "outdoor-scene": {
       "label": "户外阳台整体",
       "matchProjectTypes": ["户外全案", "户外阳台", "别墅户外"],

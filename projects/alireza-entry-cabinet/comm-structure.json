@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "app": "deep design",
+  "projectId": "AliReza · 玄关柜",
+  "section": {
+    "title": "沟通记录",
+    "visible": true,
+    "pdfBarVisible": true
+  },
+  "blocks": [
+    {
+      "id": "client",
+      "type": "summary",
+      "title": "客户沟通总结",
+      "date": "2026-06-09",
+      "preview": "Classic American 玄关柜，W3188×H2718×D<381mm；暖橡木色、古铜五金；含换鞋凳/鞋架/挂衣/全身镜/拱形元素。",
+      "detailTitle": "客户沟通记录详情"
+    },
+    {
+      "id": "images",
+      "type": "images",
+      "title": "客户上传图片",
+      "date": "2026-06-09",
+      "preview": "共 11 张参考图（WhatsApp 群）",
+      "detailTitle": "客户上传图片详情",
+      "images": []
+    },
+    {
+      "id": "designer",
+      "type": "summary",
+      "title": "设计师方案总结",
+      "date": "2026-06-09",
+      "preview": "Zhangjun 提交 14MB 全屋定制 PDF（2 页渲染图 4000×2250）",
+      "detailTitle": "设计师方案详情"
+    }
+  ],
+  "pdfExports": [
+    { "id": "comm", "label": "沟通记录", "sub": "客户总结 · 上传图片 · 方案摘要" },
+    { "id": "products", "label": "产品清单", "sub": "名称、规格、材质、数量与报价" },
+    { "id": "scheme", "label": "方案图片", "sub": "设计师渲染图与参考图合集" },
+    { "id": "full", "label": "完整项目", "sub": "全部内容 + 项目封面" }
+  ],
+  "social": [
+    { "id": "whatsapp", "label": "WhatsApp", "channel": "whatsapp" }
+  ]
+}
