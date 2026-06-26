@@ -2299,22 +2299,7 @@
             pointer-events: none;
         }
         .media-section-preview {
-            display: none;
-            padding: 12px 16px;
-            background: var(--surface-raised);
-            cursor: pointer;
-            user-select: none;
-            border-bottom: 1px solid var(--gray-100);
-            box-sizing: border-box;
-        }
-        .media-section-preview:hover {
-            background: var(--primary-10);
-        }
-        .proj-section.proj-media-section:not(.is-open) .media-section-preview {
-            display: block;
-        }
-        .proj-section.proj-media-section.is-open .media-section-preview {
-            display: none;
+            display: none !important;
         }
         .media-strip-thumb {
             flex: 3 1 0;
@@ -2496,9 +2481,6 @@
             white-space: nowrap;
             padding: 2px 0;
         }
-        .proj-section.proj-feedback-section:not(.is-open) .media-section-preview {
-            display: block;
-        }
         .proj-section.proj-feedback-section:not(.is-open) .media-section-preview--text {
             padding: 10px 16px;
         }
@@ -2669,6 +2651,15 @@
             font-size: var(--fs-sm);
             color: var(--text-faint);
             padding: 8px 0;
+        }
+        .media-cat-stack--flat > .media-cat-block > .media-cat-preview {
+            padding: 12px 16px;
+        }
+        .media-cat-stack--flat > .media-cat-block > .media-cat-bd .section-text-card {
+            margin: 0;
+            border: none;
+            border-top: 1px solid var(--gray-100);
+            border-radius: 0;
         }
         .proj-categorized-media .media-add-row {
             padding: 8px 16px 12px;
@@ -7482,6 +7473,22 @@
                 const sec = next.querySelector(`[data-section="${key}"]`);
                 sec?.classList.add('is-open');
             });
+            const openMediaCats = [...shell.querySelectorAll('.media-cat-block.is-open')].map((el, i) => {
+                const catId = el.querySelector('[data-category-id]')?.dataset.categoryId;
+                const section = el.closest('[data-section]')?.dataset.section;
+                return `${section || ''}:${catId || i}`;
+            });
+            openMediaCats.forEach(key => {
+                const [sectionKey, catKey] = key.split(':');
+                const scope = sectionKey
+                    ? next.querySelector(`[data-section="${sectionKey}"]`)
+                    : next;
+                const blocks = scope?.querySelectorAll('.media-cat-block') || [];
+                blocks.forEach((block, i) => {
+                    const bid = block.querySelector('[data-category-id]')?.dataset.categoryId || String(i);
+                    if (bid === catKey) block.classList.add('is-open');
+                });
+            });
             syncExpandButtons();
             initProjectPdfBars(next);
         }
@@ -8253,23 +8260,25 @@
                 : `<div class="feedback-date-block feedback-date-block--text"><div class="section-text-card"><p class="section-summary">暂无客户意见</p></div></div>`;
             const annotatedEntry = entries.find(e => (e.images || []).some(img => img?.url));
             const previewImages = annotatedEntry?.images || [];
-            const previewHtml = previewImages.length
-                ? renderMediaStripRow(previewImages, { interactive: false })
+            const innerPreview = previewImages.length
+                ? renderMediaStripRow(previewImages.slice(0, 4), { interactive: false })
                 : `<div class="feedback-preview-text">${entries[0]?.summary || '暂无客户意见'}</div>`;
-            const previewCls = previewImages.length ? 'media-section-preview' : 'media-section-preview media-section-preview--text';
-            const sectionCls = previewImages.length ? 'proj-media-section' : 'proj-feedback-section';
             return `
-                <section class="proj-section proj-collapsible ${sectionCls}" data-media-section="clientFeedback">
+                <section class="proj-section proj-collapsible proj-media-section" data-section="clientFeedback" data-media-section="clientFeedback">
                     <div class="proj-section-hd" data-toggle-section>
                         <span class="proj-section-label">客户意见总结</span>
                         <i class="fas fa-chevron-down chevron"></i>
                     </div>
-                    <div class="${previewCls}" data-toggle-section aria-label="展开客户意见总结">
-                        ${previewHtml}
-                    </div>
                     <div class="proj-section-bd">
-                        <div class="feedback-date-stack">${blocksHtml}</div>
-                        ${addRow}
+                        <div class="media-cat-stack media-cat-stack--flat">
+                            <div class="media-cat-block media-cat-collapsible">
+                                <div class="media-cat-preview" data-toggle-media-cat aria-label="展开客户意见总结">${innerPreview}</div>
+                                <div class="media-cat-bd">
+                                    <div class="feedback-date-stack">${blocksHtml}</div>
+                                    ${addRow}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </section>
             `;
@@ -8313,18 +8322,11 @@
                     sectionLabel: title,
                 })
             ).join('');
-            const firstWithImages = categoryDefs.find(c => (normalized.categories[c.id] || []).length);
-            const previewHtml = firstWithImages
-                ? renderMediaStripRow(normalized.categories[firstWithImages.id].slice(0, 4), { interactive: false })
-                : `<div class="feedback-preview-text">${normalized.summary || '暂无记录'}</div>`;
             return `
                 <section class="proj-section proj-collapsible proj-media-section proj-categorized-media" data-section="${sectionKey}" data-media-section="${sectionKey}">
                     <div class="proj-section-hd" data-toggle-section>
                         <span class="proj-section-label">${title}</span>
                         <i class="fas fa-chevron-down chevron"></i>
-                    </div>
-                    <div class="media-section-preview" data-toggle-section aria-label="展开${title}">
-                        ${previewHtml}
                     </div>
                     <div class="proj-section-bd">
                         <div class="media-cat-stack">${cardsHtml}</div>
@@ -8336,22 +8338,33 @@
 
         function renderSummaryStripSection(title, summary, images, extraHtml = '', mediaCtx = null) {
             const addRow = mediaCtx ? renderMediaAddRowHtml(mediaCtx) : '';
-            const previewStrip = renderMediaStripRow(images, { interactive: false });
-            const expandedStrip = renderMediaStripRow(images, { interactive: true });
-            return `
-                <section class="proj-section proj-collapsible proj-media-section"${mediaCtx?.mediaKey ? ` data-media-section="${mediaCtx.mediaKey}"` : ''}>
-                    <div class="proj-section-hd" data-toggle-section>
-                        <span class="proj-section-label">${title}</span>
-                        <i class="fas fa-chevron-down chevron"></i>
-                    </div>
-                    <div class="media-section-preview" data-toggle-section aria-label="展开${title}">
-                        ${previewStrip}
-                    </div>
-                    <div class="proj-section-bd">
+            const list = images || [];
+            const previewStrip = renderMediaStripRow(list.slice(0, 4), { interactive: false });
+            const expandedStrip = renderMediaStripRow(list, { interactive: true });
+            const sectionKey = mediaCtx?.mediaKey || '';
+            const sectionDataAttr = sectionKey ? ` data-section="${sectionKey}"` : '';
+            const innerPreview = list.length
+                ? previewStrip
+                : `<div class="media-cat-empty">暂无图片</div>`;
+            const innerExpanded = `<div class="media-cat-stack media-cat-stack--flat">
+                <div class="media-cat-block media-cat-collapsible">
+                    <div class="media-cat-preview" data-toggle-media-cat aria-label="展开${title}">${innerPreview}</div>
+                    <div class="media-cat-bd">
                         <div class="media-strip-wrap img-strip-wrap" data-img-strip>${expandedStrip}</div>
                         <div class="section-text-card"><p class="section-summary">${summary || '暂无记录'}</p></div>
                         ${extraHtml}
                         ${addRow}
+                    </div>
+                </div>
+            </div>`;
+            return `
+                <section class="proj-section proj-collapsible proj-media-section"${sectionDataAttr}${mediaCtx?.mediaKey ? ` data-media-section="${mediaCtx.mediaKey}"` : ''}>
+                    <div class="proj-section-hd" data-toggle-section>
+                        <span class="proj-section-label">${title}</span>
+                        <i class="fas fa-chevron-down chevron"></i>
+                    </div>
+                    <div class="proj-section-bd">
+                        ${innerExpanded}
                     </div>
                 </section>
             `;
@@ -8567,6 +8580,16 @@
             syncExpandButtons();
             initProjectPdfBars(document.getElementById('projectListRoot'));
             initProjectPdfBars(document.getElementById('meProjectListRoot'));
+        }
+
+        function toggleProjSection(section) {
+            if (!section) return;
+            const willClose = section.classList.contains('is-open');
+            section.classList.toggle('is-open');
+            if (willClose) {
+                section.querySelectorAll('.media-cat-block.is-open').forEach(el => el.classList.remove('is-open'));
+            }
+            syncSectionToggleUI(section);
         }
 
         function syncSectionToggleUI(section) {
@@ -8961,9 +8984,7 @@
                 const sectionBtn = e.target.closest('[data-toggle-section-btn]');
                 if (sectionBtn) {
                     e.stopPropagation();
-                    const section = sectionBtn.closest('.proj-section');
-                    section?.classList.toggle('is-open');
-                    syncSectionToggleUI(section);
+                    toggleProjSection(sectionBtn.closest('.proj-section'));
                     return;
                 }
 
@@ -8996,9 +9017,7 @@
                 const sectionHd = e.target.closest('[data-toggle-section]');
                 if (sectionHd) {
                     e.stopPropagation();
-                    const section = sectionHd.closest('.proj-section');
-                    section?.classList.toggle('is-open');
-                    syncSectionToggleUI(section);
+                    toggleProjSection(sectionHd.closest('.proj-section'));
                     return;
                 }
 
