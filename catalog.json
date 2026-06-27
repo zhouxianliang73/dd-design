@@ -13,8 +13,10 @@
       "spec": "1.8m×0.9m",
       "material": "实木",
       "price": 12800,
-      "image": "https://images.unsplash.com/photo-1617806118233-18e1de247200?w=320&h=180&fit=crop",
-      "quoteSections": ["products"]
+      "image": "https://images.unsplash.com/photo-1617806118233-18e1de247200?w=320&h=180&fit=crop&auto=format&q=80",
+      "quoteSections": [
+        "products"
+      ]
     },
     {
       "id": "f-002",
@@ -27,8 +29,10 @@
       "spec": "1.6m×0.8m",
       "material": "胡桃木",
       "price": 8600,
-      "image": "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=320&h=180&fit=crop",
-      "quoteSections": ["products"]
+      "image": "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=320&h=180&fit=crop&auto=format&q=80",
+      "quoteSections": [
+        "products"
+      ]
     },
     {
       "id": "f-003",
@@ -41,8 +45,10 @@
       "spec": "标准款",
       "material": "不锈钢+皮革",
       "price": 1200,
-      "image": "https://images.unsplash.com/photo-1503602642458-2320274450bd?w=320&h=180&fit=crop",
-      "quoteSections": ["products"]
+      "image": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=320&h=180&fit=crop&auto=format&q=80",
+      "quoteSections": [
+        "products"
+      ]
     },
     {
       "id": "f-004",
@@ -55,8 +61,10 @@
       "spec": "2.1m 三人位",
       "material": "藤编+铝架",
       "price": 9800,
-      "image": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=320&h=180&fit=crop",
-      "quoteSections": ["products"]
+      "image": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=320&h=180&fit=crop&auto=format&q=80",
+      "quoteSections": [
+        "products"
+      ]
     },
     {
       "id": "f-005",
@@ -69,8 +77,10 @@
       "spec": "0.5m×0.4m",
       "material": "橡木",
       "price": 2800,
-      "image": "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=320&h=180&fit=crop",
-      "quoteSections": ["products"]
+      "image": "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=320&h=180&fit=crop&auto=format&q=80",
+      "quoteSections": [
+        "products"
+      ]
     },
     {
       "id": "f-006",
@@ -83,8 +93,10 @@
       "spec": "人体工学",
       "material": "网布+金属",
       "price": 3200,
-      "image": "https://images.unsplash.com/photo-1580480051063-8760b8e741d0?w=320&h=180&fit=crop",
-      "quoteSections": ["products"]
+      "image": "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=320&h=180&fit=crop&auto=format&q=80",
+      "quoteSections": [
+        "products"
+      ]
     },
     {
       "id": "f-007",
@@ -97,8 +109,10 @@
       "spec": "1.2m",
       "material": "实木+大理石",
       "price": 15600,
-      "image": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=320&h=180&fit=crop",
-      "quoteSections": ["products"]
+      "image": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=320&h=180&fit=crop&auto=format&q=80",
+      "quoteSections": [
+        "products"
+      ]
     },
     {
       "id": "f-008",
@@ -111,8 +125,10 @@
       "spec": "1.4m 折叠",
       "material": "铝合金",
       "price": 2400,
-      "image": "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=320&h=180&fit=crop",
-      "quoteSections": ["products"]
+      "image": "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=320&h=180&fit=crop&auto=format&q=80",
+      "quoteSections": [
+        "products"
+      ]
     },
     {
       "id": "f-009",
@@ -125,8 +141,10 @@
       "spec": "1.8m×2.0m",
       "material": "实木",
       "price": 18900,
-      "image": "https://images.unsplash.com/photo-1615874959477-df969061e1bc?w=320&h=180&fit=crop",
-      "quoteSections": ["products"]
+      "image": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=320&h=180&fit=crop&auto=format&q=80",
+      "quoteSections": [
+        "products"
+      ]
     },
     {
       "id": "f-010",
@@ -139,8 +157,10 @@
       "spec": "1.8m×0.35m",
       "material": "不锈钢",
       "price": 4500,
-      "image": "https://images.unsplash.com/photo-1594620302202-9a762244a156?w=320&h=180&fit=crop",
-      "quoteSections": ["products"]
+      "image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=320&h=180&fit=crop&auto=format&q=80",
+      "quoteSections": [
+        "products"
+      ]
     },
     {
       "id": "f-011",
@@ -153,8 +173,11 @@
       "spec": "1.5m",
       "material": "实木+藤编",
       "price": 6800,
-      "image": "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=320&h=180&fit=crop",
-      "quoteSections": ["products", "cabinet"]
+      "image": "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=320&h=180&fit=crop&auto=format&q=80",
+      "quoteSections": [
+        "products",
+        "cabinet"
+      ]
     },
     {
       "id": "f-012",
@@ -167,8 +190,10 @@
       "spec": "标准款",
       "material": "PE藤+铝架",
       "price": 1600,
-      "image": "https://images.unsplash.com/photo-1567538096631-e0c55bd6774e?w=320&h=180&fit=crop",
-      "quoteSections": ["products"]
+      "image": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=320&h=180&fit=crop&auto=format&q=80",
+      "quoteSections": [
+        "products"
+      ]
     },
     {
       "id": "f-013",
@@ -188,8 +213,10 @@
       "qty": 1,
       "unit": "个",
       "unitPrice": 12000,
-      "image": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=320&h=180&fit=crop",
-      "quoteSections": ["products"]
+      "image": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=320&h=180&fit=crop&auto=format&q=80",
+      "quoteSections": [
+        "products"
+      ]
     },
     {
       "id": "f-014",
@@ -209,8 +236,10 @@
       "qty": 1,
       "unit": "个",
       "unitPrice": 4800,
-      "image": "https://images.unsplash.com/photo-1617806118233-18e1de247200?w=320&h=180&fit=crop",
-      "quoteSections": ["products"]
+      "image": "https://images.unsplash.com/photo-1617806118233-18e1de247200?w=320&h=180&fit=crop&auto=format&q=80",
+      "quoteSections": [
+        "products"
+      ]
     },
     {
       "id": "k-cab-001",
@@ -231,8 +260,10 @@
       "unit": "米",
       "unitPrice": 5627,
       "price": 5627,
-      "image": "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=320&h=180&fit=crop",
-      "quoteSections": ["cabinet"]
+      "image": "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=320&h=180&fit=crop&auto=format&q=80",
+      "quoteSections": [
+        "cabinet"
+      ]
     },
     {
       "id": "k-cab-002",
@@ -253,8 +284,10 @@
       "unit": "米",
       "unitPrice": 5627,
       "price": 5627,
-      "image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=320&h=180&fit=crop",
-      "quoteSections": ["cabinet"]
+      "image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=320&h=180&fit=crop&auto=format&q=80",
+      "quoteSections": [
+        "cabinet"
+      ]
     },
     {
       "id": "k-cab-003",
@@ -275,7 +308,10 @@
       "unit": "米",
       "unitPrice": 5077,
       "price": 5077,
-      "quoteSections": ["cabinet"]
+      "quoteSections": [
+        "cabinet"
+      ],
+      "image": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=320&h=180&fit=crop&auto=format&q=80"
     },
     {
       "id": "k-cab-004",
@@ -296,7 +332,10 @@
       "unit": "米",
       "unitPrice": 5077,
       "price": 5077,
-      "quoteSections": ["cabinet"]
+      "quoteSections": [
+        "cabinet"
+      ],
+      "image": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=320&h=180&fit=crop&auto=format&q=80"
     },
     {
       "id": "k-cab-005",
@@ -317,7 +356,10 @@
       "unit": "米",
       "unitPrice": 5908,
       "price": 5908,
-      "quoteSections": ["cabinet"]
+      "quoteSections": [
+        "cabinet"
+      ],
+      "image": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=320&h=180&fit=crop&auto=format&q=80"
     },
     {
       "id": "k-cab-006",
@@ -338,7 +380,10 @@
       "unit": "米",
       "unitPrice": 5077,
       "price": 5077,
-      "quoteSections": ["cabinet"]
+      "quoteSections": [
+        "cabinet"
+      ],
+      "image": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=320&h=180&fit=crop&auto=format&q=80"
     },
     {
       "id": "k-ct-001",
@@ -358,7 +403,10 @@
       "unit": "米",
       "unitPrice": 1655,
       "price": 1655,
-      "quoteSections": ["countertop"]
+      "quoteSections": [
+        "countertop"
+      ],
+      "image": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=320&h=180&fit=crop&auto=format&q=80"
     },
     {
       "id": "k-ct-002",
@@ -378,7 +426,10 @@
       "unit": "米",
       "unitPrice": 3532,
       "price": 3532,
-      "quoteSections": ["countertop"]
+      "quoteSections": [
+        "countertop"
+      ],
+      "image": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=320&h=180&fit=crop&auto=format&q=80"
     },
     {
       "id": "k-pn-001",
@@ -397,7 +448,10 @@
       "unit": "㎡",
       "unitPrice": 1598,
       "price": 1598,
-      "quoteSections": ["panel"]
+      "quoteSections": [
+        "panel"
+      ],
+      "image": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=320&h=180&fit=crop&auto=format&q=80"
     },
     {
       "id": "k-pn-002",
@@ -416,7 +470,10 @@
       "unit": "㎡",
       "unitPrice": 1598,
       "price": 1598,
-      "quoteSections": ["panel"]
+      "quoteSections": [
+        "panel"
+      ],
+      "image": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=320&h=180&fit=crop&auto=format&q=80"
     },
     {
       "id": "k-tr-001",
@@ -435,7 +492,10 @@
       "unit": "米",
       "unitPrice": 120,
       "price": 120,
-      "quoteSections": ["trim"]
+      "quoteSections": [
+        "trim"
+      ],
+      "image": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=320&h=180&fit=crop&auto=format&q=80"
     },
     {
       "id": "k-tr-002",
@@ -454,7 +514,10 @@
       "unit": "米",
       "unitPrice": 150,
       "price": 150,
-      "quoteSections": ["trim"]
+      "quoteSections": [
+        "trim"
+      ],
+      "image": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=320&h=180&fit=crop&auto=format&q=80"
     },
     {
       "id": "k-hw-001",
@@ -473,7 +536,10 @@
       "unit": "个",
       "unitPrice": 77,
       "price": 77,
-      "quoteSections": ["hardware"]
+      "quoteSections": [
+        "hardware"
+      ],
+      "image": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=320&h=180&fit=crop&auto=format&q=80"
     },
     {
       "id": "k-hw-002",
@@ -492,7 +558,10 @@
       "unit": "套",
       "unitPrice": 632,
       "price": 632,
-      "quoteSections": ["hardware"]
+      "quoteSections": [
+        "hardware"
+      ],
+      "image": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=320&h=180&fit=crop&auto=format&q=80"
     },
     {
       "id": "k-hw-003",
@@ -511,7 +580,10 @@
       "unit": "套",
       "unitPrice": 1251,
       "price": 1251,
-      "quoteSections": ["hardware"]
+      "quoteSections": [
+        "hardware"
+      ],
+      "image": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=320&h=180&fit=crop&auto=format&q=80"
     },
     {
       "id": "k-hw-004",
@@ -530,7 +602,10 @@
       "unit": "米",
       "unitPrice": 59,
       "price": 59,
-      "quoteSections": ["hardware"]
+      "quoteSections": [
+        "hardware"
+      ],
+      "image": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=320&h=180&fit=crop&auto=format&q=80"
     },
     {
       "id": "k-sk-001",
@@ -549,7 +624,10 @@
       "unit": "个",
       "unitPrice": 500,
       "price": 500,
-      "quoteSections": ["sink"]
+      "quoteSections": [
+        "sink"
+      ],
+      "image": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=320&h=180&fit=crop&auto=format&q=80"
     },
     {
       "id": "k-sk-002",
@@ -568,7 +646,10 @@
       "unit": "个",
       "unitPrice": 350,
       "price": 350,
-      "quoteSections": ["sink"]
+      "quoteSections": [
+        "sink"
+      ],
+      "image": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=320&h=180&fit=crop&auto=format&q=80"
     },
     {
       "id": "k-el-001",
@@ -587,7 +668,10 @@
       "unit": "台",
       "unitPrice": 3000,
       "price": 3000,
-      "quoteSections": ["electric"]
+      "quoteSections": [
+        "electric"
+      ],
+      "image": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=320&h=180&fit=crop&auto=format&q=80"
     },
     {
       "id": "k-el-002",
@@ -606,7 +690,10 @@
       "unit": "台",
       "unitPrice": 4500,
       "price": 4500,
-      "quoteSections": ["electric"]
+      "quoteSections": [
+        "electric"
+      ],
+      "image": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=320&h=180&fit=crop&auto=format&q=80"
     },
     {
       "id": "k-ex-001",
@@ -625,7 +712,10 @@
       "unit": "个",
       "unitPrice": 100,
       "price": 100,
-      "quoteSections": ["extra"]
+      "quoteSections": [
+        "extra"
+      ],
+      "image": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=320&h=180&fit=crop&auto=format&q=80"
     },
     {
       "id": "k-ex-002",
@@ -644,7 +734,10 @@
       "unit": "个",
       "unitPrice": 80,
       "price": 80,
-      "quoteSections": ["extra"]
+      "quoteSections": [
+        "extra"
+      ],
+      "image": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=320&h=180&fit=crop&auto=format&q=80"
     }
   ]
 }
