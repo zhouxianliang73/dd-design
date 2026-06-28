@@ -1,0 +1,64 @@
+{
+  "version": 1,
+  "brand": "DD design",
+  "updatedAt": "2026-06-28",
+  "baseUrl": "https://dd-design.com",
+  "cases": [
+    {
+      "id": "case-shade-umbrella",
+      "title": "户外遮阳伞 · 供应商比价",
+      "titleEn": "Outdoor Shade · Supplier Compare",
+      "channel": "outdoor-living",
+      "projectType": "户外遮阳寻源",
+      "status": "待确认",
+      "cover": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=640&h=360&fit=crop&auto=format&q=80",
+      "summary": "多渠道供应商方案对比，清单行复用选品卡片，伞布/骨架字段可扩展。",
+      "highlights": ["供应商比价", "微信协作归档", "清单深化"],
+      "featuredProducts": ["f-004"],
+      "order": 1,
+      "legacyPreview": "1.html?channel=outdoor-living&preview=shade"
+    },
+    {
+      "id": "case-outdoor-kitchen",
+      "title": "户外厨房 · 岛台深化",
+      "titleEn": "Outdoor Kitchen",
+      "channel": "outdoor-kitchen",
+      "projectType": "户外厨房",
+      "status": "方案中",
+      "cover": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=640&h=360&fit=crop&auto=format&q=80",
+      "summary": "L 型户外岛台，不锈钢柜体 + 台面 + 五金配件八类清单结构。",
+      "highlights": ["八类清单", "渠道选品", "方案图协作"],
+      "featuredProducts": ["k-001", "f-003"],
+      "order": 2,
+      "legacyPreview": "1.html?channel=outdoor-kitchen"
+    },
+    {
+      "id": "case-living-scheme",
+      "title": "全案客厅 · 选品到清单",
+      "titleEn": "Living Room Scheme",
+      "channel": "custom",
+      "projectType": "全案设计",
+      "status": "设计中",
+      "cover": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=640&h=360&fit=crop&auto=format&q=80",
+      "summary": "客户参考图 → 设计师方案 → 自选产品集合 → 可编辑清单与报价。",
+      "highlights": ["沟通记录", "客户意见", "产品清单"],
+      "featuredProducts": ["f-001", "f-002"],
+      "order": 3,
+      "legacyPreview": "1.html?channel=custom"
+    },
+    {
+      "id": "case-entry-cabinet",
+      "title": "玄关定制 · 跨境协作",
+      "titleEn": "Entry Cabinet · Global",
+      "channel": "custom",
+      "projectType": "全屋定制",
+      "status": "方案中",
+      "cover": "https://images.unsplash.com/photo-1617806118233-18e1de247200?w=640&h=360&fit=crop&auto=format&q=80",
+      "summary": "WhatsApp 沟通归档，尺寸与风格需求结构化，方案 PDF 与清单联动。",
+      "highlights": ["WhatsApp", "尺寸结构化", "方案跟踪"],
+      "featuredProducts": ["f-005"],
+      "order": 4,
+      "legacyPreview": "1.html?channel=custom"
+    }
+  ]
+}

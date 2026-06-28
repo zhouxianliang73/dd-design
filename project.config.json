@@ -1,0 +1,22 @@
+{
+  "miniprogramRoot": "miniprogram/",
+  "compileType": "miniprogram",
+  "appid": "wxd4f3f8302726cbd9",
+  "projectname": "dddesigncenter",
+  "libVersion": "3.7.12",
+  "packOptions": {
+    "ignore": []
+  },
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": false,
+    "compileHotReLoad": false,
+    "useIsolateContext": true,
+    "useMultiFrameRuntime": true
+  },
+  "condition": {},
+  "cloudfunctionRoot": "cloudfunctions/"
+}

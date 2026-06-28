@@ -1,0 +1,53 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/shop/shop",
+    "pages/project/project",
+    "pages/me/me",
+    "pages/my-project/my-project",
+    "pages/ai-advisor/ai-advisor",
+    "pages/case-detail/case-detail",
+    "pages/product-detail/product-detail"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#111827",
+    "navigationBarTitleText": "DD Design Center",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f3f4f6",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "color": "#7A7E83",
+    "selectedColor": "#07C160",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "首页",
+        "iconPath": "assets/icons/home.png",
+        "selectedIconPath": "assets/icons/home-active.png"
+      },
+      {
+        "pagePath": "pages/shop/shop",
+        "text": "选品",
+        "iconPath": "assets/icons/shop.png",
+        "selectedIconPath": "assets/icons/shop-active.png"
+      },
+      {
+        "pagePath": "pages/project/project",
+        "text": "方案",
+        "iconPath": "assets/icons/project.png",
+        "selectedIconPath": "assets/icons/project-active.png"
+      },
+      {
+        "pagePath": "pages/me/me",
+        "text": "我的",
+        "iconPath": "assets/icons/me.png",
+        "selectedIconPath": "assets/icons/me-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

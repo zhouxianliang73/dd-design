@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DD design · 团队</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="stylesheet" href="delivery-doc-tokens.css" />
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: var(--dd-doc-font);
+            background: var(--dd-doc-bg);
+            color: var(--dd-doc-text-default);
+            font-size: var(--dd-doc-fs-base);
+            min-height: 100vh;
+        }
+        .wrap { max-width: 880px; margin: 0 auto; padding: 24px 16px 48px; }
+        h1 { font-size: var(--dd-doc-fs-xl); color: var(--dd-doc-text-strong); font-weight: var(--dd-doc-fw-bold); }
+        .sub { color: var(--dd-doc-text-muted); font-size: var(--dd-doc-fs-sm); margin: 6px 0 20px; }
+        .panel {
+            background: var(--dd-doc-surface);
+            border-radius: var(--dd-doc-radius);
+            padding: 20px;
+            box-shadow: var(--dd-doc-elevation-1);
+            margin-bottom: 16px;
+        }
+        label { display: block; font-size: var(--dd-doc-fs-sm); color: var(--dd-doc-text-muted); margin-bottom: 4px; }
+        input, select {
+            width: 100%; padding: 8px 10px; margin-bottom: 12px;
+            border: 1px solid var(--dd-doc-border-default);
+            border-radius: var(--dd-doc-radius);
+            font: inherit;
+        }
+        .btn {
+            padding: 8px 16px; border: none; border-radius: var(--dd-doc-radius);
+            background: var(--dd-doc-action-bg); color: #fff; font: inherit; cursor: pointer;
+        }
+        .btn:hover { background: var(--dd-doc-action-hover); }
+        .btn-sm { padding: 4px 10px; font-size: var(--dd-doc-fs-xs); }
+        .btn-ghost { background: transparent; color: var(--dd-doc-text-muted); border: 1px solid var(--dd-doc-border-default); }
+        .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 8px; }
+        table { width: 100%; border-collapse: collapse; font-size: var(--dd-doc-fs-sm); }
+        th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--dd-doc-border-subtle); }
+        th { color: var(--dd-doc-text-muted); font-weight: var(--dd-doc-fw-medium); }
+        .err { color: #c0392b; font-size: var(--dd-doc-fs-sm); margin-top: 8px; }
+        .ok { color: #27ae60; font-size: var(--dd-doc-fs-sm); margin-top: 8px; }
+        .nav { margin-bottom: 16px; }
+        .nav a { color: var(--dd-doc-text-muted); font-size: var(--dd-doc-fs-sm); margin-right: 14px; }
+        .hidden { display: none; }
+        code { font-size: var(--dd-doc-fs-xs); background: var(--dd-doc-surface-nested); padding: 2px 6px; border-radius: 3px; word-break: break-all; }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <nav class="nav">
+            <a href="1.html">选品中心</a>
+            <a href="showcase.html">精选案例</a>
+        </nav>
+        <h1>DD design · 团队</h1>
+        <p class="sub">内部 ERP · 最多 5 人 · 客户通过 magic link 访问自己的项目</p>
+
+        <div id="loginPanel" class="panel">
+            <h2 style="font-size:16px;margin-bottom:12px">登录</h2>
+            <label>邮箱</label>
+            <input id="email" type="email" autocomplete="username" placeholder="admin@dd-design.com" />
+            <label>密码</label>
+            <input id="password" type="password" autocomplete="current-password" />
+            <button class="btn" id="loginBtn">登录</button>
+            <p id="loginErr" class="err hidden"></p>
+        </div>
+
+        <div id="dashPanel" class="hidden">
+            <div class="panel">
+                <div class="row" style="justify-content:space-between;margin-top:0">
+                    <span id="userLabel" style="font-size:13px;color:#666"></span>
+                    <button class="btn btn-ghost btn-sm" id="logoutBtn">退出</button>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2 style="font-size:16px;margin-bottom:12px">新建项目</h2>
+                <label>客户名称</label>
+                <input id="clientName" placeholder="张先生 / AliReza" />
+                <label>渠道</label>
+                <select id="channel">
+                    <option value="custom">定制</option>
+                    <option value="outdoor-living">户外阳台</option>
+                    <option value="outdoor-kitchen">户外厨房</option>
+                    <option value="french-ru">法式 · 俄罗斯</option>
+                    <option value="event-ru">活动家具 · 俄罗斯</option>
+                </select>
+                <label>销售备注 (invite)</label>
+                <input id="inviteLabel" placeholder="客户简称" />
+                <button class="btn" id="createBtn">创建并生成链接</button>
+                <p id="createMsg" class="ok hidden"></p>
+            </div>
+
+            <div class="panel">
+                <h2 style="font-size:16px;margin-bottom:12px">项目列表</h2>
+                <div id="tableWrap" class="sub">加载中…</div>
+            </div>
+        </div>
+    </div>
+    <script src="js/dd-config.js"></script>
+    <script src="js/dd-api.js"></script>
+    <script>
+        (async function () {
+            const config = await DDConfig.loadConfig();
+            const SESSION_KEY = 'dd_design_session';
+
+            const loginPanel = document.getElementById('loginPanel');
+            const dashPanel = document.getElementById('dashPanel');
+            const loginErr = document.getElementById('loginErr');
+            const createMsg = document.getElementById('createMsg');
+
+            let session = loadSession();
+
+            if (session?.access_token) showDash();
+            else showLogin();
+
+            document.getElementById('loginBtn').addEventListener('click', async () => {
+                loginErr.classList.add('hidden');
+                try {
+                    session = await DDApi.authPassword(
+                        config,
+                        document.getElementById('email').value.trim(),
+                        document.getElementById('password').value
+                    );
+                    saveSession(session);
+                    showDash();
+                    await refreshProjects();
+                } catch (err) {
+                    loginErr.textContent = err.message === 'supabase_not_configured'
+                        ? '请先配置 config.public.json'
+                        : (err.message || '登录失败');
+                    loginErr.classList.remove('hidden');
+                }
+            });
+
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                session = null;
+                localStorage.removeItem(SESSION_KEY);
+                showLogin();
+            });
+
+            document.getElementById('createBtn').addEventListener('click', async () => {
+                createMsg.classList.add('hidden');
+                try {
+                    const created = await DDApi.createProject(config, session.access_token, {
+                        clientName: document.getElementById('clientName').value.trim(),
+                        channel: document.getElementById('channel').value,
+                        inviteLabel: document.getElementById('inviteLabel').value.trim(),
+                    });
+                    const link = DDApi.buildMagicLink(config, created.access_token);
+                    createMsg.innerHTML = `已创建 <strong>${created.project_no}</strong><br>Magic link：<code>${link}</code>`;
+                    createMsg.classList.remove('hidden');
+                    await refreshProjects();
+                } catch (err) {
+                    createMsg.textContent = err.message || '创建失败';
+                    createMsg.className = 'err';
+                    createMsg.classList.remove('hidden');
+                }
+            });
+
+            async function refreshProjects() {
+                const wrap = document.getElementById('tableWrap');
+                try {
+                    const rows = await DDApi.fetchTeamProjects(config, session.access_token);
+                    if (!rows.length) {
+                        wrap.innerHTML = '<p class="sub">暂无项目</p>';
+                        return;
+                    }
+                    wrap.innerHTML = `<table>
+                        <thead><tr><th>编号</th><th>客户</th><th>状态</th><th>渠道</th><th>链接</th></tr></thead>
+                        <tbody>${rows.map(r => `<tr>
+                            <td>${esc(r.project_no)}</td>
+                            <td>${esc(r.client_name)}</td>
+                            <td>${DDApi.statusLabel(r.status)}</td>
+                            <td>${esc(r.channel)}</td>
+                            <td><button class="btn btn-ghost btn-sm copy-btn" data-token="${esc(r.access_token)}">复制</button></td>
+                        </tr>`).join('')}</tbody>
+                    </table>`;
+                    wrap.querySelectorAll('.copy-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const link = DDApi.buildMagicLink(config, btn.dataset.token);
+                            navigator.clipboard?.writeText(link);
+                            btn.textContent = '已复制';
+                            setTimeout(() => { btn.textContent = '复制'; }, 1500);
+                        });
+                    });
+                } catch (err) {
+                    wrap.innerHTML = `<p class="err">${esc(err.message)}</p>`;
+                }
+            }
+
+            function showLogin() {
+                loginPanel.classList.remove('hidden');
+                dashPanel.classList.add('hidden');
+            }
+
+            function showDash() {
+                loginPanel.classList.add('hidden');
+                dashPanel.classList.remove('hidden');
+                document.getElementById('userLabel').textContent = session.user?.email || '已登录';
+                refreshProjects();
+            }
+
+            function loadSession() {
+                try { return JSON.parse(localStorage.getItem(SESSION_KEY)); } catch { return null; }
+            }
+            function saveSession(s) {
+                localStorage.setItem(SESSION_KEY, JSON.stringify(s));
+            }
+            function esc(s) {
+                return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+            }
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DD design · 我的项目</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="stylesheet" href="delivery-doc-tokens.css" />
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: var(--dd-doc-font);
+            background: var(--dd-doc-bg);
+            color: var(--dd-doc-text-default);
+            font-size: var(--dd-doc-fs-base);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+        .wrap { max-width: 720px; margin: 0 auto; padding: 24px 16px 48px; }
+        .brand { font-size: var(--dd-doc-fs-xs); color: var(--dd-doc-text-light); letter-spacing: 0.04em; text-transform: uppercase; }
+        h1 { font-size: var(--dd-doc-fs-xl); color: var(--dd-doc-text-strong); font-weight: var(--dd-doc-fw-bold); margin: 4px 0 8px; }
+        .meta { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: var(--dd-doc-fs-sm); color: var(--dd-doc-text-muted); margin-bottom: 20px; }
+        .badge { display: inline-block; padding: 2px 8px; background: var(--dd-doc-surface); border-radius: 4px; font-size: var(--dd-doc-fs-xs); }
+        section {
+            background: var(--dd-doc-surface);
+            border-radius: var(--dd-doc-radius);
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: var(--dd-doc-elevation-1);
+        }
+        section h2 { font-size: var(--dd-doc-fs-md); color: var(--dd-doc-text-strong); font-weight: var(--dd-doc-fw-bold); margin-bottom: 10px; }
+        .empty { color: var(--dd-doc-text-light); font-size: var(--dd-doc-fs-sm); }
+        .selection-item, .msg {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--dd-doc-border-subtle);
+            font-size: var(--dd-doc-fs-sm);
+        }
+        .selection-item:last-child, .msg:last-child { border-bottom: none; }
+        .msg-role { font-size: var(--dd-doc-fs-xs); color: var(--dd-doc-text-light); }
+        .msg-body { margin-top: 4px; color: var(--dd-doc-text-default); }
+        .comm-item { font-size: var(--dd-doc-fs-sm); line-height: 1.5; padding: 6px 10px; border-radius: 6px; margin-bottom: 6px; }
+        .comm-item--pending { color: #dc2626; }
+        .comm-item--confirmed { color: #15803d; }
+        .comm-item--important { background: #fffbeb; border: 1px solid #fde68a; }
+        .comm-date-label { font-size: var(--dd-doc-fs-xs); color: var(--dd-doc-text-faint); margin-bottom: 6px; }
+        .state { text-align: center; padding: 64px 16px; color: var(--dd-doc-text-muted); }
+        .err { color: #c0392b; }
+        .foot { margin-top: 24px; font-size: var(--dd-doc-fs-xs); color: var(--dd-doc-text-faint); text-align: center; }
+        .foot a { color: var(--dd-doc-text-muted); }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div id="app" class="state">正在加载您的项目…</div>
+    </div>
+    <script src="js/dd-config.js"></script>
+    <script src="js/dd-api.js"></script>
+    <script>
+        (async function () {
+            const app = document.getElementById('app');
+            const token = DDApi.parseMagicToken();
+
+            if (!token) {
+                app.innerHTML = `
+                    <p class="err">无效链接</p>
+                    <p style="margin-top:8px">请使用销售提供的专属项目链接访问。</p>
+                    <p class="foot"><a href="showcase.html">查看精选案例</a> · <a href="1.html">选品中心</a></p>`;
+                return;
+            }
+
+            try {
+                const config = await DDConfig.loadConfig();
+                const bundle = await DDApi.fetchClientProject(config, token);
+                const p = bundle.project;
+                const selection = p.selection || [];
+                const messages = bundle.messages || [];
+
+                document.title = `${config.brand} · ${p.client_name || '我的项目'}`;
+
+                app.innerHTML = `
+                    <div class="brand">${config.brand}</div>
+                    <h1>${escapeHtml(p.client_name || '我的项目')}</h1>
+                    <div class="meta">
+                        <span class="badge">${DDApi.statusLabel(p.status)}</span>
+                        <span>${escapeHtml(p.project_no || '')}</span>
+                        <span>更新 ${formatDate(p.updated_at)}</span>
+                    </div>
+
+                    <section>
+                        <h2>我的方案</h2>
+                        ${selection.length ? selection.map(line => `
+                            <div class="selection-item">
+                                <strong>${escapeHtml(line.name || line.catalogId || '—')}</strong>
+                                ${line.qty ? ` · ${line.qty} ${escapeHtml(line.unit || '')}` : ''}
+                            </div>
+                        `).join('') : '<p class="empty">方案清单待完善，请联系您的设计师。</p>'}
+                    </section>
+
+                    <section>
+                        <h2>沟通内容</h2>
+                        ${messages.length ? messages.map(m => `
+                            <div class="msg">
+                                <div class="msg-role">${m.sender_role === 'client' ? '我' : '设计团队'} · ${formatDate(m.created_at)}</div>
+                                <div class="msg-body comm-item comm-item--${m.status || 'confirmed'}">${escapeHtml(m.body)}</div>
+                            </div>
+                        `).join('') : '<p class="empty">暂无沟通记录。</p>'}
+                    </section>
+
+                    <p class="foot">专属链接 · 请勿转发 · <a href="showcase.html">DD design</a></p>
+                `;
+            } catch (err) {
+                const isConfig = err.message === 'supabase_not_configured';
+                app.innerHTML = isConfig
+                    ? `<p class="err">Supabase 未配置</p>
+                       <p style="margin-top:8px;font-size:13px">复制 config.public.example.json → config.public.json 并填入密钥。</p>
+                       <p style="margin-top:8px;font-size:13px">开发测试 token：<code>dev-demo-token-dd-design-2026</code></p>`
+                    : `<p class="err">无法打开项目</p>
+                       <p style="margin-top:8px">链接无效或已失效，请联系销售获取新链接。</p>`;
+            }
+
+            function escapeHtml(s) {
+                return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            }
+            function formatDate(iso) {
+                if (!iso) return '—';
+                try {
+                    return new Date(iso).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+                } catch { return iso; }
+            }
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "brand": "DD design",
+  "siteUrl": "https://dd-design.com",
+  "legacyApp": "1.html",
+  "supabase": {
+    "url": "https://YOUR_PROJECT.supabase.co",
+    "anonKey": "YOUR_SUPABASE_ANON_KEY"
+  },
+  "magicLinkPath": "p.html",
+  "adminPath": "admin.html"
+}

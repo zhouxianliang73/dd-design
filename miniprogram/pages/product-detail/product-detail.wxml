@@ -1,0 +1,28 @@
+<view class="page" wx:if="{{product}}">
+  <view class="cover-wrap">
+    <image
+      wx:if="{{product.image}}"
+      class="cover"
+      src="{{product.image}}"
+      mode="aspectFill"
+    />
+    <view wx:else class="cover-placeholder">{{product.emoji}}</view>
+    <view class="fav-btn {{isFavorite ? 'fav-active' : ''}}" bindtap="onToggleFavorite">
+      <text class="fav-icon">{{isFavorite ? '♥' : '♡'}}</text>
+    </view>
+  </view>
+  <view class="card body">
+    <view class="hero-title">{{product.emoji}} {{product.name}}</view>
+    <view class="price">{{product.priceText}}</view>
+    <view class="spec-grid">
+      <view class="spec-item"><text class="muted">空间</text><text>{{product.space}}</text></view>
+      <view class="spec-item"><text class="muted">分类</text><text>{{product.sub}}</text></view>
+      <view class="spec-item"><text class="muted">风格</text><text>{{product.style}}</text></view>
+      <view class="spec-item"><text class="muted">规格</text><text>{{product.spec}}</text></view>
+      <view class="spec-item"><text class="muted">材质</text><text>{{product.material}}</text></view>
+      <view class="spec-item"><text class="muted">颜色</text><text>{{product.color}}</text></view>
+    </view>
+    <button class="btn-primary action-btn" bindtap="goProject">加入我的方案</button>
+    <view class="hint muted">收藏产品后可在选品页查看；提交设计需求后清单会出现在「方案」Tab。</view>
+  </view>
+</view>

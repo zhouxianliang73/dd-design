@@ -2,12 +2,18 @@
   "version": 1,
   "updatedAt": "2026-06-23",
   "brand": {
-    "name": "DD Deep Design",
-    "productName": "选品中心",
-    "subtitle": "设计 · 深化 · 项目协作"
+    "name": "DD design",
+    "productName": "项目协作",
+    "subtitle": "选品 · 方案 · 跟踪"
   },
   "defaultChannel": "custom",
-  "salesLinkBase": "https://zhouxianliang73.github.io/dd-design/1.html",
+  "salesLinkBase": "https://dd-design.com/1.html",
+  "platform": {
+    "siteUrl": "https://dd-design.com",
+    "showcase": "showcase.html",
+    "magicLink": "p.html",
+    "admin": "admin.html"
+  },
   "channels": {
     "outdoor-living": {
       "label": "户外阳台整体服务",

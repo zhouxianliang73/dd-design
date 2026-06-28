@@ -1,0 +1,101 @@
+<view class="page">
+  <view class="hero card">
+    <view class="hero-tag">{{heroTag}}</view>
+    <view class="hero-title">{{heroTitle}}</view>
+    <view class="hero-desc">{{heroDesc}}</view>
+    <view class="hero-actions">
+      <button class="btn-primary" bindtap="goAiAdvisor">开始设计</button>
+      <button class="btn-ghost" bindtap="goShop">进入选品</button>
+    </view>
+  </view>
+
+  <view class="ai-entry card" bindtap="goAiAdvisor">
+    <view class="ai-entry-row">
+      <view class="ai-icon">✎</view>
+      <view class="ai-entry-body">
+        <view class="ai-entry-title">告诉我你的想法</view>
+        <view class="muted">文字描述 · 参考图片 · 提交后 AI 推荐相似款</view>
+      </view>
+      <text class="ai-arrow">›</text>
+    </view>
+  </view>
+
+  <view class="card designer-card">
+    <view class="card-header">
+      <text class="card-header-title">设计师超市</text>
+      <text class="card-header-more muted">智能推荐 ›</text>
+    </view>
+    <scroll-view class="designer-scroll" scroll-x enable-flex>
+      <view class="designer-row">
+        <view
+          class="designer-item"
+          wx:for="{{designers}}"
+          wx:key="id"
+          bindtap="onDesignerTap"
+        >
+          <image class="designer-avatar" src="{{item.photo}}" mode="aspectFill" lazy-load="{{true}}" />
+          <view class="designer-name">{{item.name}}</view>
+          <view class="designer-tag muted">{{item.tag}}</view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="section-title">精选案例</view>
+  <view class="case-list">
+    <view
+      class="case-card card"
+      wx:for="{{cases}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="onCaseTap"
+    >
+      <image
+        wx:if="{{item.cover}}"
+        class="case-cover"
+        src="{{item.cover}}"
+        mode="aspectFill"
+        lazy-load="{{true}}"
+      />
+      <view wx:else class="case-cover-placeholder">
+        <text class="case-cover-text">{{item.projectType}}</text>
+      </view>
+      <view class="case-body">
+        <view class="case-tag muted">{{item.projectType}} · {{item.status}}</view>
+        <view class="case-title">{{item.title}}</view>
+        <view class="case-summary muted">{{item.summary}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-head">
+    <view class="section-title inline">爆款推荐</view>
+    <text class="section-more muted" bindtap="goShop">全部选品 ›</text>
+  </view>
+  <view class="product-grid" wx:if="{{recommendProducts.length}}">
+    <view
+      class="product-card card"
+      wx:for="{{recommendProducts}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="onProductTap"
+    >
+      <view class="product-image-wrap">
+        <image
+          wx:if="{{item.image}}"
+          class="product-image"
+          src="{{item.image}}"
+          mode="aspectFill"
+          lazy-load="{{true}}"
+        />
+        <view wx:else class="product-image-placeholder">{{item.emoji}}</view>
+        <view wx:if="{{item.isFavorite}}" class="product-fav">♥</view>
+      </view>
+      <view class="product-body">
+        <view class="product-name">{{item.emoji}} {{item.name}}</view>
+        <view class="product-meta muted">{{item.space}} · {{item.style}}</view>
+        <view class="product-price">{{item.priceText}}</view>
+      </view>
+    </view>
+  </view>
+</view>

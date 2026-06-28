@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DD design · 精选案例</title>
+    <meta name="description" content="DD design 精选过往案例 — 公开展示" />
+    <link rel="stylesheet" href="delivery-doc-tokens.css" />
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: var(--dd-doc-font);
+            background: var(--dd-doc-bg);
+            color: var(--dd-doc-text-default);
+            font-size: var(--dd-doc-fs-base);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+        .wrap { max-width: 960px; margin: 0 auto; padding: 24px 16px 48px; }
+        header { margin-bottom: 28px; }
+        header h1 { font-size: var(--dd-doc-fs-xl); color: var(--dd-doc-text-strong); font-weight: var(--dd-doc-fw-bold); }
+        header p { color: var(--dd-doc-text-muted); margin-top: 6px; font-size: var(--dd-doc-fs-md); }
+        .nav { margin-top: 12px; display: flex; gap: 16px; flex-wrap: wrap; }
+        .nav a { color: var(--dd-doc-text-strong); text-decoration: none; font-size: var(--dd-doc-fs-sm); }
+        .nav a:hover { text-decoration: underline; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+        .card {
+            background: var(--dd-doc-surface);
+            border-radius: var(--dd-doc-radius);
+            overflow: hidden;
+            box-shadow: var(--dd-doc-elevation-1);
+            transition: box-shadow 0.2s;
+        }
+        .card:hover { box-shadow: var(--dd-doc-elevation-hover); }
+        .card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; background: var(--dd-doc-surface-inset); }
+        .card-bd { padding: 14px 16px 16px; }
+        .card-tag { font-size: var(--dd-doc-fs-xs); color: var(--dd-doc-text-light); margin-bottom: 4px; }
+        .card h2 { font-size: var(--dd-doc-fs-lg); color: var(--dd-doc-text-strong); font-weight: var(--dd-doc-fw-bold); margin-bottom: 6px; }
+        .card p { color: var(--dd-doc-text-muted); font-size: var(--dd-doc-fs-sm); margin-bottom: 10px; }
+        .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+        .tag { font-size: var(--dd-doc-fs-xs); padding: 2px 8px; background: var(--dd-doc-surface-nested); border-radius: 4px; color: var(--dd-doc-text-muted); }
+        .card-actions { display: flex; gap: 10px; }
+        .btn {
+            display: inline-block; padding: 6px 12px; font-size: var(--dd-doc-fs-sm);
+            border-radius: var(--dd-doc-radius); text-decoration: none; border: none; cursor: pointer;
+        }
+        .btn-primary { background: var(--dd-doc-action-bg); color: #fff; }
+        .btn-primary:hover { background: var(--dd-doc-action-hover); }
+        .btn-ghost { background: transparent; color: var(--dd-doc-text-muted); border: 1px solid var(--dd-doc-border-default); }
+        .state { text-align: center; padding: 48px 16px; color: var(--dd-doc-text-muted); }
+        .err { color: #c0392b; }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <header>
+            <h1>DD design · 精选案例</h1>
+            <p>公开展示 · 真实项目请通过销售提供的专属链接访问</p>
+            <nav class="nav">
+                <a href="1.html">进入选品中心</a>
+                <a href="admin.html">团队登录</a>
+            </nav>
+        </header>
+        <div id="root" class="state">加载案例…</div>
+    </div>
+    <script>
+        (async function () {
+            const root = document.getElementById('root');
+            try {
+                const res = await fetch('showcase.json', { cache: 'no-store' });
+                if (!res.ok) throw new Error('无法加载 showcase.json');
+                const data = await res.json();
+                document.title = `${data.brand || 'DD design'} · 精选案例`;
+                if (!data.cases?.length) {
+                    root.textContent = '暂无案例';
+                    return;
+                }
+                const sorted = [...data.cases].sort((a, b) => (a.order || 0) - (b.order || 0));
+                root.className = 'grid';
+                root.innerHTML = sorted.map(c => `
+                    <article class="card">
+                        <img src="${c.cover}" alt="${c.title}" loading="lazy" referrerpolicy="no-referrer" />
+                        <div class="card-bd">
+                            <div class="card-tag">${c.projectType || ''} · ${c.status || ''}</div>
+                            <h2>${c.title}</h2>
+                            <p>${c.summary || ''}</p>
+                            <div class="tags">${(c.highlights || []).map(h => `<span class="tag">${h}</span>`).join('')}</div>
+                            <div class="card-actions">
+                                <a class="btn btn-primary" href="${c.legacyPreview || '1.html'}">查看演示</a>
+                                <a class="btn btn-ghost" href="1.html?channel=${encodeURIComponent(c.channel || 'custom')}">同渠道选品</a>
+                            </div>
+                        </div>
+                    </article>
+                `).join('');
+            } catch (err) {
+                root.innerHTML = `<p class="err">${err.message}</p>`;
+            }
+        })();
+    </script>
+</body>
+</html>

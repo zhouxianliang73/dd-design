@@ -2428,6 +2428,71 @@
             color: var(--quote-spec-custom);
             font-weight: var(--fw-medium);
         }
+        /* 沟通内容 · 按日事务条目 */
+        .comm-item-list {
+            list-style: none;
+            margin: 0;
+            padding: 6px 16px 12px;
+        }
+        .comm-item {
+            font-size: var(--fs-sm);
+            line-height: 1.5;
+            padding: 6px 10px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 6px;
+        }
+        .comm-item:last-child {
+            margin-bottom: 0;
+        }
+        .comm-item--pending {
+            color: #dc2626;
+        }
+        .comm-item--confirmed {
+            color: #15803d;
+        }
+        .comm-item--important {
+            color: var(--text-primary);
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+        }
+        .scheme-version-block {
+            border-bottom: 1px solid var(--gray-100);
+            background: var(--surface-raised);
+        }
+        .scheme-version-block:last-child {
+            border-bottom: none;
+        }
+        .scheme-version-hd {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px 0;
+        }
+        .scheme-version-tag {
+            font-size: var(--fs-xs);
+            font-weight: var(--fw-semibold);
+            color: #4338ca;
+            background: #eef2ff;
+            padding: 2px 8px;
+            border-radius: 6px;
+        }
+        .scheme-version-date {
+            font-size: var(--fs-xs);
+            color: var(--text-faint);
+        }
+        .scheme-version-block .media-strip-wrap {
+            padding: 8px 16px 0;
+            background: transparent;
+        }
+        .scheme-version-block .section-text-card {
+            margin: 0;
+            border: none;
+            border-radius: 0;
+            background: transparent;
+        }
+        .scheme-version-block .section-summary {
+            padding: 6px 16px 12px;
+        }
         /* 客户意见 · 按日期分条 */
         .feedback-date-stack {
             display: flex;
@@ -5728,7 +5793,7 @@
             <div class="card" style="padding:14px 14px 4px;">
                 <div class="card-header" style="margin-bottom:12px;">
                     <span><i class="fas fa-tasks" style="color:var(--primary);margin-right:10px;"></i>我的项目</span>
-                    <span class="text-muted" style="font-size:12px;color:var(--text-tertiary);">生产中 · 运输中 · 已完成</span>
+                    <span class="text-muted" style="font-size:12px;color:var(--text-tertiary);">仅已完成 · 付款 / 发货 / 跟踪</span>
                 </div>
                 <div id="meProjectListRoot" class="project-list"></div>
             </div>
@@ -6074,18 +6139,18 @@
                     {
                         id: 'client',
                         type: 'summary',
-                        title: '客户沟通总结',
+                        title: '沟通内容',
                         date: '2026-07-14',
                         preview: '希望温暖明亮、浅色系沙发，注重耐用性，预算控制在 ¥2 万以内…',
-                        detailTitle: '客户沟通记录详情',
+                        detailTitle: '沟通内容详情',
                     },
                     {
                         id: 'images',
                         type: 'images',
-                        title: '客户上传图片',
+                        title: '沟通图片',
                         date: '2026-07-14',
                         preview: '共 3 张客厅参考图',
-                        detailTitle: '客户上传图片详情',
+                        detailTitle: '沟通图片详情',
                         images: [
                             { url: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=96&h=96&fit=crop&auto=format&q=80', alt: '参考图1' },
                             { url: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=96&h=96&fit=crop&auto=format&q=80', alt: '参考图2' },
@@ -6095,14 +6160,14 @@
                     {
                         id: 'designer',
                         type: 'summary',
-                        title: '设计师方案总结',
+                        title: '方案版本',
                         date: '2026-07-13',
                         preview: '方案 V1 · 现代简约客厅布局，推荐 3 款沙发与 2 款茶几组合',
-                        detailTitle: '设计师方案详情',
+                        detailTitle: '方案版本详情',
                     },
                 ],
                 pdfExports: [
-                    { id: 'comm', label: '沟通记录', sub: '客户总结 · 上传图片 · 方案摘要' },
+                    { id: 'comm', label: '沟通记录', sub: '沟通内容 · 沟通图片 · 方案版本' },
                     { id: 'products', label: '产品清单', sub: '名称、规格、材质、数量与报价' },
                     { id: 'scheme', label: '方案图片', sub: '设计师渲染图与参考图合集' },
                     { id: 'full', label: '完整项目', sub: '全部内容 + 项目封面' },
@@ -6820,7 +6885,7 @@
 
         const PROJECT_TAB_STATUS = {
             'page-projects': ['设计中', '待确认'],
-            'page-me': ['生产中', '运输中', '已完成'],
+            'page-me': ['已完成'],
         };
 
         const IMAGE_FALLBACK = 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=320&h=180&fit=crop&auto=format&q=80';
@@ -6890,16 +6955,16 @@
         ];
 
         const PROJECT_PDF_EXPORTS = [
-            { id: 'comm', label: '沟通记录', sub: '客户总结 · 上传图片 · 方案摘要' },
+            { id: 'comm', label: '沟通记录', sub: '沟通内容 · 沟通图片 · 方案版本' },
             { id: 'products', label: '产品清单', sub: '名称、规格、材质、数量与报价' },
             { id: 'scheme', label: '方案图片', sub: '设计师渲染图与参考图合集' },
             { id: 'full', label: '完整项目', sub: '全部内容 + 项目封面' },
         ];
 
         const MEDIA_SECTION_KEYS = {
-            clientImages: { label: '客户上传图片', pool: 'products' },
-            clientFeedbackImages: { label: '客户意见总结', pool: 'products' },
-            designerImages: { label: '设计师方案总结', pool: 'products' },
+            clientImages: { label: '沟通图片', pool: 'products' },
+            clientFeedbackImages: { label: '沟通内容', pool: 'products' },
+            designerImages: { label: '方案版本', pool: 'products' },
             production: { label: '生产记录', pool: 'cabinet' },
             shipping: { label: '货运记录', pool: 'cabinet' },
         };
@@ -7137,7 +7202,7 @@
             p.price = calcProjectTotal(p);
         }
 
-        let activeProjectId = 'p1';
+        let activeProjectId = 'p-kitchen';
         let mergeSuggestedName = '';
 
         const projectsData = [
@@ -7154,40 +7219,106 @@
                 updatedFull: '2026-07-15',
                 checked: true,
                 products: [
-                    { name: '洗手盘地柜', emoji: '🗄️', w: 800, h: 700, d: 570, materialBody: '大千云纹', materialDoor: '大千云纹', coef: 1.0, qty: 1, unit: '米', unitPrice: 5627, image: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=320&h=180&fit=crop&auto=format&q=80' },
                     { name: '云朵沙发', emoji: '☁️', w: 2400, h: 850, d: 900, material: '实木+布艺', coef: 1.0, qty: 1, unit: '个', unitPrice: 12000, image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=320&h=180&fit=crop&auto=format&q=80' },
                     { name: '岩板茶几', emoji: '🪨', w: 1200, h: 450, d: 600, material: '岩板+金属', coef: 1.0, qty: 1, unit: '个', unitPrice: 4800, image: 'https://images.unsplash.com/photo-1617806118233-18e1de247200?w=320&h=180&fit=crop&auto=format&q=80' },
+                    { name: '实木电视柜', emoji: '📺', w: 2000, h: 450, d: 400, material: '实木', coef: 1.0, qty: 1, unit: '个', unitPrice: 4200, image: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=320&h=180&fit=crop&auto=format&q=80' },
                 ],
                 comm: {
-                    clientUploadSummary: '共 5 张客厅参考图，涵盖整体风格与软装偏好',
-                    clientImages: IMG_SAMPLES,
-                    clientFeedbackSummary: '希望温暖明亮、浅色系沙发，注重耐用性，预算控制在 ¥2 万以内；不喜欢深色木饰面，偏好布艺与浅灰色调。',
-                    clientFeedbackByDate: [
+                    commImagesSummary: '共 5 张客厅参考图，涵盖整体风格与软装偏好',
+                    commImages: IMG_SAMPLES,
+                    commContentByDate: [
                         {
                             date: '2026-07-14',
-                            summary: '已在参考图上圈选沙发区域：要浅灰布艺，不要深色木饰面。',
-                            remindCount: 0,
+                            items: [
+                                { text: '浅灰布艺沙发，不要深色木饰面', status: 'confirmed' },
+                                { text: '茶几款式待选', status: 'pending' },
+                                { text: '预算控制在 ¥2 万以内', status: 'important' },
+                            ],
                             images: [
                                 { url: FEEDBACK_SAMPLES[0].url, alt: '标注图1', note: '标注：沙发区域', date: '2026-07-14' },
                                 { url: FEEDBACK_SAMPLES[1].url, alt: '标注图2', note: '标注：色调参考', date: '2026-07-14' },
                             ],
                         },
                         {
-                            date: '2026-07-10',
-                            summary: '预算请控制在 ¥2 万以内——第三次提醒，请务必在报价中体现。',
-                            remindCount: 3,
-                            images: [],
-                        },
-                        {
                             date: '2026-07-08',
-                            summary: '希望温暖明亮、整体偏北欧，注重耐用与易打理。',
-                            remindCount: 0,
-                            images: [],
+                            items: [
+                                { text: '希望温暖明亮、整体偏北欧', status: 'confirmed' },
+                                { text: '注重耐用与易打理', status: 'confirmed' },
+                            ],
                         },
                     ],
+                    schemeVersions: [
+                        {
+                            version: 'V1',
+                            date: '2026-07-13',
+                            summary: '现代简约客厅布局，推荐 3 款沙发与 2 款茶几组合',
+                            images: SCHEME_SAMPLES,
+                        },
+                    ],
+                    clientUploadSummary: '共 5 张客厅参考图，涵盖整体风格与软装偏好',
+                    clientImages: IMG_SAMPLES,
                     clientFeedbackImages: FEEDBACK_SAMPLES,
                     designerSummary: '方案 V1 · 现代简约客厅布局，推荐 3 款沙发与 2 款茶几组合',
                     designerImages: SCHEME_SAMPLES,
+                },
+                production: [],
+                shipping: [],
+            },
+            {
+                id: 'p-kitchen',
+                name: '陈先生 · 不锈钢厨柜',
+                designer: '李雅婷',
+                status: '待确认',
+                statusClass: 'badge-warning',
+                price: 0,
+                address: '东莞市南城区鸿福路 128 号 · 御景湾',
+                projectType: '不锈钢橱柜',
+                quoteTemplate: 'kitchen',
+                eta: '2026-08-15',
+                updatedFull: '2026-06-22',
+                checked: false,
+                quoteMeta: {
+                    orderNo: 'DD-2026-06-22-018',
+                    quoteDate: '2026-06-22',
+                    salesperson: '李雅婷',
+                    store: '东莞旗舰店',
+                },
+                quoteCategories: [],
+                products: [],
+                comm: {
+                    commImagesSummary: '共 5 张厨房现场与参考图，L 型布局，不锈钢柜体 + 琉晶台面',
+                    commImages: KITCHEN_DEMO_IMAGES,
+                    commContentByDate: [
+                        {
+                            date: '2026-06-20',
+                            items: [
+                                { text: '偏好大千云纹，台面琉晶-丝纹 GY01', status: 'confirmed' },
+                                { text: '水槽手工单槽 + 抽拉龙头', status: 'confirmed' },
+                                { text: '蒸烤一体机嵌入位待复核', status: 'pending' },
+                                { text: '预算 ¥7 万以内，交货期 45 天内', status: 'important' },
+                            ],
+                        },
+                        {
+                            date: '2026-06-18',
+                            items: [
+                                { text: 'L 型布局，不锈钢柜体', status: 'confirmed' },
+                                { text: '百隆五金 + 希勒碗碟篮', status: 'confirmed' },
+                            ],
+                        },
+                    ],
+                    schemeVersions: [
+                        {
+                            version: 'V1',
+                            date: '2026-06-22',
+                            summary: 'L 型厨柜方案 · 柜体 + 琉晶台面 + 百隆五金 + 希勒碗碟篮，八类清单齐全',
+                            images: KITCHEN_DEMO_IMAGES.slice(0, 3),
+                        },
+                    ],
+                    clientUploadSummary: '共 5 张厨房现场与参考图，L 型布局，要求不锈钢柜体 + 琉晶台面',
+                    clientImages: KITCHEN_DEMO_IMAGES,
+                    clientFeedbackImages: KITCHEN_DEMO_IMAGES,
+                    designerSummary: '厨柜方案 V1 · L 型布局，含柜体 + 琉晶台面 + 百隆五金 + 希勒碗碟篮，八类清单齐全',
+                    designerImages: KITCHEN_DEMO_IMAGES,
                 },
                 production: [],
                 shipping: [],
@@ -7220,43 +7351,11 @@
                 shipping: [],
             },
             {
-                id: 'p-kitchen',
-                name: '陈先生 · 不锈钢厨柜',
-                designer: '李雅婷',
-                status: '待确认',
-                statusClass: 'badge-warning',
-                price: 0,
-                address: '东莞市南城区鸿福路 128 号 · 御景湾',
-                projectType: '不锈钢橱柜',
-                quoteTemplate: 'kitchen',
-                eta: '2026-08-15',
-                updatedFull: '2026-06-22',
-                checked: false,
-                quoteMeta: {
-                    orderNo: 'DD-2026-06-22-018',
-                    quoteDate: '2026-06-22',
-                    salesperson: '李雅婷',
-                    store: '东莞旗舰店',
-                },
-                quoteCategories: [],
-                products: [],
-                comm: {
-                    clientUploadSummary: '共 5 张厨房现场与参考图，L 型布局，要求不锈钢柜体 + 琉晶台面',
-                    clientImages: KITCHEN_DEMO_IMAGES,
-                    clientFeedbackSummary: '偏好大千云纹系列，台面要琉晶-丝纹 GY01；水槽手工单槽 + 抽拉龙头；需嵌入蒸烤一体机；预算 ¥7 万以内，交货期 45 天内。',
-                    clientFeedbackImages: KITCHEN_DEMO_IMAGES,
-                    designerSummary: '厨柜方案 V1 · L 型布局，含柜体 + 琉晶台面 + 百隆五金 + 希勒碗碟篮，八类清单齐全',
-                    designerImages: KITCHEN_DEMO_IMAGES,
-                },
-                production: [],
-                shipping: [],
-            },
-            {
                 id: 'p-shade-umbrella',
                 name: '户外遮阳伞 · 供应商比价',
                 designer: 'HILL',
-                status: '待确认',
-                statusClass: 'badge-warning',
+                status: '生产中',
+                statusClass: 'badge-primary',
                 price: 0,
                 address: '微信 · 佛山顺怡发遮阳伞沟通(直泰)',
                 projectType: '户外遮阳寻源',
@@ -7288,8 +7387,8 @@
                 id: 'p3',
                 name: 'Lisa · 主卧',
                 designer: '顾欣',
-                status: '生产中',
-                statusClass: 'badge-primary',
+                status: '已完成',
+                statusClass: 'badge-success',
                 price: 45000,
                 address: '北京朝阳区 xxx 街 88 号',
                 projectType: '卧室改造',
@@ -7323,8 +7422,8 @@
                 id: 'p4',
                 name: '王先生 · 书房',
                 designer: '盛菲',
-                status: '运输中',
-                statusClass: 'badge-info',
+                status: '已完成',
+                statusClass: 'badge-success',
                 price: 22500,
                 address: '深圳南山区 xxx 大道 66 号',
                 projectType: '书房定制',
@@ -8566,9 +8665,26 @@
 
         function normalizeClientFeedbackEntries(comm) {
             if (!comm) return [];
+            if (Array.isArray(comm.commContentByDate) && comm.commContentByDate.length) {
+                return [...comm.commContentByDate]
+                    .filter(entry => entry && (entry.items?.length || entry.summary || entry.images?.length))
+                    .sort((a, b) => parseMediaSortTime({ date: b.date }) - parseMediaSortTime({ date: a.date }));
+            }
             if (Array.isArray(comm.clientFeedbackByDate) && comm.clientFeedbackByDate.length) {
                 return [...comm.clientFeedbackByDate]
                     .filter(entry => entry && (entry.summary || entry.images?.length))
+                    .map(entry => {
+                        if (entry.items?.length) return entry;
+                        const reminded = Number(entry.remindCount || 0) >= 2;
+                        return {
+                            date: entry.date,
+                            items: [{
+                                text: entry.summary || '—',
+                                status: reminded ? 'important' : 'confirmed',
+                            }],
+                            images: entry.images,
+                        };
+                    })
                     .sort((a, b) => parseMediaSortTime({ date: b.date }) - parseMediaSortTime({ date: a.date }));
             }
             const summary = comm.clientFeedbackSummary || comm.clientSummary || '';
@@ -8576,53 +8692,124 @@
             if (!summary && !images.length) return [];
             return [{
                 date: images[0]?.date || '',
-                summary: summary || '暂无客户意见',
-                remindCount: comm.clientFeedbackRemindCount || 0,
+                items: [{ text: summary || '暂无沟通记录', status: 'confirmed' }],
                 images,
             }];
         }
 
+        function renderCommContentItemsHtml(items) {
+            if (!items?.length) return '';
+            return `<ul class="comm-item-list">${items.map(item => {
+                const status = item.status || 'confirmed';
+                return `<li class="comm-item comm-item--${status}">${item.text || '—'}</li>`;
+            }).join('')}</ul>`;
+        }
+
         function renderFeedbackDateBlock(entry) {
             const dateLabel = entry.date ? formatMediaDateYmd({ date: entry.date }) : '—';
-            const reminded = Number(entry.remindCount || 0) >= 2;
-            const summaryCls = reminded ? 'section-summary is-reminded' : 'section-summary';
             const images = (entry.images || []).filter(img => img && img.url);
-            const summaryHtml = entry.summary || '—';
+            const itemsHtml = entry.items?.length
+                ? renderCommContentItemsHtml(entry.items)
+                : `<div class="section-text-card"><p class="section-summary">${entry.summary || '—'}</p></div>`;
             if (images.length) {
-                return `<article class="feedback-date-block feedback-date-block--annotated${reminded ? ' is-reminded' : ''}">
+                return `<article class="feedback-date-block feedback-date-block--annotated">
                     <div class="feedback-date-label">${dateLabel}</div>
                     <div class="media-strip-wrap img-strip-wrap">${renderMediaStripRow(images, { interactive: true })}</div>
-                    <div class="section-text-card"><p class="${summaryCls}">${summaryHtml}</p></div>
+                    ${itemsHtml}
                 </article>`;
             }
-            return `<article class="feedback-date-block feedback-date-block--text${reminded ? ' is-reminded' : ''}">
+            return `<article class="feedback-date-block feedback-date-block--text">
                 <div class="feedback-date-label">${dateLabel}</div>
-                <div class="section-text-card"><p class="${summaryCls}">${summaryHtml}</p></div>
+                ${itemsHtml}
             </article>`;
         }
 
-        function renderClientFeedbackSection(comm, projectId) {
-            const entries = normalizeClientFeedbackEntries(comm);
-            const mediaCtx = { projectId, mediaKey: 'clientFeedbackImages', sectionLabel: '客户意见总结' };
+        function normalizeSchemeVersions(comm) {
+            if (!comm) return [];
+            if (Array.isArray(comm.schemeVersions) && comm.schemeVersions.length) {
+                return [...comm.schemeVersions].sort((a, b) => parseMediaSortTime({ date: b.date }) - parseMediaSortTime({ date: a.date }));
+            }
+            if (comm.designerSummary || comm.designerImages?.length) {
+                return [{
+                    version: 'V1',
+                    date: '',
+                    summary: comm.designerSummary || '',
+                    images: comm.designerImages || [],
+                }];
+            }
+            return [];
+        }
+
+        function renderSchemeVersionsSection(comm, projectId) {
+            const versions = normalizeSchemeVersions(comm);
+            const mediaCtx = { projectId, mediaKey: 'designerImages', sectionLabel: '方案版本' };
             const addRow = renderMediaAddRowHtml(mediaCtx);
-            const blocksHtml = entries.length
-                ? entries.map(renderFeedbackDateBlock).join('')
-                : `<div class="feedback-date-block feedback-date-block--text"><div class="section-text-card"><p class="section-summary">暂无客户意见</p></div></div>`;
-            const annotatedEntry = entries.find(e => (e.images || []).some(img => img?.url));
-            const previewImages = annotatedEntry?.images || [];
+            const blocksHtml = versions.length
+                ? versions.map(v => {
+                    const images = (v.images || []).filter(img => img && img.url);
+                    const dateLabel = v.date ? formatMediaDateYmd({ date: v.date }) : '';
+                    const imgHtml = images.length
+                        ? `<div class="media-strip-wrap img-strip-wrap">${renderMediaStripRow(images, { interactive: true })}</div>`
+                        : '';
+                    return `<article class="scheme-version-block">
+                        <div class="scheme-version-hd">
+                            <span class="scheme-version-tag">${v.version || 'V1'}</span>
+                            ${dateLabel ? `<span class="scheme-version-date">${dateLabel}</span>` : ''}
+                        </div>
+                        ${imgHtml}
+                        <div class="section-text-card"><p class="section-summary">${v.summary || '—'}</p></div>
+                    </article>`;
+                }).join('')
+                : `<div class="scheme-version-block"><div class="section-text-card"><p class="section-summary">暂无方案版本</p></div></div>`;
+            const latest = versions[0];
+            const previewImages = (latest?.images || []).filter(img => img?.url);
             const innerPreview = previewImages.length
                 ? renderMediaStripRow(previewImages, { interactive: false })
-                : `<div class="feedback-preview-text">${entries[0]?.summary || '暂无客户意见'}</div>`;
+                : `<div class="feedback-preview-text">${latest?.summary || '暂无方案版本'}</div>`;
             return `
-                <section class="proj-section proj-collapsible proj-media-section" data-section="clientFeedback" data-media-section="clientFeedback">
+                <section class="proj-section proj-collapsible proj-media-section" data-section="schemeVersions" data-media-section="designerImages">
                     <div class="proj-section-hd" data-toggle-section>
-                        <span class="proj-section-label">客户意见总结</span>
+                        <span class="proj-section-label">方案版本</span>
                         <i class="fas fa-chevron-down chevron"></i>
                     </div>
                     <div class="proj-section-bd">
                         <div class="media-cat-stack media-cat-stack--flat">
                             <div class="media-cat-block media-cat-collapsible">
-                                <div class="media-cat-preview" data-toggle-media-cat aria-label="展开客户意见总结">${innerPreview}</div>
+                                <div class="media-cat-preview" data-toggle-media-cat aria-label="展开方案版本">${innerPreview}</div>
+                                <div class="media-cat-bd">
+                                    <div class="feedback-date-stack">${blocksHtml}</div>
+                                    ${addRow}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            `;
+        }
+
+        function renderClientFeedbackSection(comm, projectId) {
+            const entries = normalizeClientFeedbackEntries(comm);
+            const mediaCtx = { projectId, mediaKey: 'clientFeedbackImages', sectionLabel: '沟通内容' };
+            const addRow = renderMediaAddRowHtml(mediaCtx);
+            const blocksHtml = entries.length
+                ? entries.map(renderFeedbackDateBlock).join('')
+                : `<div class="feedback-date-block feedback-date-block--text"><div class="section-text-card"><p class="section-summary">暂无沟通记录</p></div></div>`;
+            const annotatedEntry = entries.find(e => (e.images || []).some(img => img?.url));
+            const previewImages = annotatedEntry?.images || [];
+            const previewText = entries[0]?.items?.[0]?.text || entries[0]?.summary || '暂无沟通记录';
+            const innerPreview = previewImages.length
+                ? renderMediaStripRow(previewImages, { interactive: false })
+                : `<div class="feedback-preview-text">${previewText}</div>`;
+            return `
+                <section class="proj-section proj-collapsible proj-media-section" data-section="commContent" data-media-section="clientFeedback">
+                    <div class="proj-section-hd" data-toggle-section>
+                        <span class="proj-section-label">沟通内容</span>
+                        <i class="fas fa-chevron-down chevron"></i>
+                    </div>
+                    <div class="proj-section-bd">
+                        <div class="media-cat-stack media-cat-stack--flat">
+                            <div class="media-cat-block media-cat-collapsible">
+                                <div class="media-cat-preview" data-toggle-media-cat aria-label="展开沟通内容">${innerPreview}</div>
                                 <div class="media-cat-bd">
                                     <div class="feedback-date-stack">${blocksHtml}</div>
                                     ${addRow}
@@ -8721,15 +8908,51 @@
 
         function renderCommSectionsHtml(comm, projectId) {
             if (!comm) return '';
-            const uploadSummary = comm.clientUploadSummary || '客户提交的参考图片';
+            const uploadSummary = comm.commImagesSummary || comm.clientUploadSummary || '沟通中的参考图片';
+            const commImages = comm.commImages || comm.clientImages || [];
             return `
-                ${renderSummaryStripSection('客户上传图片', uploadSummary, comm.clientImages, '', { projectId, mediaKey: 'clientImages', sectionLabel: '客户上传图片' })}
+                ${renderSummaryStripSection('沟通图片', uploadSummary, commImages, '', { projectId, mediaKey: 'clientImages', sectionLabel: '沟通图片' })}
                 ${renderClientFeedbackSection(comm, projectId)}
-                ${renderSummaryStripSection('设计师方案总结', comm.designerSummary, comm.designerImages, '', { projectId, mediaKey: 'designerImages', sectionLabel: '设计师方案总结' })}
+                ${renderSchemeVersionsSection(comm, projectId)}
             `;
         }
 
-        function renderProjectSectionsHtml(p) {
+        function renderOrderActionsHtml(p) {
+            return `
+                <section class="proj-section proj-collapsible proj-order-actions" data-section="orderActions">
+                    <div class="proj-section-hd" data-toggle-section>
+                        <span class="proj-section-label">订单服务</span>
+                        <i class="fas fa-chevron-down chevron"></i>
+                    </div>
+                    <div class="proj-section-bd">
+                        <div class="order-action-row">
+                            <button type="button" class="order-action-btn" data-order-action="pay" data-project-id="${p.id}">付款</button>
+                            <button type="button" class="order-action-btn" data-order-action="ship" data-project-id="${p.id}">发货</button>
+                            <button type="button" class="order-action-btn" data-order-action="track" data-project-id="${p.id}">跟踪</button>
+                        </div>
+                        <p class="section-summary" style="margin-top:8px;">已完成项目 · 查看付款、发货与物流进度</p>
+                    </div>
+                </section>`;
+        }
+
+        function renderTrackingTimelineHtml(p) {
+            const ship = normalizeShippingMedia(p.shipping);
+            const records = ship.records || [];
+            if (!records.length && !ship.summary) return '';
+            const lines = records.length
+                ? records.map(r => `<div class="tracking-line"><span class="muted">${r.date || ''}</span> ${r.title || r.tracking || ''}</div>`).join('')
+                : `<div class="tracking-line">${ship.summary}</div>`;
+            return `
+                <section class="proj-section proj-collapsible" data-section="tracking">
+                    <div class="proj-section-hd" data-toggle-section>
+                        <span class="proj-section-label">物流跟踪</span>
+                        <i class="fas fa-chevron-down chevron"></i>
+                    </div>
+                    <div class="proj-section-bd">${lines}</div>
+                </section>`;
+        }
+
+        function renderProjectSectionsHtml(p, phase = 'scheme') {
             if (usesGroupedQuoteSections(p)) ensureProjectQuoteCategories(p);
             const hasQuoteCats = !p.children?.length && usesGroupedQuoteSections(p);
             const products = p.children?.length ? [] : (hasQuoteCats ? [] : (p.products || []));
@@ -8745,13 +8968,22 @@
                     </div>
                     <div class="proj-section-bd">${renderQuoteTableHtml(products, { projectId: p.id, sectionKey: 'products', sectionLabel: '产品清单' })}</div>
                 </section>`;
+            const commHtml = showComm ? renderCommSectionsHtml(p.comm, p.id) : '';
+            const deliveryHtml = phase === 'delivery'
+                ? `${renderOrderActionsHtml(p)}
+                ${renderCategorizedMediaSection('生产记录', PRODUCTION_CATEGORIES, prod, p.id, 'production')}
+                ${renderCategorizedMediaSection('货运记录', SHIPPING_CATEGORIES, ship, p.id, 'shipping')}
+                ${renderTrackingTimelineHtml(p)}`
+                : '';
+            const schemeTail = phase === 'scheme' && showComm
+                ? `${renderProjectPdfBarHtml(p.id)}
+                ${['设计中', '待确认'].includes(p.status) ? renderCommPlatformBarHtml(p.id) : ''}`
+                : '';
             return `
                 ${quoteHtml}
-                ${showComm ? renderCommSectionsHtml(p.comm, p.id) : ''}
-                ${showComm ? renderCategorizedMediaSection('生产记录', PRODUCTION_CATEGORIES, prod, p.id, 'production') : ''}
-                ${showComm ? renderCategorizedMediaSection('货运记录', SHIPPING_CATEGORIES, ship, p.id, 'shipping') : ''}
-                ${showComm ? renderProjectPdfBarHtml(p.id) : ''}
-                ${showComm && ['设计中', '待确认'].includes(p.status) ? renderCommPlatformBarHtml(p.id) : ''}
+                ${phase === 'scheme' ? commHtml : ''}
+                ${deliveryHtml}
+                ${schemeTail}
             `;
         }
 
@@ -8900,7 +9132,7 @@
                         ${hdInner}
                     </header>
                     <div class="project-shell-body">
-                        ${childrenHtml || renderProjectSectionsHtml(p)}
+                        ${childrenHtml || renderProjectSectionsHtml(p, opts.phase || 'scheme')}
                     </div>
                 </article>
             `;
@@ -8918,10 +9150,11 @@
         function renderProjectListForRoot(rootId, pageId) {
             const root = document.getElementById(rootId);
             if (!root) return;
+            const phase = pageId === 'page-me' ? 'delivery' : 'scheme';
             const list = getProjectsForPage(pageId);
             root.innerHTML = list.length
-                ? list.map(p => renderProjectShell(p)).join('')
-                : `<div style="text-align:center;padding:32px 16px;color:var(--text-tertiary);font-size:14px;">暂无${pageId === 'page-projects' ? '设计中 / 待确认方案' : '进行中项目'}</div>`;
+                ? list.map(p => renderProjectShell(p, { phase })).join('')
+                : `<div style="text-align:center;padding:32px 16px;color:var(--text-tertiary);font-size:14px;">暂无${pageId === 'page-projects' ? '设计中 / 待确认方案' : '已完成项目'}</div>`;
         }
 
         function renderAllProjectLists() {
@@ -9240,6 +9473,16 @@
 
                 if (e.target.closest('#lightboxClose') || e.target.id === 'imageLightbox') {
                     closeLightbox();
+                    return;
+                }
+
+                const orderBtn = e.target.closest('[data-order-action]');
+                if (orderBtn) {
+                    e.stopPropagation();
+                    const action = orderBtn.dataset.orderAction;
+                    const p = findProjectById(orderBtn.dataset.projectId);
+                    const labels = { pay: '付款', ship: '发货信息', track: '物流跟踪' };
+                    showToast(`📦 ${labels[action] || '订单服务'}`, `「${p?.name || '项目'}」· 演示交互`);
                     return;
                 }
 
@@ -9764,6 +10007,15 @@
                 switchPage('page-projects');
                 requestAnimationFrame(() => {
                     const shell = document.querySelector('[data-project-id="p-shade-umbrella"]');
+                    shell?.classList.add('is-open');
+                    shell?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            }
+            if (entryContext.preview === 'kitchen' || entryContext.project === 'p-kitchen') {
+                activeProjectId = 'p-kitchen';
+                switchPage('page-projects');
+                requestAnimationFrame(() => {
+                    const shell = document.querySelector('[data-project-id="p-kitchen"]');
                     shell?.classList.add('is-open');
                     shell?.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 });

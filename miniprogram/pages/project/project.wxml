@@ -1,0 +1,343 @@
+<template name="projectBody">
+  <view class="shell-address muted" wx:if="{{item.address}}">{{item.address}}</view>
+
+  <view class="scheme-quote-hint muted" wx:if="{{item.canEditQuote}}">
+    货运前可在方案内删减清单；发货后如需新增请新建项目
+  </view>
+
+  <block wx:if="{{item.quoteCategories && item.quoteCategories.length}}">
+    <view
+      class="proj-section {{item.sectionOpen[cat.id] ? 'is-open' : ''}}"
+      wx:for="{{item.quoteCategories}}"
+      wx:key="id"
+      wx:for-item="cat"
+    >
+      <view class="proj-section-hd" catchtap="onToggleSection" data-id="{{item.id}}" data-section="{{cat.id}}">
+        <text class="proj-section-label">{{cat.name}}</text>
+        <text class="chevron">{{item.sectionOpen[cat.id] ? '▾' : '▸'}}</text>
+      </view>
+      <view class="proj-section-bd" wx:if="{{item.sectionOpen[cat.id]}}">
+        <view class="quote-head muted">
+          <text class="col-name">产品</text>
+          <text class="col-qty">数量</text>
+          <text class="col-price">小计</text>
+        </view>
+        <view class="quote-row" wx:for="{{cat.products}}" wx:key="lineId" wx:for-item="line">
+          <view class="col-name">
+            <view class="line-thumb-wrap" wx:if="{{line.image}}">
+              <image class="line-thumb" src="{{line.image}}" mode="aspectFill" />
+              <view
+                wx:if="{{item.canEditQuote}}"
+                class="line-remove"
+                catchtap="onDeleteQuoteLine"
+                data-project-id="{{item.id}}"
+                data-line-id="{{line.lineId}}"
+                data-line-name="{{line.name}}"
+              >×</view>
+            </view>
+            <view class="line-thumb-wrap line-thumb-ph" wx:else>
+              <text class="line-emoji-ph">{{line.emoji}}</text>
+              <view
+                wx:if="{{item.canEditQuote}}"
+                class="line-remove"
+                catchtap="onDeleteQuoteLine"
+                data-project-id="{{item.id}}"
+                data-line-id="{{line.lineId}}"
+                data-line-name="{{line.name}}"
+              >×</view>
+            </view>
+            <view class="line-text">
+              <text class="line-name">{{line.emoji}} {{line.name}}</text>
+              <text class="line-spec muted">{{line.spec}} · {{line.material}}</text>
+            </view>
+          </view>
+          <text class="col-qty">{{line.qty}}{{line.unit}}</text>
+          <text class="col-price">{{line.lineTotalText}}</text>
+        </view>
+        <view class="quote-cat-total muted">本类合计 {{cat.subtotalText}}</view>
+      </view>
+    </view>
+    <view class="quote-total">清单合计 {{item.priceText}}</view>
+  </block>
+  <view wx:else class="proj-section {{item.sectionOpen.products ? 'is-open' : ''}}">
+    <view class="proj-section-hd" catchtap="onToggleSection" data-id="{{item.id}}" data-section="products">
+      <text class="proj-section-label">产品清单</text>
+      <text class="chevron">{{item.sectionOpen.products ? '▾' : '▸'}}</text>
+    </view>
+    <view class="proj-section-bd" wx:if="{{item.sectionOpen.products}}">
+      <view class="quote-head muted">
+        <text class="col-name">产品</text>
+        <text class="col-qty">数量</text>
+        <text class="col-price">小计</text>
+      </view>
+      <view class="quote-row" wx:for="{{item.products}}" wx:key="lineId" wx:for-item="line">
+        <view class="col-name">
+          <view class="line-thumb-wrap" wx:if="{{line.image}}">
+            <image class="line-thumb" src="{{line.image}}" mode="aspectFill" />
+            <view
+              wx:if="{{item.canEditQuote}}"
+              class="line-remove"
+              catchtap="onDeleteQuoteLine"
+              data-project-id="{{item.id}}"
+              data-line-id="{{line.lineId}}"
+              data-line-name="{{line.name}}"
+            >×</view>
+          </view>
+          <view class="line-thumb-wrap line-thumb-ph" wx:else>
+            <text class="line-emoji-ph">{{line.emoji}}</text>
+            <view
+              wx:if="{{item.canEditQuote}}"
+              class="line-remove"
+              catchtap="onDeleteQuoteLine"
+              data-project-id="{{item.id}}"
+              data-line-id="{{line.lineId}}"
+              data-line-name="{{line.name}}"
+            >×</view>
+          </view>
+          <view class="line-text">
+            <text class="line-name">{{line.emoji}} {{line.name}}</text>
+            <text class="line-spec muted">{{line.spec}} · {{line.material}}</text>
+          </view>
+        </view>
+        <text class="col-qty">{{line.qty}}{{line.unit}}</text>
+        <text class="col-price">{{line.lineTotalText}}</text>
+      </view>
+      <view class="quote-total">清单合计 {{item.priceText}}</view>
+    </view>
+  </view>
+
+  <view class="proj-section {{item.sectionOpen.commImages ? 'is-open' : ''}}">
+    <view class="proj-section-hd" catchtap="onToggleSection" data-id="{{item.id}}" data-section="commImages">
+      <text class="proj-section-label">沟通图片</text>
+      <text class="chevron">{{item.sectionOpen.commImages ? '▾' : '▸'}}</text>
+    </view>
+    <view class="proj-section-bd" wx:if="{{item.sectionOpen.commImages}}">
+      <view class="section-summary muted">{{item.comm.commImagesSummary}}</view>
+      <scroll-view class="img-strip" scroll-x enable-flex>
+        <view class="img-strip-row">
+          <view class="img-strip-item" wx:for="{{item.comm.commImages}}" wx:key="url" wx:for-item="img">
+            <image class="strip-img" src="{{img.url}}" mode="aspectFill" />
+            <text class="strip-note muted">{{img.note}}</text>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <view class="proj-section {{item.sectionOpen.commContent ? 'is-open' : ''}}">
+    <view class="proj-section-hd" catchtap="onToggleSection" data-id="{{item.id}}" data-section="commContent">
+      <text class="proj-section-label">沟通内容</text>
+      <text class="chevron">{{item.sectionOpen.commContent ? '▾' : '▸'}}</text>
+    </view>
+    <view class="proj-section-bd" wx:if="{{item.sectionOpen.commContent}}">
+      <view class="comm-date-stack">
+        <view class="comm-date-block" wx:for="{{item.comm.commContentByDate}}" wx:key="date" wx:for-item="day">
+          <view class="comm-date-label" wx:if="{{day.date}}">{{day.date}}</view>
+          <view
+            class="comm-item comm-item--{{commItem.status}}"
+            wx:for="{{day.items}}"
+            wx:key="text"
+            wx:for-item="commItem"
+          >{{commItem.text}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="proj-section {{item.sectionOpen.schemeVersions ? 'is-open' : ''}}">
+    <view class="proj-section-hd" catchtap="onToggleSection" data-id="{{item.id}}" data-section="schemeVersions">
+      <text class="proj-section-label">方案版本</text>
+      <text class="chevron">{{item.sectionOpen.schemeVersions ? '▾' : '▸'}}</text>
+    </view>
+    <view class="proj-section-bd" wx:if="{{item.sectionOpen.schemeVersions}}">
+      <view class="scheme-version-block" wx:for="{{item.comm.schemeVersions}}" wx:key="version" wx:for-item="ver">
+        <view class="scheme-version-hd">
+          <text class="scheme-version-tag">{{ver.version}}</text>
+          <text class="scheme-version-date muted" wx:if="{{ver.date}}">{{ver.date}}</text>
+        </view>
+        <view class="section-summary muted">{{ver.summary}}</view>
+        <scroll-view class="img-strip" scroll-x enable-flex wx:if="{{ver.images.length}}">
+          <view class="img-strip-row">
+            <view class="img-strip-item" wx:for="{{ver.images}}" wx:key="url" wx:for-item="img">
+              <image class="strip-img" src="{{img.url}}" mode="aspectFill" />
+              <text class="strip-note muted">{{img.note}}</text>
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<view class="page">
+  <view wx:if="{{loading}}" class="empty">正在加载…</view>
+
+  <block wx:else>
+    <view class="projects-hd card">
+      <view class="projects-hd-left">
+        <view class="projects-hd-title">{{pageTitle}}</view>
+        <text class="member-badge">会员</text>
+      </view>
+      <view class="projects-hd-actions">
+        <button class="btn-capsule btn-capsule-ghost projects-new-btn" bindtap="goCreateProject">新建</button>
+        <view class="view-toggle-btn" bindtap="onToggleViewMode">
+          <text>{{listViewMode === 'list' ? '▦' : '☰'}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="project-list-toolbar card">
+      <checkbox-group bindchange="onSelectAllChange">
+        <label class="select-all-label">
+          <checkbox value="all" checked="{{selectAll}}" color="#4b5563" />
+          <text>全选方案</text>
+        </label>
+      </checkbox-group>
+      <text class="toolbar-hint muted">点击方案标题展开 · 版块可再折叠</text>
+    </view>
+
+    <block wx:if="{{displayProjects.length}}">
+      <view wx:if="{{listViewMode === 'list'}}" class="project-list">
+        <view
+          class="project-shell card {{item.expanded ? 'is-open' : ''}} {{item.selected ? 'is-selected' : ''}} {{item.isMerged ? 'is-merged' : ''}}"
+          wx:for="{{displayProjects}}"
+          wx:key="id"
+        >
+          <view class="project-shell-hd" bindtap="onToggleShell" data-id="{{item.id}}">
+            <view class="shell-check-col" catchtap="onToggleSelect" data-id="{{item.id}}">
+              <checkbox checked="{{item.selected}}" color="#4b5563" />
+            </view>
+            <view class="shell-hd-main">
+              <view class="shell-title-row">
+                <view class="shell-name">{{item.clientName}}</view>
+                <text class="badge shell-status-badge">{{item.statusLabel}}</text>
+                <text class="shell-expand-icon">{{item.expanded ? '▲' : '▼'}}</text>
+              </view>
+              <view class="shell-meta muted">
+                <text>设计：{{item.designer}}</text>
+                <text> · {{item.projectType}}</text>
+                <text wx:if="{{item.isMerged}}"> · 合并 {{item.childrenCount}} 项</text>
+              </view>
+              <view class="progress-row">
+                <view class="progress-bar">
+                  <view class="progress-fill" style="width: {{item.progress}}%;"></view>
+                </view>
+                <text class="progress-text muted">{{item.progress}}%</text>
+              </view>
+              <view class="shell-info-row">
+                <text class="shell-price">{{item.priceText}}</text>
+                <text class="shell-date muted">{{item.updatedAt}}</text>
+                <view
+                  wx:if="{{item.showConfirm && !item.isMerged}}"
+                  class="btn-capsule btn-capsule-outline btn-confirm"
+                  catchtap="onConfirmScheme"
+                  data-id="{{item.id}}"
+                  data-name="{{item.clientName}}"
+                >确认方案</view>
+              </view>
+            </view>
+          </view>
+
+          <view class="project-shell-body" wx:if="{{item.expanded}}">
+            <block wx:if="{{item.isMerged}}">
+              <view class="merge-sub-list">
+                <view class="sub-shell" wx:for="{{item.children}}" wx:for-item="sub" wx:key="id">
+                  <view class="project-shell-hd sub-hd" bindtap="onToggleShell" data-id="{{sub.id}}">
+                    <view class="shell-hd-main">
+                      <view class="shell-title-row">
+                        <view class="shell-name sub-name">{{sub.clientName}}</view>
+                        <text class="shell-expand-icon">{{sub.expanded ? '▲' : '▼'}}</text>
+                      </view>
+                      <view class="shell-meta muted">{{sub.designer}} · {{sub.priceText}}</view>
+                    </view>
+                  </view>
+                  <view class="project-shell-body sub-body" wx:if="{{sub.expanded}}">
+                    <template is="projectBody" data="{{item: sub}}" />
+                  </view>
+                </view>
+              </view>
+            </block>
+            <block wx:else>
+              <template is="projectBody" data="{{item: item}}" />
+            </block>
+          </view>
+        </view>
+      </view>
+
+      <view wx:else class="project-cards">
+        <view
+          class="pcard card {{item.isMerged ? 'is-merged' : ''}} {{item.selected ? 'is-selected' : ''}}"
+          wx:for="{{displayProjects}}"
+          wx:key="id"
+        >
+          <view class="pcard-check" catchtap="onToggleSelect" data-id="{{item.id}}">
+            <checkbox checked="{{item.selected}}" color="#111827" />
+          </view>
+          <view bindtap="onGridExpand" data-id="{{item.id}}">
+            <view class="pcard-img">
+              <text wx:if="{{item.isMerged}}">合并 {{item.childrenCount}} 项</text>
+              <text wx:else>{{item.coverEmoji}}</text>
+            </view>
+            <view class="pcard-info">
+              <view class="pcard-name">{{item.clientName}}</view>
+              <view class="pcard-meta muted">
+                <text>{{item.designer}}</text>
+                <text class="badge badge-sm">{{item.statusLabel}}</text>
+              </view>
+              <view class="pcard-meta">
+                <text class="pcard-price">{{item.priceText}}</text>
+                <text class="muted pcard-date">{{item.updatedAt}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+    <view wx:else class="list-empty muted">暂无设计中 / 待确认方案</view>
+
+    <view class="merge-hint card" wx:if="{{mergeHintVisible}}">
+      <view class="merge-hint-meta">{{mergeHintMeta}}</view>
+      <view wx:if="{{showMergeName}}" class="merge-name-row">
+        <text class="merge-name-label muted">建议名称</text>
+        <input class="merge-name-input" value="{{mergeNameInput}}" bindinput="onMergeNameInput" placeholder="合并方案名称" />
+      </view>
+      <view class="merge-hint-subs muted" wx:if="{{mergeHintSubs}}">{{mergeHintSubs}}</view>
+    </view>
+
+    <view class="selection-bar card">
+      <view class="selection-summary muted">
+        已选 {{selectedCount}} 个方案，总价：<text class="price-grand">{{selectedTotalText}}</text>
+      </view>
+      <view class="selection-actions">
+        <button class="btn-ghost action-btn" bindtap="onMergeProjects" disabled="{{!canMerge}}">{{mergeBtnLabel}}</button>
+        <button class="btn-ghost action-btn danger" bindtap="onDeleteSelected" disabled="{{selectedCount === 0}}">删除</button>
+      </view>
+    </view>
+
+    <view class="card favorites-card">
+      <view class="card-header" bindtap="onToggleFavorites">
+        <text class="card-header-title">我的收藏</text>
+        <text class="card-header-more muted">{{favoritesExpanded ? '收起' : '展开'}}</text>
+      </view>
+      <view wx:if="{{favoritesExpanded}}">
+        <view class="favorites-grid" wx:if="{{favoriteProducts.length}}">
+          <view class="favorite-item" wx:for="{{favoriteProducts}}" wx:key="id" data-id="{{item.id}}" bindtap="onFavoriteTap">
+            <image wx:if="{{item.image}}" class="fav-img" src="{{item.image}}" mode="aspectFill" />
+            <view wx:else class="fav-img fav-img-ph">{{item.emoji}}</view>
+            <view class="fav-info">
+              <view class="fav-name">{{item.name}}</view>
+              <view class="fav-price">{{item.priceText}}</view>
+            </view>
+          </view>
+        </view>
+        <view wx:else class="favorites-empty muted">在选品页点心形收藏产品</view>
+      </view>
+    </view>
+
+    <view class="bind-toggle muted" bindtap="onToggleBind">{{showBind ? '收起' : '有销售口令？点此绑定'}}</view>
+    <view class="card bind-card" wx:if="{{showBind}}">
+      <input class="token-input" placeholder="粘贴链接或输入口令" value="{{tokenInput}}" bindinput="onTokenInput" />
+      <button class="btn-ghost bind-btn" bindtap="onBindToken">打开销售项目</button>
+    </view>
+  </block>
+</view>

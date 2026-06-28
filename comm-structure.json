@@ -11,18 +11,18 @@
     {
       "id": "client",
       "type": "summary",
-      "title": "客户沟通总结",
+      "title": "沟通内容",
       "date": "2026-07-14",
       "preview": "希望温暖明亮、浅色系沙发，注重耐用性，预算控制在 ¥2 万以内…",
-      "detailTitle": "客户沟通记录详情"
+      "detailTitle": "沟通内容详情"
     },
     {
       "id": "images",
       "type": "images",
-      "title": "客户上传图片",
+      "title": "沟通图片",
       "date": "2026-07-14",
       "preview": "共 3 张客厅参考图",
-      "detailTitle": "客户上传图片详情",
+      "detailTitle": "沟通图片详情",
       "images": [
         {
           "url": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=96&h=96&fit=crop",
@@ -41,17 +41,17 @@
     {
       "id": "designer",
       "type": "summary",
-      "title": "设计师方案总结",
+      "title": "方案版本",
       "date": "2026-07-13",
       "preview": "方案 V1 · 现代简约客厅布局，推荐 3 款沙发与 2 款茶几组合",
-      "detailTitle": "设计师方案详情"
+      "detailTitle": "方案版本详情"
     }
   ],
   "pdfExports": [
     {
       "id": "comm",
       "label": "沟通记录",
-      "sub": "客户总结 · 上传图片 · 方案摘要"
+      "sub": "沟通内容 · 沟通图片 · 方案版本"
     },
     {
       "id": "products",

@@ -1,0 +1,9 @@
+{
+  "name": "analyzeReference",
+  "version": "1.0.0",
+  "description": "AI 分析客户参考图",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

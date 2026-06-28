@@ -1,0 +1,18 @@
+<view class="page" wx:if="{{caseItem}}">
+  <image
+    wx:if="{{caseItem.cover}}"
+    class="cover"
+    src="{{caseItem.cover}}"
+    mode="aspectFill"
+  />
+  <view wx:else class="cover-placeholder">{{caseItem.projectType}}</view>
+  <view class="card body">
+    <view class="badge">{{caseItem.projectType}} · {{caseItem.status}}</view>
+    <view class="hero-title">{{caseItem.title}}</view>
+    <view class="muted">{{caseItem.summary}}</view>
+    <view class="tags">
+      <text class="tag" wx:for="{{caseItem.highlights}}" wx:key="*this">{{item}}</text>
+    </view>
+    <button class="btn-primary action-btn" bindtap="goShop">进入相关选品</button>
+  </view>
+</view>
