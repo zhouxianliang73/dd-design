@@ -1,0 +1,39 @@
+version: 1
+root: D:/dd-cursor/scheme-center
+
+roles:
+  client_signals:
+    - 尺寸
+    - 户型
+    - 参考
+    - 预算
+    - 风格
+  team_signals:
+    - 方案
+    - 报价
+    - quotation
+    - 效果图
+    - 深化
+
+quote_keywords:
+  - 报价
+  - quotation
+  - quote
+  - price
+  - 价目
+  - 清单
+
+channels:
+  whatsapp:
+    enabled: true
+    groups:
+      - match: AliReza
+        project_slug: alireza-entry-cabinet
+  wechat:
+    enabled: true
+    account: zxl13823197801
+    groups:
+      - match: 顺怡发遮阳伞
+        project_slug: outdoor-shade-umbrella
+        supplier: 佛山顺怡发
+        category: shade
