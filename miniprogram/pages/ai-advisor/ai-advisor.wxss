@@ -155,6 +155,20 @@
 .submit-btn {
   width: 100%;
   margin-top: 8rpx;
+  padding: 22rpx 28rpx;
+  text-align: center;
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #374151;
+  background: transparent;
+  border: 1rpx solid #d1d5db;
+  border-radius: 16rpx;
+  box-sizing: border-box;
+}
+
+.submit-btn.is-disabled {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .ai-banner {

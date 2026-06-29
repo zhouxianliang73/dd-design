@@ -11,7 +11,6 @@
 
   <view class="ai-entry card" bindtap="goAiAdvisor">
     <view class="ai-entry-row">
-      <view class="ai-icon">✎</view>
       <view class="ai-entry-body">
         <view class="ai-entry-title">告诉我你的想法</view>
         <view class="muted">文字描述 · 参考图片 · 提交后 AI 推荐相似款</view>

@@ -513,6 +513,25 @@ function isLineRemoved(removedIds, lineId) {
   return removedIds.indexOf(lineId) >= 0;
 }
 
+function applyLineQtyOverrides(lines, overrides) {
+  return (lines || []).map(function (line) {
+    var qty =
+      overrides && overrides[line.lineId] != null ? overrides[line.lineId] : line.qty || 1;
+    return decorateProductLine(Object.assign({}, line, { qty: qty }), line.lineId);
+  });
+}
+
+function refreshCategoriesWithOverrides(categories, overrides) {
+  if (!categories) return null;
+  return categories.map(function (cat) {
+    var products = applyLineQtyOverrides(cat.products, overrides);
+    return Object.assign({}, cat, {
+      products: products,
+      subtotalText: formatPrice(sumCategoryProducts(products))
+    });
+  });
+}
+
 function buildKitchenQuoteCategories(project) {
   var removed = project && project.removedQuoteLineIds ? project.removedQuoteLineIds : [];
   return KITCHEN_SECTION_DEFS.map(function (sec) {
@@ -672,14 +691,18 @@ function attachProjectContent(project, index, clientId) {
   var isDemo = String(project.token || '').indexOf('demo-') === 0;
   var isKitchen = isKitchenProject(project);
   var removedIds = project.removedQuoteLineIds || [];
+  var qtyOverrides = project.quoteQtyOverrides || {};
   var quoteCategories = isKitchen ? buildKitchenQuoteCategories(project) : null;
+  if (quoteCategories) {
+    quoteCategories = refreshCategoriesWithOverrides(quoteCategories, qtyOverrides);
+  }
   var products = productsFromSelection(project.selection);
   if (!products.length && !quoteCategories) {
     products = (DEMO_PRODUCTS[index % DEMO_PRODUCTS.length] || DEMO_PRODUCTS[0]).map(function (line, idx) {
       return decorateProductLine(line, 'demo-' + index + '-' + idx);
     });
   }
-  products = filterRemovedProducts(products, removedIds);
+  products = applyLineQtyOverrides(filterRemovedProducts(products, removedIds), qtyOverrides);
 
   var comm;
   if (isKitchen) {
@@ -1060,6 +1083,41 @@ function removeQuoteLine(projects, projectId, lineId) {
   return next;
 }
 
+function setQuoteLineQty(projects, projectId, lineId, qty) {
+  if (!lineId) return projects;
+  var safeQty = Math.max(1, Number(qty) || 1);
+  var next = mapProjectsDeep(projects, function (p) {
+    if (p.id !== projectId) return p;
+    var overrides = Object.assign({}, p.quoteQtyOverrides || {});
+    overrides[lineId] = safeQty;
+    return Object.assign({}, p, { quoteQtyOverrides: overrides });
+  });
+  next = next.map(function (p, index) {
+    var enriched = enrichProject(
+      Object.assign({}, p, { selected: p.selected, expanded: p.expanded }),
+      index,
+      auth.getCachedClientId() || ''
+    );
+    if (enriched.children && enriched.children.length) {
+      enriched.children = enriched.children.map(function (child, childIndex) {
+        return enrichProject(
+          Object.assign({}, child, { selected: child.selected, expanded: child.expanded }),
+          childIndex,
+          auth.getCachedClientId() || ''
+        );
+      });
+    }
+    return enriched;
+  });
+  writeLayout(next);
+  return next;
+}
+
+function changeQuoteLineQty(projects, projectId, lineId, delta, currentQty) {
+  var base = Math.max(1, Number(currentQty) || 1);
+  return setQuoteLineQty(projects, projectId, lineId, base + (Number(delta) || 0));
+}
+
 function deleteSelected(projects) {
   var next = projects.filter(function (p) {
     return !p.selected;
@@ -1122,6 +1180,8 @@ module.exports = {
   mergeSelected,
   deleteSelected,
   removeQuoteLine,
+  setQuoteLineQty,
+  changeQuoteLineQty,
   confirmScheme,
   resetLayout,
   suggestMergedName,

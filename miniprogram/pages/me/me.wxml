@@ -23,7 +23,7 @@
     <scroll-view class="coupon-scroll" scroll-x enable-flex>
       <view class="coupon-row">
         <view
-          class="coupon coupon-{{item.accent}}"
+          class="coupon"
           wx:for="{{benefits}}"
           wx:key="title"
         >

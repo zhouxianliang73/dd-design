@@ -1,16 +1,81 @@
 <view class="page shop-page">
-  <view class="search-bar">
-    <input
-      class="search-input"
-      placeholder="搜索产品名称"
-      value="{{keyword}}"
-      bindinput="onSearchInput"
-      confirm-type="search"
-      bindconfirm="onSearchConfirm"
-    />
-    <button class="search-btn-capsule" bindtap="onSearchConfirm">搜索</button>
+  <view class="search-panel">
+    <view class="search-bar">
+      <input
+        class="search-input"
+        placeholder="搜索产品名称、材质…"
+        value="{{keyword}}"
+        bindinput="onSearchInput"
+        confirm-type="search"
+        bindconfirm="onSearchConfirm"
+      />
+      <view class="search-btn-capsule" bindtap="onSearchConfirm" aria-role="button" aria-label="搜索">
+        <text class="search-btn-icon">⌕</text>
+      </view>
+    </view>
+
+    <scroll-view class="filter-scroll" scroll-x enable-flex show-scrollbar="{{false}}">
+      <view class="filter-row">
+        <picker
+          mode="selector"
+          range="{{spaceOptions}}"
+          range-key="label"
+          value="{{spaceIndex}}"
+          data-field="space"
+          bindchange="onFilterChange"
+        >
+          <view class="filter-pill {{filters.space ? 'is-active' : ''}}">
+            <text>{{spaceLabel}}</text>
+            <text class="filter-chevron">▾</text>
+          </view>
+        </picker>
+        <picker
+          mode="selector"
+          range="{{subOptions}}"
+          range-key="label"
+          value="{{subIndex}}"
+          data-field="sub"
+          bindchange="onFilterChange"
+        >
+          <view class="filter-pill {{filters.sub ? 'is-active' : ''}}">
+            <text>{{subLabel}}</text>
+            <text class="filter-chevron">▾</text>
+          </view>
+        </picker>
+        <picker
+          mode="selector"
+          range="{{styleOptions}}"
+          range-key="label"
+          value="{{styleIndex}}"
+          data-field="style"
+          bindchange="onFilterChange"
+        >
+          <view class="filter-pill {{filters.style ? 'is-active' : ''}}">
+            <text>{{styleLabel}}</text>
+            <text class="filter-chevron">▾</text>
+          </view>
+        </picker>
+        <picker
+          mode="selector"
+          range="{{colorOptions}}"
+          range-key="label"
+          value="{{colorIndex}}"
+          data-field="color"
+          bindchange="onFilterChange"
+        >
+          <view class="filter-pill {{filters.color ? 'is-active' : ''}}">
+            <text>{{colorLabel}}</text>
+            <text class="filter-chevron">▾</text>
+          </view>
+        </picker>
+      </view>
+    </scroll-view>
+
+    <view class="search-meta" wx:if="{{keyword || filters.space || filters.sub || filters.style || filters.color}}">
+      <text class="result-count muted">共 {{total}} 件</text>
+      <text class="clear-link" bindtap="onResetFilters">重置筛选</text>
+    </view>
   </view>
-  <view wx:if="{{keyword}}" class="clear-link muted" bindtap="onClearSearch">清除</view>
 
   <view class="product-grid" wx:if="{{products.length}}">
     <view

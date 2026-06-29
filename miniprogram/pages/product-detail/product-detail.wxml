@@ -12,7 +12,7 @@
     </view>
   </view>
   <view class="card body">
-    <view class="hero-title">{{product.emoji}} {{product.name}}</view>
+    <view class="hero-title">{{product.name}}</view>
     <view class="price">{{product.priceText}}</view>
     <view class="spec-grid">
       <view class="spec-item"><text class="muted">空间</text><text>{{product.space}}</text></view>
@@ -22,7 +22,7 @@
       <view class="spec-item"><text class="muted">材质</text><text>{{product.material}}</text></view>
       <view class="spec-item"><text class="muted">颜色</text><text>{{product.color}}</text></view>
     </view>
-    <button class="btn-primary action-btn" bindtap="goProject">加入我的方案</button>
+    <view class="action-btn" bindtap="goProject" aria-role="button" aria-label="加入我的方案">加入我的方案</view>
     <view class="hint muted">收藏产品后可在选品页查看；提交设计需求后清单会出现在「方案」Tab。</view>
   </view>
 </view>

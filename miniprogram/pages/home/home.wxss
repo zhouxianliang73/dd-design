@@ -9,6 +9,12 @@
   margin: 0;
 }
 
+.hero-actions .btn-primary {
+  background: #e5e7eb;
+  color: #374151;
+  font-weight: 500;
+}
+
 .ai-entry {
   margin-bottom: 24rpx;
 }
@@ -20,25 +26,12 @@
 .ai-entry-row {
   display: flex;
   align-items: center;
-  gap: 20rpx;
-}
-
-.ai-icon {
-  width: 72rpx;
-  height: 72rpx;
-  border-radius: 16rpx;
-  background: linear-gradient(135deg, #111827, #374151);
-  color: #fff;
-  font-size: 32rpx;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+  gap: 16rpx;
 }
 
 .ai-entry-body {
   flex: 1;
+  min-width: 0;
 }
 
 .ai-entry-title {

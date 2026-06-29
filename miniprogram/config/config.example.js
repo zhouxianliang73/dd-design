@@ -1,6 +1,6 @@
 module.exports = {
   brand: 'DD Design Center',
-  siteUrl: 'https://dddesigncenter.com',
+  siteUrl: 'https://dd-design.com',
   supabase: {
     url: 'https://YOUR_PROJECT.supabase.co',
     anonKey: 'YOUR_SUPABASE_ANON_KEY'

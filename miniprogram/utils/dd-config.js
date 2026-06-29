@@ -7,8 +7,8 @@ try {
 }
 
 const DEFAULTS = {
-  brand: 'DD Design Center',
-  siteUrl: 'https://dddesigncenter.com',
+  brand: 'DD design',
+  siteUrl: 'https://dd-design.com',
   defaultChannel: 'custom',
   supabase: { url: '', anonKey: '' }
 };

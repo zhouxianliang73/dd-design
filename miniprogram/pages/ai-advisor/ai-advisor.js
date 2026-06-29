@@ -82,6 +82,7 @@ Page({
 
   onSubmit: function () {
     var that = this;
+    if (that.data.analyzing) return;
     var note = (that.data.userNote || '').trim();
     var images = that.data.imagePaths || [];
 
@@ -108,7 +109,7 @@ Page({
 
     analyzePromise
       .then(function (result) {
-        var modeLabel = '智能匹配';
+        var modeLabel = '智能推荐';
         if (result.mode === 'openai_vision') modeLabel = 'AI 识图';
         else if (result.mode === 'cloud' || result.mode === 'cloud_local') modeLabel = '云分析';
 

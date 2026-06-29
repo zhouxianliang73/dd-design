@@ -77,7 +77,6 @@ Page({
   },
 
   onDesignerTap: function () {
-    wx.showToast({ title: '提交需求后将为您匹配设计师', icon: 'none' });
     wx.navigateTo({ url: '/pages/ai-advisor/ai-advisor' });
   }
 });

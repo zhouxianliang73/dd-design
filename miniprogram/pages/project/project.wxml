@@ -1,3 +1,53 @@
+<template name="quoteLineRow">
+  <view class="quote-row">
+    <view class="col-name">
+      <view class="line-thumb-wrap" wx:if="{{line.image}}">
+        <image class="line-thumb" src="{{line.image}}" mode="aspectFill" />
+      </view>
+      <view class="line-thumb-wrap line-thumb-ph" wx:else>
+        <text class="line-emoji-ph">{{line.emoji}}</text>
+      </view>
+      <view class="line-text">
+        <text class="line-name">{{line.emoji}} {{line.name}}</text>
+        <text class="line-spec muted">{{line.spec}} · {{line.material}}</text>
+      </view>
+    </view>
+    <view class="col-qty">
+      <view wx:if="{{owner.canEditQuote}}" class="qty-stepper">
+        <text
+          class="qty-btn"
+          catchtap="onQuoteQtyChange"
+          data-project-id="{{owner.id}}"
+          data-line-id="{{line.lineId}}"
+          data-qty="{{line.qty}}"
+          data-delta="-1"
+        >−</text>
+        <text class="qty-val">{{line.qty}}{{line.unit}}</text>
+        <text
+          class="qty-btn"
+          catchtap="onQuoteQtyChange"
+          data-project-id="{{owner.id}}"
+          data-line-id="{{line.lineId}}"
+          data-qty="{{line.qty}}"
+          data-delta="1"
+        >+</text>
+      </view>
+      <text wx:else class="qty-readonly">{{line.qty}}{{line.unit}}</text>
+    </view>
+    <text class="col-price">{{line.lineTotalText}}</text>
+    <view class="col-action">
+      <text
+        wx:if="{{owner.canEditQuote}}"
+        class="line-remove-inline"
+        catchtap="onDeleteQuoteLine"
+        data-project-id="{{owner.id}}"
+        data-line-id="{{line.lineId}}"
+        data-line-name="{{line.name}}"
+      >×</text>
+    </view>
+  </view>
+</template>
+
 <template name="projectBody">
   <view class="shell-address muted" wx:if="{{item.address}}">{{item.address}}</view>
 
@@ -21,39 +71,11 @@
           <text class="col-name">产品</text>
           <text class="col-qty">数量</text>
           <text class="col-price">小计</text>
+          <text class="col-action"></text>
         </view>
-        <view class="quote-row" wx:for="{{cat.products}}" wx:key="lineId" wx:for-item="line">
-          <view class="col-name">
-            <view class="line-thumb-wrap" wx:if="{{line.image}}">
-              <image class="line-thumb" src="{{line.image}}" mode="aspectFill" />
-              <view
-                wx:if="{{item.canEditQuote}}"
-                class="line-remove"
-                catchtap="onDeleteQuoteLine"
-                data-project-id="{{item.id}}"
-                data-line-id="{{line.lineId}}"
-                data-line-name="{{line.name}}"
-              >×</view>
-            </view>
-            <view class="line-thumb-wrap line-thumb-ph" wx:else>
-              <text class="line-emoji-ph">{{line.emoji}}</text>
-              <view
-                wx:if="{{item.canEditQuote}}"
-                class="line-remove"
-                catchtap="onDeleteQuoteLine"
-                data-project-id="{{item.id}}"
-                data-line-id="{{line.lineId}}"
-                data-line-name="{{line.name}}"
-              >×</view>
-            </view>
-            <view class="line-text">
-              <text class="line-name">{{line.emoji}} {{line.name}}</text>
-              <text class="line-spec muted">{{line.spec}} · {{line.material}}</text>
-            </view>
-          </view>
-          <text class="col-qty">{{line.qty}}{{line.unit}}</text>
-          <text class="col-price">{{line.lineTotalText}}</text>
-        </view>
+        <block wx:for="{{cat.products}}" wx:key="lineId" wx:for-item="line">
+          <template is="quoteLineRow" data="{{line: line, owner: item}}" />
+        </block>
         <view class="quote-cat-total muted">本类合计 {{cat.subtotalText}}</view>
       </view>
     </view>
@@ -69,39 +91,11 @@
         <text class="col-name">产品</text>
         <text class="col-qty">数量</text>
         <text class="col-price">小计</text>
+        <text class="col-action"></text>
       </view>
-      <view class="quote-row" wx:for="{{item.products}}" wx:key="lineId" wx:for-item="line">
-        <view class="col-name">
-          <view class="line-thumb-wrap" wx:if="{{line.image}}">
-            <image class="line-thumb" src="{{line.image}}" mode="aspectFill" />
-            <view
-              wx:if="{{item.canEditQuote}}"
-              class="line-remove"
-              catchtap="onDeleteQuoteLine"
-              data-project-id="{{item.id}}"
-              data-line-id="{{line.lineId}}"
-              data-line-name="{{line.name}}"
-            >×</view>
-          </view>
-          <view class="line-thumb-wrap line-thumb-ph" wx:else>
-            <text class="line-emoji-ph">{{line.emoji}}</text>
-            <view
-              wx:if="{{item.canEditQuote}}"
-              class="line-remove"
-              catchtap="onDeleteQuoteLine"
-              data-project-id="{{item.id}}"
-              data-line-id="{{line.lineId}}"
-              data-line-name="{{line.name}}"
-            >×</view>
-          </view>
-          <view class="line-text">
-            <text class="line-name">{{line.emoji}} {{line.name}}</text>
-            <text class="line-spec muted">{{line.spec}} · {{line.material}}</text>
-          </view>
-        </view>
-        <text class="col-qty">{{line.qty}}{{line.unit}}</text>
-        <text class="col-price">{{line.lineTotalText}}</text>
-      </view>
+      <block wx:for="{{item.products}}" wx:key="lineId" wx:for-item="line">
+        <template is="quoteLineRow" data="{{line: line, owner: item}}" />
+      </block>
       <view class="quote-total">清单合计 {{item.priceText}}</view>
     </view>
   </view>
@@ -294,11 +288,13 @@
   <block wx:else>
     <view class="projects-hd card">
       <view class="projects-hd-left">
-        <view class="projects-hd-title">{{pageTitle}}</view>
+        <text class="projects-hd-brand">{{pageTitle}}</text>
         <text class="member-badge">会员</text>
       </view>
       <view class="projects-hd-actions">
-        <button class="btn-capsule btn-capsule-ghost projects-new-btn" bindtap="goCreateProject">新建</button>
+        <view class="projects-new-btn" bindtap="goCreateProject" aria-role="button" aria-label="新建">
+          <text class="projects-new-icon">＋</text>
+        </view>
         <view class="view-toggle-btn" bindtap="onToggleViewMode">
           <text>{{listViewMode === 'list' ? '▦' : '☰'}}</text>
         </view>

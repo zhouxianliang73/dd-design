@@ -62,9 +62,14 @@
       </picker>
     </view>
 
-    <button class="btn-primary submit-btn" bindtap="onSubmit" loading="{{analyzing}}" disabled="{{analyzing}}">
-      {{analyzing ? '正在匹配设计师…' : '提交项目，匹配设计师'}}
-    </button>
+    <view
+      class="submit-btn {{analyzing ? 'is-disabled' : ''}}"
+      bindtap="onSubmit"
+      aria-role="button"
+      aria-label="提交项目"
+    >
+      <text>{{analyzing ? '正在提交…' : '提交项目'}}</text>
+    </view>
   </view>
 
   <block wx:if="{{hasResult}}">
@@ -108,7 +113,7 @@
       </view>
     </view>
 
-    <view class="footer-hint muted">已为你推荐相似产品，设计师将据此跟进您的项目</view>
+    <view class="footer-hint muted">已为你推荐相似产品，可在「方案」页查看项目进度</view>
     <button wx:if="{{projectCreated}}" class="btn-primary more-btn" bindtap="goProject">查看我的方案</button>
     <button class="btn-ghost more-btn" bindtap="goShop">进入选品中心</button>
   </block>

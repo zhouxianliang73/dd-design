@@ -1,3 +1,12 @@
+page {
+  background: #f9fafb;
+}
+
+.page {
+  min-height: 100vh;
+  background: #f9fafb;
+}
+
 .profile-card {
   margin-bottom: 20rpx;
 }
@@ -12,8 +21,8 @@
   width: 112rpx;
   height: 112rpx;
   border-radius: 50%;
-  background: linear-gradient(135deg, #111827, #374151);
-  color: #fff;
+  background: #e5e7eb;
+  color: #6b7280;
   font-size: 40rpx;
   font-weight: 700;
   display: flex;
@@ -86,6 +95,8 @@
 
 .benefits-card {
   margin-bottom: 20rpx;
+  background: #f3f4f6;
+  box-shadow: none;
 }
 
 .coupon-scroll {
@@ -101,22 +112,11 @@
 .coupon {
   width: 280rpx;
   flex-shrink: 0;
-  background: #f9fafb;
+  background: #ffffff;
   border-radius: 16rpx;
   padding: 20rpx;
-  border-left: 6rpx solid #111827;
-}
-
-.coupon-gold {
-  border-left-color: #b45309;
-}
-
-.coupon-red {
-  border-left-color: #dc2626;
-}
-
-.coupon-blue {
-  border-left-color: #2563eb;
+  border: 1rpx solid #e5e7eb;
+  box-shadow: 0 4rpx 12rpx rgba(107, 114, 128, 0.08);
 }
 
 .coupon-title {
@@ -124,11 +124,13 @@
   font-size: 28rpx;
   font-weight: 600;
   margin-bottom: 8rpx;
+  color: #374151;
 }
 
 .coupon-sub {
   font-size: 22rpx;
   line-height: 1.4;
+  color: #9ca3af;
 }
 
 .ongoing-card {

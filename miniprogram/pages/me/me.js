@@ -7,19 +7,16 @@ const { getConfig } = require('../../utils/dd-config');
 
 var BENEFITS = [
   {
-    title: '🎯 设计费 8 折',
-    sub: '已完成 2 个项目解锁 · 长期有效',
-    accent: 'gold'
+    title: '设计费 8 折',
+    sub: '已完成 2 个项目解锁 · 长期有效'
   },
   {
-    title: '🧧 ¥500 优惠券',
-    sub: '满 ¥20,000 可用 · 7 天后到期',
-    accent: 'red'
+    title: '¥500 优惠券',
+    sub: '满 ¥20,000 可用 · 7 天后到期'
   },
   {
-    title: '🚚 免运费 1 次',
-    sub: '全国范围 · 有效期 30 天',
-    accent: 'blue'
+    title: '免运费 1 次',
+    sub: '全国范围 · 有效期 30 天'
   }
 ];
 

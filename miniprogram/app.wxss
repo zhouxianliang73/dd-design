@@ -7,7 +7,7 @@ page {
 
 .page {
   min-height: 100vh;
-  padding: 24rpx 24rpx calc(120rpx + env(safe-area-inset-bottom));
+  padding: 28rpx 28rpx calc(120rpx + env(safe-area-inset-bottom));
   box-sizing: border-box;
 }
 
@@ -140,9 +140,9 @@ button::after {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 8rpx;
-  margin-top: 6rpx;
-  padding: 0 4rpx;
+  gap: 16rpx;
+  margin-top: 12rpx;
+  padding: 8rpx 8rpx 12rpx;
 }
 
 .product-name {

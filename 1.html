@@ -1063,9 +1063,22 @@
         }
         .filter-bar .shop-search-btn {
             flex-shrink: 0;
-            min-height: 36px;
-            padding: 6px 14px;
+            min-height: 32px;
+            min-width: 32px;
+            padding: 4px 10px;
             white-space: nowrap;
+            background: transparent;
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-full);
+            color: var(--text-muted);
+            font-size: var(--fs-sm);
+            cursor: pointer;
+            font-family: var(--font);
+            box-shadow: none;
+        }
+        .filter-bar .shop-search-btn:hover {
+            background: var(--surface-inset);
+            color: var(--text-strong);
         }
         .filter-select-wrap {
             position: relative;
@@ -5273,11 +5286,24 @@
             .navbar .logo span {
                 display: none;
             }
+            .navbar .actions {
+                gap: 14px;
+            }
             .navbar .actions .search-btn span {
                 display: none;
             }
             .navbar .actions .search-btn {
-                padding: 6px 12px;
+                padding: 8px 10px;
+                min-width: 38px;
+                justify-content: center;
+            }
+            .navbar .actions .notif {
+                width: 36px;
+                height: 36px;
+            }
+            .navbar .actions .avatar {
+                width: 36px;
+                height: 36px;
             }
             .project-table {
                 font-size: 12px;
@@ -5578,7 +5604,7 @@
                 <div class="filter-collapsed-row">
                     <span class="filter-collapsed-label"><i class="fas fa-sliders-h"></i> 筛选</span>
                     <div class="filter-result-tags" id="activeFilters"></div>
-                    <button class="btn btn-primary shop-search-btn" id="shopSearchBtn" type="button" aria-label="搜索灵感">
+                    <button class="shop-search-btn" id="shopSearchBtn" type="button" aria-label="搜索">
                         <i class="fas fa-search"></i>
                     </button>
                 </div>
@@ -6565,7 +6591,7 @@
             marketPreferences.color.forEach(v => tags.push(`偏好: ${v}`));
 
             if (tags.length === 0) {
-                activeFilters.innerHTML = '<span class="active-filters-empty">悬停展开筛选 · 未应用条件</span>';
+                activeFilters.innerHTML = '<span class="active-filters-empty">点击展开筛选 · 未应用条件</span>';
             } else {
                 activeFilters.innerHTML = tags.map(t => `<span class="active-filter-tag">${t}</span>`).join('');
             }

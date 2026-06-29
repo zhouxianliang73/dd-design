@@ -1,7 +1,7 @@
 const channelsData = {
   defaultChannel: 'custom',
   brand: {
-    name: 'DD Design Center',
+    name: 'DD design',
     subtitle: '选品 · 方案 · 跟踪'
   },
   channels: {
@@ -65,7 +65,7 @@ function getDefaultChannelId() {
 function getBrandMeta() {
   const brandNode = channelsData.brand || {};
   return {
-    brand: showcaseData.brand || brandNode.name || 'DD Design Center',
+    brand: showcaseData.brand || brandNode.name || 'DD design',
     subtitle: brandNode.subtitle || '选品 · 方案 · 跟踪'
   };
 }

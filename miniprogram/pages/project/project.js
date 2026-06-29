@@ -1,3 +1,4 @@
+const channelService = require('../../utils/channel-service');
 const ddApi = require('../../utils/dd-api');
 const clientProject = require('../../utils/client-project-service');
 const catalog = require('../../utils/catalog-service');
@@ -122,8 +123,8 @@ Page({
           that.setData({
             loading: false,
             favoriteProducts,
-            pageTitle: config.brand || 'DD Design Center',
-            brand: config.brand,
+            pageTitle: channelService.getBrandMeta().brand || 'DD design',
+            brand: channelService.getBrandMeta().brand || 'DD design',
             error: '',
             mergeNameInput: ''
           });
@@ -139,7 +140,7 @@ Page({
           that.setData({
             loading: false,
             favoriteProducts,
-            pageTitle: config.brand || 'DD Design Center',
+            pageTitle: channelService.getBrandMeta().brand || 'DD design',
             error: ''
           });
           that.syncSelection(displayProjects);
@@ -249,6 +250,23 @@ Page({
         wx.showToast({ title: '已移除', icon: 'none' });
       }
     });
+  },
+
+  onQuoteQtyChange(e) {
+    const projectId = e.currentTarget.dataset.projectId;
+    const lineId = e.currentTarget.dataset.lineId;
+    const currentQty = e.currentTarget.dataset.qty;
+    const delta = Number(e.currentTarget.dataset.delta) || 0;
+    const nextQty = Math.max(1, (Number(currentQty) || 1) + delta);
+    if (nextQty === Number(currentQty)) return;
+    const projects = projectDisplay.changeQuoteLineQty(
+      this.data.displayProjects,
+      projectId,
+      lineId,
+      delta,
+      currentQty
+    );
+    this.syncSelection(projects);
   },
 
   onConfirmScheme(e) {
