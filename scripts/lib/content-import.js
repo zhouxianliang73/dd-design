@@ -1,15 +1,18 @@
 /**
- * 从标准 Excel 导入图片与文本，更新 JSON 并复制资源到 miniprogram/assets
+ * 从标准 Excel 导入 · 三表：设计师 / 商品清单 / 案例封面
+ * 外网文件先按 scripts/lib/catalog-schema.js 列结构清洗，再写入 catalog.json
  */
 const fs = require('fs');
 const path = require('path');
 const XLSX = require('xlsx');
 const { syncMiniprogramData } = require('./sync-miniprogram');
+const { normalizeProductRow, mergeProduct } = require('./catalog-normalize');
 
 const SHEET_TYPES = {
   '设计师': 'designer',
+  '商品清单': 'product',
   '商品图片': 'product',
-  '案例封面': 'case'
+  '案例封面': 'case',
 };
 
 const TYPE_META = {
@@ -18,22 +21,15 @@ const TYPE_META = {
     listKey: 'designers',
     assetDir: 'designers',
     imageField: 'photo',
-    textFields: { '姓名': 'name', '标签': 'tag' }
-  },
-  product: {
-    jsonFile: 'catalog.json',
-    listKey: 'products',
-    assetDir: 'products',
-    imageField: 'image',
-    textFields: {}
+    textFields: { '姓名': 'name', '标签': 'tag' },
   },
   case: {
     jsonFile: 'showcase.json',
     listKey: 'cases',
     assetDir: 'cases',
     imageField: 'cover',
-    textFields: {}
-  }
+    textFields: {},
+  },
 };
 
 function cell(row, keys) {
@@ -49,11 +45,7 @@ function isUrl(value) {
 }
 
 function findSourceImage(imagesDir, value) {
-  const candidates = [
-    value,
-    path.join('images', value),
-    path.basename(value)
-  ];
+  const candidates = [value, path.join('images', value), path.basename(value)];
   for (let i = 0; i < candidates.length; i++) {
     const p = path.join(imagesDir, candidates[i]);
     if (fs.existsSync(p) && fs.statSync(p).isFile()) return p;
@@ -74,10 +66,28 @@ function copyImageToAssets(sourcePath, assetDir, id, projectRoot) {
   return '/assets/' + assetDir + '/' + filename;
 }
 
+function isDispimg(value) {
+  return /=DISPIMG/i.test(String(value || ''));
+}
+
+function normalizeImageInput(value) {
+  const trimmed = String(value || '').trim();
+  if (!trimmed || isDispimg(trimmed)) return trimmed;
+  if (isUrl(trimmed)) return trimmed;
+  if (/^photo-\d+/i.test(trimmed)) {
+    return 'https://images.unsplash.com/' + trimmed.replace(/^\/+/, '');
+  }
+  if (trimmed.indexOf('images.unsplash.com') >= 0) {
+    return trimmed.indexOf('http') === 0 ? trimmed : 'https://' + trimmed.replace(/^\/+/, '');
+  }
+  return trimmed;
+}
+
 function resolveImageValue(value, imagesDir, assetDir, id, projectRoot) {
   if (!value) return null;
-  const trimmed = String(value).trim();
+  const trimmed = normalizeImageInput(value);
   if (!trimmed) return null;
+  if (isDispimg(trimmed)) return null;
   if (isUrl(trimmed)) return trimmed;
 
   const sourcePath = findSourceImage(imagesDir, trimmed);
@@ -97,10 +107,7 @@ function writeJson(filePath, data) {
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2) + '\n', 'utf8');
 }
 
-function processSheet(sheetName, rows, imagesDir, projectRoot, log) {
-  const type = SHEET_TYPES[sheetName];
-  if (!type) return { skipped: true };
-
+function processSimpleSheet(sheetName, type, rows, imagesDir, projectRoot, log) {
   const meta = TYPE_META[type];
   const { filePath, data } = readJson(projectRoot, meta.jsonFile);
   const list = data[meta.listKey];
@@ -134,11 +141,19 @@ function processSheet(sheetName, rows, imagesDir, projectRoot, log) {
 
     const imageVal = cell(row, ['图片', '封面图', '封面', meta.imageField, 'image', 'photo', 'cover']);
     if (imageVal) {
-      const resolved = resolveImageValue(imageVal, imagesDir, meta.assetDir, id, projectRoot);
-      if (item[meta.imageField] !== resolved) {
-        item[meta.imageField] = resolved;
-        rowChanged = true;
-        log.push({ sheet: sheetName, id: id, image: resolved });
+      if (isDispimg(imageVal)) {
+        warnings.push(sheetName + ' 第 ' + (index + 2) + ' 行 ID「' + id + '」：图例为 Excel 嵌入图，请导出图片后重新导入');
+      } else {
+        try {
+          const resolved = resolveImageValue(imageVal, imagesDir, meta.assetDir, id, projectRoot);
+          if (resolved && item[meta.imageField] !== resolved) {
+            item[meta.imageField] = resolved;
+            rowChanged = true;
+            log.push({ sheet: sheetName, id: id, image: resolved });
+          }
+        } catch (err) {
+          warnings.push(sheetName + ' 第 ' + (index + 2) + ' 行 ID「' + id + '」：' + err.message);
+        }
       }
     }
 
@@ -146,7 +161,125 @@ function processSheet(sheetName, rows, imagesDir, projectRoot, log) {
   });
 
   writeJson(filePath, data);
-  return { updated, warnings };
+  return { updated, created: 0, warnings };
+}
+
+function isLegacyProductImageRow(row) {
+  const id = cell(row, ['ID', 'id']);
+  const image = cell(row, ['图片', 'image', '封面']);
+  const space = cell(row, ['空间', 'space']);
+  const name = cell(row, ['名称', 'name']);
+  return id && image && !space && !name;
+}
+
+function processProductSheet(sheetName, rows, imagesDir, projectRoot, log) {
+  const { filePath, data } = readJson(projectRoot, 'catalog.json');
+  const list = data.products;
+  if (!Array.isArray(list)) {
+    throw new Error('catalog.json 缺少 products 数组');
+  }
+
+  let updated = 0;
+  let created = 0;
+  const warnings = [];
+  const errors = [];
+
+  rows.forEach(function (row, index) {
+    const rowNum = index + 2;
+
+    if (isLegacyProductImageRow(row)) {
+      const id = cell(row, ['ID', 'id']);
+      const item = list.find(function (x) { return x.id === id; });
+      if (!item) {
+        warnings.push(sheetName + ' 第 ' + rowNum + ' 行：ID「' + id + '」不存在，已跳过');
+        return;
+      }
+      const imageVal = cell(row, ['图片', 'image']);
+      if (isDispimg(imageVal)) {
+        warnings.push(sheetName + ' 第 ' + rowNum + ' 行 ID「' + id + '」：图例为 Excel 嵌入图，请导出图片后重新导入');
+        return;
+      }
+      try {
+        const resolved = resolveImageValue(imageVal, imagesDir, 'products', id, projectRoot);
+        if (resolved && item.image !== resolved) {
+          item.image = resolved;
+          updated += 1;
+          log.push({ sheet: sheetName, id: id, image: resolved });
+        }
+      } catch (err) {
+        warnings.push(sheetName + ' 第 ' + rowNum + ' 行 ID「' + id + '」：' + err.message);
+      }
+      return;
+    }
+
+    const result = normalizeProductRow(row, rowNum);
+
+    warnings.push.apply(warnings, result.warnings);
+    if (result.errors.length) {
+      errors.push.apply(errors, result.errors);
+      return;
+    }
+    if (!result.product) return;
+
+    const incoming = result.product;
+    const imageRaw = incoming._imageRaw;
+    delete incoming._imageRaw;
+
+    let item = list.find(function (x) { return x.id === incoming.id; });
+    const isNew = !item;
+
+    if (isNew) {
+      item = incoming;
+      if (!item.unit) item.unit = '个';
+      if (!item.qty) item.qty = 1;
+      if (!item.coef) item.coef = 1;
+      if (item.price == null) item.price = 0;
+      if (item.unitPrice == null && item.price != null) item.unitPrice = item.price;
+      if (!item.image) item.image = '';
+      list.push(item);
+      created += 1;
+    } else {
+      const before = JSON.stringify(item);
+      item = mergeProduct(item, incoming);
+      if (JSON.stringify(item) !== before) {
+        updated += 1;
+      }
+    }
+
+    if (imageRaw) {
+      if (isDispimg(imageRaw)) {
+        warnings.push(sheetName + ' 第 ' + rowNum + ' 行 ID「' + incoming.id + '」：图例为 Excel 嵌入图，请导出图片后重新导入');
+      } else {
+        try {
+          const resolved = resolveImageValue(imageRaw, imagesDir, 'products', incoming.id, projectRoot);
+          if (resolved && item.image !== resolved) {
+            item.image = resolved;
+            log.push({ sheet: sheetName, id: incoming.id, image: resolved });
+          }
+        } catch (err) {
+          warnings.push(sheetName + ' 第 ' + rowNum + ' 行 ID「' + incoming.id + '」：' + err.message);
+        }
+      }
+    }
+  });
+
+  if (errors.length) {
+    throw new Error(errors.join('\n'));
+  }
+
+  writeJson(filePath, data);
+  return { updated, created, warnings };
+}
+
+function processSheet(sheetName, rows, imagesDir, projectRoot, log) {
+  const type = SHEET_TYPES[sheetName];
+  if (!type) return { skipped: true };
+
+  if (type === 'product') {
+    return processProductSheet(sheetName, rows, imagesDir, projectRoot, log);
+  }
+
+  return processSimpleSheet(sheetName, type, rows, imagesDir, projectRoot, log);
 }
 
 function importFromExcel(excelPath, imagesDir, options) {
@@ -167,7 +300,7 @@ function importFromExcel(excelPath, imagesDir, options) {
   const summary = {
     sheets: [],
     warnings: [],
-    log: log
+    log: log,
   };
 
   workbook.SheetNames.forEach(function (sheetName) {
@@ -177,12 +310,18 @@ function importFromExcel(excelPath, imagesDir, options) {
     const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
     if (!rows.length) return;
 
-  const result = processSheet(sheetName, rows, imagesDir, projectRoot, log);
+    const result = processSheet(sheetName, rows, imagesDir, projectRoot, log);
     if (result.skipped) {
-      summary.warnings.push('未识别的表「' + sheetName + '」，已跳过（支持：设计师 / 商品图片 / 案例封面）');
+      summary.warnings.push(
+        '未识别的表「' + sheetName + '」，已跳过（支持：设计师 / 商品清单 / 案例封面）'
+      );
       return;
     }
-    summary.sheets.push({ name: sheetName, updated: result.updated });
+    summary.sheets.push({
+      name: sheetName,
+      updated: result.updated,
+      created: result.created || 0,
+    });
     summary.warnings.push.apply(summary.warnings, result.warnings);
   });
 
@@ -197,5 +336,5 @@ function importFromExcel(excelPath, imagesDir, options) {
 module.exports = {
   importFromExcel,
   SHEET_TYPES,
-  TYPE_META
+  TYPE_META,
 };

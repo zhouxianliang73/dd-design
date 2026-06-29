@@ -15,8 +15,11 @@
     "minified": true,
     "compileHotReLoad": false,
     "useIsolateContext": true,
-    "useMultiFrameRuntime": true
+    "useMultiFrameRuntime": true,
+    "condition": true
   },
   "condition": {},
-  "cloudfunctionRoot": "cloudfunctions/"
+  "cloudfunctionRoot": "cloudfunctions/",
+  "simulatorPluginLibVersion": {},
+  "projectArchitecture": "multiPlatform"
 }

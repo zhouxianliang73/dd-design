@@ -269,6 +269,36 @@ Page({
     this.syncSelection(projects);
   },
 
+  onGoShopFromQuote(e) {
+    const projectId = e.currentTarget.dataset.projectId;
+    const section = e.currentTarget.dataset.section || 'products';
+    const label = e.currentTarget.dataset.label || '产品清单';
+    let projectName = '';
+    const projects = this.data.displayProjects;
+    for (let i = 0; i < projects.length; i += 1) {
+      const p = projects[i];
+      if (p.id === projectId) {
+        projectName = p.clientName;
+        break;
+      }
+      if (p.children && p.children.length) {
+        for (let j = 0; j < p.children.length; j += 1) {
+          if (p.children[j].id === projectId) {
+            projectName = p.children[j].clientName;
+            break;
+          }
+        }
+      }
+    }
+    projectDisplay.setShopPickContext({
+      projectId: projectId,
+      section: section,
+      label: label,
+      projectName: projectName
+    });
+    wx.switchTab({ url: '/pages/shop/shop' });
+  },
+
   onConfirmScheme(e) {
     const id = e.currentTarget.dataset.id;
     const name = e.currentTarget.dataset.name || '方案';

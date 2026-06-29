@@ -1,4 +1,16 @@
 <view class="page shop-page">
+  <view class="pick-banner card" wx:if="{{pickContext}}">
+    <view class="pick-banner-body">
+      <view class="pick-banner-title">正在为「{{pickContext.label}}」选品</view>
+      <view class="pick-banner-sub muted" wx:if="{{pickContext.projectName}}">{{pickContext.projectName}}</view>
+      <view class="pick-banner-hint muted">点击产品即可加入方案清单</view>
+    </view>
+    <view class="pick-banner-actions">
+      <text class="pick-banner-link" bindtap="onReturnProject">返回方案</text>
+      <text class="pick-banner-link muted" bindtap="onExitPickMode">取消</text>
+    </view>
+  </view>
+
   <view class="search-panel">
     <view class="search-bar">
       <input

@@ -1,5 +1,6 @@
 const catalog = require('../../utils/catalog-service');
 const favoriteService = require('../../utils/favorite-service');
+const projectDisplay = require('../../utils/project-display-service');
 
 function withAllOption(list, allLabel) {
   const items = (list || []).map(function (v) {
@@ -30,15 +31,22 @@ Page({
     spaceLabel: '空间',
     subLabel: '品类',
     styleLabel: '风格',
-    colorLabel: '颜色'
+    colorLabel: '颜色',
+    pickContext: null
   },
 
   onShow() {
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().syncSelected();
     }
+    this.syncPickContext();
     this.syncFilterOptions();
     this.loadProducts();
+  },
+
+  syncPickContext() {
+    const ctx = projectDisplay.getShopPickContext();
+    this.setData({ pickContext: ctx });
   },
 
   syncFilterOptions() {
@@ -149,7 +157,34 @@ Page({
 
   onProductTap(e) {
     const { id } = e.currentTarget.dataset;
+    const pickContext = this.data.pickContext;
+
+    if (pickContext) {
+      const product = catalog.getProduct(id);
+      if (!product) return;
+      const result = projectDisplay.addCatalogToProjectQuote(pickContext.projectId, product);
+      if (result.duplicate) {
+        wx.showToast({ title: '已在清单中', icon: 'none' });
+        return;
+      }
+      if (result.added) {
+        wx.showToast({ title: '已加入方案', icon: 'success' });
+      }
+      return;
+    }
+
     wx.navigateTo({ url: '/pages/product-detail/product-detail?id=' + id });
+  },
+
+  onExitPickMode() {
+    projectDisplay.clearShopPickContext();
+    this.setData({ pickContext: null });
+  },
+
+  onReturnProject() {
+    projectDisplay.clearShopPickContext();
+    this.setData({ pickContext: null });
+    wx.switchTab({ url: '/pages/project/project' });
   },
 
   onToggleFavorite(e) {

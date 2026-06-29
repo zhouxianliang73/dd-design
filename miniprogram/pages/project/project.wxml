@@ -52,7 +52,7 @@
   <view class="shell-address muted" wx:if="{{item.address}}">{{item.address}}</view>
 
   <view class="scheme-quote-hint muted" wx:if="{{item.canEditQuote}}">
-    货运前可在方案内删减清单；发货后如需新增请新建项目
+    货运前可在方案内调整清单；点 + 去选品添加，发货后新增请新建项目
   </view>
 
   <block wx:if="{{item.quoteCategories && item.quoteCategories.length}}">
@@ -62,9 +62,23 @@
       wx:key="id"
       wx:for-item="cat"
     >
-      <view class="proj-section-hd" catchtap="onToggleSection" data-id="{{item.id}}" data-section="{{cat.id}}">
-        <text class="proj-section-label">{{cat.name}}</text>
-        <text class="chevron">{{item.sectionOpen[cat.id] ? '▾' : '▸'}}</text>
+      <view class="proj-section-hd">
+        <view class="proj-section-hd-main" catchtap="onToggleSection" data-id="{{item.id}}" data-section="{{cat.id}}">
+          <text class="proj-section-label">{{cat.name}}</text>
+          <text class="chevron">{{item.sectionOpen[cat.id] ? '▾' : '▸'}}</text>
+        </view>
+        <view
+          wx:if="{{item.canEditQuote}}"
+          class="section-shop-add"
+          catchtap="onGoShopFromQuote"
+          data-project-id="{{item.id}}"
+          data-section="{{cat.id}}"
+          data-label="{{cat.name}}"
+          aria-role="button"
+          aria-label="去选品"
+        >
+          <text class="section-shop-add-icon">+</text>
+        </view>
       </view>
       <view class="proj-section-bd" wx:if="{{item.sectionOpen[cat.id]}}">
         <view class="quote-head muted">
@@ -79,12 +93,60 @@
         <view class="quote-cat-total muted">本类合计 {{cat.subtotalText}}</view>
       </view>
     </view>
+    <view
+      wx:if="{{item.addedProducts && item.addedProducts.length}}"
+      class="proj-section {{item.sectionOpen.addedProducts ? 'is-open' : ''}}"
+    >
+      <view class="proj-section-hd">
+        <view class="proj-section-hd-main" catchtap="onToggleSection" data-id="{{item.id}}" data-section="addedProducts">
+          <text class="proj-section-label">选品增补</text>
+          <text class="chevron">{{item.sectionOpen.addedProducts ? '▾' : '▸'}}</text>
+        </view>
+        <view
+          wx:if="{{item.canEditQuote}}"
+          class="section-shop-add"
+          catchtap="onGoShopFromQuote"
+          data-project-id="{{item.id}}"
+          data-section="addedProducts"
+          data-label="选品增补"
+          aria-role="button"
+          aria-label="去选品"
+        >
+          <text class="section-shop-add-icon">+</text>
+        </view>
+      </view>
+      <view class="proj-section-bd" wx:if="{{item.sectionOpen.addedProducts}}">
+        <view class="quote-head muted">
+          <text class="col-name">产品</text>
+          <text class="col-qty">数量</text>
+          <text class="col-price">小计</text>
+          <text class="col-action"></text>
+        </view>
+        <block wx:for="{{item.addedProducts}}" wx:key="lineId" wx:for-item="line">
+          <template is="quoteLineRow" data="{{line: line, owner: item}}" />
+        </block>
+      </view>
+    </view>
     <view class="quote-total">清单合计 {{item.priceText}}</view>
   </block>
   <view wx:else class="proj-section {{item.sectionOpen.products ? 'is-open' : ''}}">
-    <view class="proj-section-hd" catchtap="onToggleSection" data-id="{{item.id}}" data-section="products">
-      <text class="proj-section-label">产品清单</text>
-      <text class="chevron">{{item.sectionOpen.products ? '▾' : '▸'}}</text>
+    <view class="proj-section-hd">
+      <view class="proj-section-hd-main" catchtap="onToggleSection" data-id="{{item.id}}" data-section="products">
+        <text class="proj-section-label">产品清单</text>
+        <text class="chevron">{{item.sectionOpen.products ? '▾' : '▸'}}</text>
+      </view>
+      <view
+        wx:if="{{item.canEditQuote}}"
+        class="section-shop-add"
+        catchtap="onGoShopFromQuote"
+        data-project-id="{{item.id}}"
+        data-section="products"
+        data-label="产品清单"
+        aria-role="button"
+        aria-label="去选品"
+      >
+        <text class="section-shop-add-icon">+</text>
+      </view>
     </view>
     <view class="proj-section-bd" wx:if="{{item.sectionOpen.products}}">
       <view class="quote-head muted">

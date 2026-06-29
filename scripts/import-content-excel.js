@@ -14,7 +14,9 @@ try {
   const summary = importFromExcel(excelPath, imagesDir, { projectRoot: root });
   console.log('导入完成');
   summary.sheets.forEach(function (s) {
-    console.log('  ' + s.name + '：更新 ' + s.updated + ' 条');
+    var line = '  ' + s.name + '：更新 ' + s.updated + ' 条';
+    if (s.created) line += '，新增 ' + s.created + ' 条';
+    console.log(line);
   });
   if (summary.log.length) {
     console.log('图片写入：');

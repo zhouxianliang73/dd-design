@@ -84,16 +84,18 @@
     </nav>
     <h1>图片内容导入<span class="badge">Excel</span></h1>
     <p class="sub">
-      用一张标准 Excel 维护设计师头像、商品图、案例封面。本地图片与 Excel 一并上传后，自动写入 JSON 并同步到小程序。
+      三表标准：<strong>设计师</strong> · <strong>商品清单</strong>（外网接入标准，与 catalog.json 一致）· <strong>案例封面</strong>。
+      外网 Excel 先按「商品清单」列清洗，再导入入库。
     </p>
 
     <div class="panel">
       <h2>使用步骤</h2>
       <ol class="steps">
-        <li><strong>下载模板</strong>：运行 <code>npm run content:template</code> 生成 <code>content/dd-content-template.xlsx</code></li>
-        <li><strong>填写 Excel</strong>：三张表「设计师」「商品图片」「案例封面」。图片列填网址或文件名（如 <code>zhangjun.jpg</code>）</li>
-        <li><strong>准备图片</strong>：本地图放到 <code>content/images/</code>，或与 Excel 一起在下文上传</li>
-        <li><strong>导入</strong>：上传 Excel + 图片，点击「开始导入」；微信开发者工具重新编译即可预览</li>
+        <li><strong>下载模板</strong>：<code>npm run content:template</code> → <code>content/dd-content-template.xlsx</code></li>
+        <li><strong>外网文件</strong>：供应商表先对齐「商品清单」列（见「商品清单说明」页），支持常见列名别名</li>
+        <li><strong>填写 Excel</strong>：设计师 / 商品清单 / 案例封面；商品可新增行（新 ID）或更新已有行</li>
+        <li><strong>准备图片</strong>：本地图放到 <code>content/images/</code></li>
+        <li><strong>导入</strong>：本页上传 → 清洗写入 <code>catalog.json</code> 等 → 自动 sync 小程序</li>
       </ol>
     </div>
 
@@ -112,7 +114,7 @@
       <p id="statusMsg" class="hidden"></p>
       <div id="resultPanel" class="hidden">
         <table>
-          <thead><tr><th>工作表</th><th>更新条数</th></tr></thead>
+          <thead><tr><th>工作表</th><th>结果</th></tr></thead>
           <tbody id="resultBody"></tbody>
         </table>
         <div id="warnBox" class="warn hidden"></div>
@@ -127,8 +129,8 @@
           <tr><th>工作表</th><th>列</th><th>说明</th></tr>
         </thead>
         <tbody>
-          <tr><td>设计师</td><td>ID · 姓名 · 标签 · 图片</td><td>ID 如 d-zhangjun；图片可为 URL 或文件名</td></tr>
-          <tr><td>商品图片</td><td>ID · 名称(参考) · 图片</td><td>ID 如 f-001，对应选品卡片主图</td></tr>
+          <tr><td>设计师</td><td>ID · 姓名 · 标签 · 图片</td><td>ID 如 d-zhangjun</td></tr>
+          <tr><td>商品清单</td><td>ID · 名称 · 空间 · 子类 · 规格 · 单价 · 渠道 · 清单分组 · 图片 …</td><td>与 catalog.json 一致；外网标准表；可新增 SKU</td></tr>
           <tr><td>案例封面</td><td>ID · 标题(参考) · 图片</td><td>ID 如 case-shade-umbrella</td></tr>
         </tbody>
       </table>
@@ -202,7 +204,9 @@
 
       function showSummary(summary) {
         resultBody.innerHTML = (summary.sheets || []).map(function (s) {
-          return '<tr><td>' + esc(s.name) + '</td><td>' + s.updated + '</td></tr>';
+          var detail = s.updated + ' 条更新';
+          if (s.created) detail += '，' + s.created + ' 条新增';
+          return '<tr><td>' + esc(s.name) + '</td><td>' + detail + '</td></tr>';
         }).join('');
         resultPanel.classList.remove('hidden');
 

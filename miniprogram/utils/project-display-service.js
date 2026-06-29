@@ -2,6 +2,7 @@ var completedDisplay = require('./completed-project-display');
 var inquiryService = require('./inquiry-service');
 var procurementAccess = require('./procurement-access-service');
 var auth = require('./auth-service');
+var kitchenQuote = require('./kitchen-quote-service');
 
 var LAYOUT_KEY = 'dd_project_layout_v5';
 
@@ -32,194 +33,9 @@ var KITCHEN_SECTION_DEFS = [
   { id: 'extra', name: '增加项目' }
 ];
 
-var KITCHEN_PRODUCT_LINES = {
-  cabinet: [
-    {
-      name: '洗手盘地柜',
-      emoji: '🗄️',
-      spec: '800×700×570',
-      material: '大千云纹',
-      qty: 1,
-      unit: '米',
-      unitPrice: 5627,
-      image: KITCHEN_IMAGES[0]
-    },
-    {
-      name: '地柜',
-      emoji: '🗄️',
-      spec: '800×700×570',
-      material: '大千云纹',
-      qty: 3.2,
-      unit: '米',
-      unitPrice: 5627,
-      image: KITCHEN_IMAGES[1]
-    },
-    {
-      name: '灶台吊柜',
-      emoji: '🗄️',
-      spec: '800×700×370',
-      material: '大千云纹',
-      qty: 0.9,
-      unit: '米',
-      unitPrice: 5077,
-      image: KITCHEN_IMAGES[2]
-    },
-    {
-      name: '吊柜',
-      emoji: '🗄️',
-      spec: '800×700×370',
-      material: '大千云纹',
-      qty: 2.4,
-      unit: '米',
-      unitPrice: 5077,
-      image: KITCHEN_IMAGES[2]
-    },
-    {
-      name: '高柜',
-      emoji: '🗄️',
-      spec: '600×2100×570',
-      material: '大千云纹',
-      qty: 1,
-      unit: '米',
-      unitPrice: 5908,
-      image: KITCHEN_IMAGES[3]
-    }
-  ],
-  countertop: [
-    {
-      name: '台面',
-      emoji: '▬',
-      spec: '琉晶-丝纹GY01 · 12mm',
-      material: '琉晶-丝纹GY01',
-      qty: 3,
-      unit: '米',
-      unitPrice: 1655,
-      image: KITCHEN_IMAGES[3]
-    }
-  ],
-  panel: [
-    {
-      name: '侧见光板',
-      emoji: '📐',
-      spec: '大千云纹',
-      material: '大千云纹',
-      qty: 1.5,
-      unit: '㎡',
-      unitPrice: 1598,
-      image: KITCHEN_IMAGES[2]
-    },
-    {
-      name: '高柜见光板',
-      emoji: '📐',
-      spec: '大千云纹',
-      material: '大千云纹',
-      qty: 1,
-      unit: '㎡',
-      unitPrice: 1598,
-      image: KITCHEN_IMAGES[2]
-    }
-  ],
-  trim: [
-    {
-      name: '地脚线',
-      emoji: '📏',
-      spec: '与柜体一致',
-      material: '大千云纹',
-      qty: 4.8,
-      unit: '米',
-      unitPrice: 268,
-      image: KITCHEN_IMAGES[1]
-    },
-    {
-      name: '顶封板',
-      emoji: '📏',
-      spec: '与柜体一致',
-      material: '大千云纹',
-      qty: 3.2,
-      unit: '米',
-      unitPrice: 268,
-      image: KITCHEN_IMAGES[1]
-    }
-  ],
-  hardware: [
-    {
-      name: '百隆铰链',
-      emoji: '⚙️',
-      spec: '全盖',
-      material: '—',
-      qty: 24,
-      unit: '个',
-      unitPrice: 38,
-      image: KITCHEN_IMAGES[4]
-    },
-    {
-      name: '希勒碗碟篮',
-      emoji: '⚙️',
-      spec: '600柜',
-      material: '—',
-      qty: 1,
-      unit: '套',
-      unitPrice: 680,
-      image: KITCHEN_IMAGES[4]
-    },
-    {
-      name: '百隆反弹器',
-      emoji: '⚙️',
-      spec: '按柜门',
-      material: '—',
-      qty: 12,
-      unit: '个',
-      unitPrice: 28,
-      image: KITCHEN_IMAGES[4]
-    }
-  ],
-  sink: [
-    {
-      name: '手工单槽',
-      emoji: '🚰',
-      spec: '680×450',
-      material: '304不锈钢',
-      qty: 1,
-      unit: '个',
-      unitPrice: 1280,
-      image: KITCHEN_IMAGES[4]
-    },
-    {
-      name: '抽拉龙头',
-      emoji: '🚰',
-      spec: '冷热',
-      material: '不锈钢',
-      qty: 1,
-      unit: '个',
-      unitPrice: 560,
-      image: KITCHEN_IMAGES[4]
-    }
-  ],
-  electric: [
-    {
-      name: '蒸烤一体机',
-      emoji: '🔌',
-      spec: '嵌入位预留',
-      material: '—',
-      qty: 1,
-      unit: '台',
-      unitPrice: 0,
-      image: KITCHEN_IMAGES[0]
-    }
-  ],
-  extra: [
-    {
-      name: '安装费',
-      emoji: '➕',
-      spec: '含现场安装',
-      material: '—',
-      qty: 1,
-      unit: '项',
-      unitPrice: 2800,
-      image: KITCHEN_IMAGES[1]
-    }
-  ]
-};
+function getKitchenProductLines() {
+  return kitchenQuote.getKitchenProductLines();
+}
 
 var KITCHEN_COMM = {
   commImagesSummary: '共 5 张厨房现场与参考图，L 型布局，不锈钢柜体 + 琉晶台面',
@@ -534,8 +350,9 @@ function refreshCategoriesWithOverrides(categories, overrides) {
 
 function buildKitchenQuoteCategories(project) {
   var removed = project && project.removedQuoteLineIds ? project.removedQuoteLineIds : [];
+  var kitchenLines = getKitchenProductLines();
   return KITCHEN_SECTION_DEFS.map(function (sec) {
-    var products = (KITCHEN_PRODUCT_LINES[sec.id] || [])
+    var products = (kitchenLines[sec.id] || [])
       .map(function (line, idx) {
         return decorateProductLine(line, sec.id + '-' + idx);
       })
@@ -573,17 +390,43 @@ function sumQuoteCategories(categories) {
 function productsFromSelection(selection) {
   if (!selection || !selection.length) return [];
   return selection.map(function (line, idx) {
-    return decorateProductLine({
-      name: line.name || line.catalogId || '产品',
-      emoji: '📦',
-      spec: line.spec || '—',
-      material: line.material || '—',
-      qty: line.qty || 1,
-      unit: line.unit || '件',
-      unitPrice: line.unitPrice || 3000 + idx * 500,
-      image: line.image || SAMPLE_IMAGES[idx % SAMPLE_IMAGES.length]
-    }, 'sel-' + idx);
+    var lineId = line.catalogId ? 'sel-' + line.catalogId : 'sel-' + idx;
+    return decorateProductLine(
+      {
+        name: line.name || line.catalogId || '产品',
+        emoji: line.emoji || '📦',
+        spec: line.spec || '—',
+        material: line.material || '—',
+        qty: line.qty || 1,
+        unit: line.unit || '件',
+        unitPrice: line.unitPrice != null ? line.unitPrice : 3000 + idx * 500,
+        image: line.image || SAMPLE_IMAGES[idx % SAMPLE_IMAGES.length]
+      },
+      lineId
+    );
   });
+}
+
+function buildDemoQuoteLines(index) {
+  return (DEMO_PRODUCTS[index % DEMO_PRODUCTS.length] || DEMO_PRODUCTS[0]).map(function (line, idx) {
+    return decorateProductLine(line, 'demo-' + index + '-' + idx);
+  });
+}
+
+function buildFlatQuoteProducts(project, index, removedIds, qtyOverrides) {
+  var isDemo = String(project.token || '').indexOf('demo-') === 0;
+  var fromSelection = productsFromSelection(project.selection);
+  var lines;
+
+  if (fromSelection.length && !isDemo) {
+    lines = fromSelection;
+  } else if (fromSelection.length && isDemo) {
+    lines = buildDemoQuoteLines(index).concat(fromSelection);
+  } else {
+    lines = buildDemoQuoteLines(index);
+  }
+
+  return applyLineQtyOverrides(filterRemovedProducts(lines, removedIds), qtyOverrides);
 }
 
 function filterRemovedProducts(products, removedIds) {
@@ -623,6 +466,7 @@ function normalizeSectionOpen(sectionOpen, quoteCategories) {
   var o = sectionOpen || {};
   var base = {
     products: o.products || false,
+    addedProducts: o.addedProducts || false,
     commImages: o.commImages || o.clientImages || false,
     commContent: o.commContent || o.clientFeedback || false,
     schemeVersions: o.schemeVersions || o.designerSummary || false,
@@ -641,6 +485,7 @@ function normalizeSectionOpen(sectionOpen, quoteCategories) {
 function defaultSectionOpen() {
   return {
     products: false,
+    addedProducts: false,
     commImages: false,
     commContent: false,
     schemeVersions: false,
@@ -648,6 +493,86 @@ function defaultSectionOpen() {
     inquiryCompare: false,
     inquiryQuotes: false
   };
+}
+
+var SHOP_PICK_KEY = 'dd_shop_pick_context';
+
+function setShopPickContext(ctx) {
+  if (ctx) {
+    wx.setStorageSync(SHOP_PICK_KEY, ctx);
+  } else {
+    wx.removeStorageSync(SHOP_PICK_KEY);
+  }
+}
+
+function getShopPickContext() {
+  try {
+    return wx.getStorageSync(SHOP_PICK_KEY) || null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function clearShopPickContext() {
+  wx.removeStorageSync(SHOP_PICK_KEY);
+}
+
+function selectionLineFromCatalog(product) {
+  return {
+    catalogId: product.id,
+    name: product.name,
+    emoji: product.emoji || '📦',
+    spec: product.spec || '—',
+    material: product.material || '—',
+    qty: 1,
+    unit: '件',
+    unitPrice: product.price != null ? product.price : 0,
+    image: product.image || ''
+  };
+}
+
+function addCatalogToProjectQuote(projectId, catalogProduct) {
+  if (!projectId || !catalogProduct || !catalogProduct.id) {
+    return { added: false };
+  }
+
+  var layout = readLayout();
+  if (!layout.items || !layout.items.length) {
+    return { added: false };
+  }
+
+  var duplicate = false;
+  var added = false;
+  var next = mapProjectsDeep(layout.items, function (p) {
+    if (p.id !== projectId && p.token !== projectId) return p;
+    var selection = (p.selection || []).slice();
+    if (
+      selection.some(function (line) {
+        return line.catalogId === catalogProduct.id;
+      })
+    ) {
+      duplicate = true;
+      return p;
+    }
+    selection.push(selectionLineFromCatalog(catalogProduct));
+    added = true;
+    var sectionOpen = Object.assign({}, p.sectionOpen || defaultSectionOpen(), {
+      products: true,
+      addedProducts: true
+    });
+    return Object.assign({}, p, {
+      selection: selection,
+      itemCount: Math.max(p.itemCount || 0, selection.length),
+      sectionOpen: sectionOpen,
+      expanded: true
+    });
+  });
+
+  if (duplicate) return { added: false, duplicate: true };
+  if (!added) return { added: false };
+
+  writeLayout(next);
+  return { added: true };
 }
 
 function attachProcurementContent(project, clientId) {
@@ -696,13 +621,12 @@ function attachProjectContent(project, index, clientId) {
   if (quoteCategories) {
     quoteCategories = refreshCategoriesWithOverrides(quoteCategories, qtyOverrides);
   }
-  var products = productsFromSelection(project.selection);
-  if (!products.length && !quoteCategories) {
-    products = (DEMO_PRODUCTS[index % DEMO_PRODUCTS.length] || DEMO_PRODUCTS[0]).map(function (line, idx) {
-      return decorateProductLine(line, 'demo-' + index + '-' + idx);
-    });
+  var fromSelection = productsFromSelection(project.selection);
+  var products = quoteCategories ? [] : buildFlatQuoteProducts(project, index, removedIds, qtyOverrides);
+  var addedProducts = null;
+  if (quoteCategories && fromSelection.length) {
+    addedProducts = applyLineQtyOverrides(filterRemovedProducts(fromSelection, removedIds), qtyOverrides);
   }
-  products = applyLineQtyOverrides(filterRemovedProducts(products, removedIds), qtyOverrides);
 
   var comm;
   if (isKitchen) {
@@ -716,7 +640,7 @@ function attachProjectContent(project, index, clientId) {
   var procurementFields = attachProcurementContent(project, clientId);
 
   var priceFromProducts = quoteCategories
-    ? sumQuoteCategories(quoteCategories)
+    ? sumQuoteCategories(quoteCategories) + sumCategoryProducts(addedProducts || [])
     : products.reduce(function (sum, line) {
         return sum + (line.unitPrice || 0) * (line.qty || 1) * (line.coef || 1);
       }, 0);
@@ -734,6 +658,7 @@ function attachProjectContent(project, index, clientId) {
     sectionOpen: normalizeSectionOpen(project.sectionOpen, quoteCategories),
     products: products,
     quoteCategories: quoteCategories,
+    addedProducts: addedProducts,
     comm: comm,
     price:
       isKitchen || (project.price != null && !isDemo && project.selection && project.selection.length)
@@ -1187,5 +1112,9 @@ module.exports = {
   suggestMergedName,
   formatPrice,
   defaultSectionOpen,
-  refreshProcurementAccess
+  refreshProcurementAccess,
+  setShopPickContext,
+  getShopPickContext,
+  clearShopPickContext,
+  addCatalogToProjectQuote
 };

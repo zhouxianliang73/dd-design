@@ -35,7 +35,7 @@ Page({
     channels: [],
     currentChannelLabel: '',
     filingNo: '粤ICP备2026001662号-1X',
-    siteDomain: 'dddesigncenter.com',
+    siteDomain: 'dd-design.com',
     footerBrand: 'DD Design Center · 选品中心'
   },
 
@@ -70,7 +70,8 @@ Page({
         completedProjects: completedProjects,
         favoriteProducts: favoriteProducts,
         channels: channels,
-        currentChannelLabel: channel.label || channelId
+        currentChannelLabel: channel.label || channelId,
+        siteDomain: (config.siteUrl || 'https://dd-design.com').replace(/^https?:\/\//, '')
       });
     }).catch(function () {
       const completedProjects = completedDisplay.buildCompletedProjects([]);
@@ -81,7 +82,8 @@ Page({
         completedCount: completedProjects.length,
         favoriteProducts: favoriteProducts,
         channels: channels,
-        currentChannelLabel: channel.label || channelId
+        currentChannelLabel: channel.label || channelId,
+        siteDomain: (config.siteUrl || 'https://dd-design.com').replace(/^https?:\/\//, '')
       });
     });
   },
