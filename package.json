@@ -1,0 +1,15 @@
+{
+  "name": "dd-design-tools",
+  "private": true,
+  "scripts": {
+    "sync": "node scripts/sync-miniprogram-data.js",
+    "content:template": "node scripts/generate-content-template.js",
+    "content:import": "node scripts/import-content-excel.js",
+    "content:import-inquiry": "node scripts/import-inquiry-excel.js",
+    "content:admin": "node scripts/content-admin-server.js",
+    "intake:sync-quotes": "node scripts/intake-sync-quotes.js"
+  },
+  "dependencies": {
+    "xlsx": "^0.18.5"
+  }
+}

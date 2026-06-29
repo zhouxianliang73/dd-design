@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DD design · 询价项目</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="stylesheet" href="delivery-doc-tokens.css" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--dd-doc-font);
+      background: var(--dd-doc-bg);
+      color: var(--dd-doc-text-default);
+      font-size: var(--dd-doc-fs-base);
+      line-height: 1.5;
+    }
+    .wrap { max-width: 720px; margin: 0 auto; padding: 16px 14px 40px; }
+    .nav { margin-bottom: 12px; }
+    .nav a { color: var(--dd-doc-text-muted); font-size: var(--dd-doc-fs-sm); margin-right: 12px; }
+    h1 { font-size: var(--dd-doc-fs-xl); color: var(--dd-doc-text-strong); }
+    .sub { color: var(--dd-doc-text-muted); font-size: var(--dd-doc-fs-sm); margin: 6px 0 16px; }
+    .panel {
+      background: var(--dd-doc-surface);
+      border-radius: var(--dd-doc-radius);
+      padding: 14px;
+      margin-bottom: 12px;
+      box-shadow: var(--dd-doc-elevation-1);
+    }
+    h2 { font-size: 15px; margin-bottom: 10px; }
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+    .tab {
+      padding: 6px 14px; border-radius: 999px; border: 1px solid var(--dd-doc-border-default);
+      background: var(--dd-doc-surface-nested); font-size: var(--dd-doc-fs-sm); cursor: pointer;
+    }
+    .tab.active { background: #111827; color: #fff; border-color: #111827; }
+    table { width: 100%; border-collapse: collapse; font-size: var(--dd-doc-fs-sm); }
+    th, td { padding: 8px 6px; border-bottom: 1px solid var(--dd-doc-border-subtle); text-align: left; vertical-align: top; }
+    th { color: var(--dd-doc-text-muted); font-weight: 500; }
+    .muted { color: var(--dd-doc-text-muted); font-size: var(--dd-doc-fs-sm); }
+    .comm-item { padding: 6px 0; border-bottom: 1px solid var(--dd-doc-border-subtle); font-size: var(--dd-doc-fs-sm); }
+    .err { color: #c0392b; }
+    .badge { display: inline-block; padding: 2px 8px; background: #e8f4fd; color: #1565c0; border-radius: 4px; font-size: 11px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <nav class="nav">
+      <a href="admin.html">团队后台</a>
+      <a href="1.html">选品中心</a>
+      <a href="content-admin.html">内容导入</a>
+    </nav>
+    <div id="app" class="muted">正在加载询价数据…</div>
+  </div>
+  <script>
+    (function () {
+      var slug = new URLSearchParams(location.search).get('slug') || 'stainless-bookcase';
+      var app = document.getElementById('app');
+      var activeId = '';
+
+      fetch('projects/' + slug + '/inquiry-bundle.json', { cache: 'no-store' })
+        .then(function (r) { if (!r.ok) throw new Error('load_failed'); return r.json(); })
+        .then(function (bundle) {
+          bundle.comparison = buildCompare(bundle.suppliers || []);
+          activeId = (bundle.suppliers && bundle.suppliers[0]) ? bundle.suppliers[0].id : '';
+          render(bundle);
+        })
+        .catch(function () {
+          app.innerHTML = '<p class="err">无法加载询价数据</p><p class="muted">请确认 projects/' + slug + '/inquiry-bundle.json 存在，或用静态服务打开本站。</p>';
+        });
+
+      function buildCompare(suppliers) {
+        var rows = suppliers.map(function (s) {
+          return {
+            id: s.id,
+            name: s.name,
+            total: s.total,
+            totalText: s.totalText || (s.total != null ? '¥' + Number(s.total).toLocaleString('zh-CN') : '待核'),
+            leadTimeDays: s.leadTimeDays || '—',
+            lineCount: (s.lines || []).length,
+            isLowest: false
+          };
+        });
+        var priced = rows.filter(function (r) { return r.total != null && r.total > 0; });
+        var min = priced.length ? Math.min.apply(null, priced.map(function (r) { return r.total; })) : null;
+        rows.forEach(function (r) { r.isLowest = min != null && r.total === min; });
+        return { rows: rows, minTotalText: min != null ? '¥' + Number(min).toLocaleString('zh-CN') : '—' };
+      }
+
+      function esc(s) {
+        return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;');
+      }
+
+      function render(bundle) {
+        document.title = 'DD design · ' + bundle.name;
+        app.innerHTML =
+          '<h1>' + esc(bundle.name) + '</h1>' +
+          '<p class="sub">客户 ' + esc(bundle.client) + ' · <span class="badge">询价</span> · 更新 ' + esc(bundle.updatedAt) + '</p>' +
+          '<div class="panel"><h2>供应商比价</h2><p class="muted" style="margin-bottom:10px">最低合计 <strong style="color:#15803d">' + esc(bundle.comparison && bundle.comparison.minTotalText || '—') + '</strong></p>' +
+          '<table><thead><tr><th>供应商</th><th>合计</th><th>工期</th><th>行数</th></tr></thead><tbody id="compareRows"></tbody></table></div>' +
+          '<div class="panel"><h2>供应商询价单</h2><p class="muted" style="margin-bottom:10px">各供应商独立明细</p>' +
+          '<div class="tabs" id="tabs"></div><div id="quoteBody"></div></div>' +
+          '<div class="panel"><h2>沟通整理</h2><div id="commBody"></div></div>' +
+          '<div class="panel"><h2>方案版本</h2><div id="schemeBody"></div></div>' +
+          '<div class="panel muted">数据来源：' + esc(bundle.sourceFile || 'Excel 导入') + '</div>';
+
+        var tabs = document.getElementById('tabs');
+        (bundle.suppliers || []).forEach(function (s) {
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'tab' + (s.id === activeId ? ' active' : '');
+          btn.textContent = s.name;
+          btn.addEventListener('click', function () {
+            activeId = s.id;
+            tabs.querySelectorAll('.tab').forEach(function (t) { t.classList.remove('active'); });
+            btn.classList.add('active');
+            renderQuote(bundle);
+          });
+          tabs.appendChild(btn);
+        });
+
+        renderQuote(bundle);
+        renderCompare(bundle);
+        renderComm(bundle.comm);
+        renderScheme(bundle.comm && bundle.comm.schemeVersions);
+      }
+
+      function renderCompare(bundle) {
+        var box = document.getElementById('compareRows');
+        if (!box || !bundle.comparison) return;
+        box.innerHTML = (bundle.comparison.rows || []).map(function (row) {
+          var low = row.isLowest ? ' style="background:#f0fdf4"' : '';
+          return '<tr' + low + '><td>' + esc(row.name) + (row.isLowest ? ' <span class="badge">最低</span>' : '') + '</td>' +
+            '<td>' + esc(row.totalText) + '</td><td>' + esc(row.leadTimeDays) + '</td><td>' + esc(row.lineCount) + '</td></tr>';
+        }).join('');
+      }
+
+      function renderQuote(bundle) {
+        var sup = (bundle.suppliers || []).find(function (s) { return s.id === activeId; });
+        var box = document.getElementById('quoteBody');
+        if (!sup) { box.innerHTML = '<p class="muted">无报价</p>'; return; }
+        var meta = '合计 ' + esc(sup.totalText || '待核');
+        if (sup.leadTimeDays) meta += ' · 工期 ' + esc(sup.leadTimeDays);
+        if (sup.validDays) meta += ' · 有效期 ' + esc(sup.validDays) + '天';
+        var rows = (sup.lines || []).map(function (line) {
+          return '<tr><td>' + esc(line.name) + '<br><span class="muted">' + esc(line.spec) + '</span></td>' +
+            '<td>' + esc(line.qty != null ? line.qty : '—') + '</td>' +
+            '<td>' + esc(line.unitPrice != null ? line.unitPrice : '—') + '</td>' +
+            '<td>' + esc(line.amount != null ? line.amount : '—') + '</td></tr>';
+        }).join('');
+        box.innerHTML = '<p class="muted">' + meta + '</p><table><thead><tr><th>品名/规格</th><th>数量</th><th>单价</th><th>金额</th></tr></thead><tbody>' + rows + '</tbody></table>';
+      }
+
+      function renderComm(comm) {
+        var box = document.getElementById('commBody');
+        if (!comm || !comm.commContentByDate) { box.innerHTML = '<p class="muted">暂无</p>'; return; }
+        box.innerHTML = comm.commContentByDate.map(function (day) {
+          return (day.items || []).map(function (item) {
+            return '<div class="comm-item">' + esc(item.text) + '</div>';
+          }).join('');
+        }).join('');
+      }
+
+      function renderScheme(versions) {
+        var box = document.getElementById('schemeBody');
+        if (!versions || !versions.length) { box.innerHTML = '<p class="muted">暂无</p>'; return; }
+        box.innerHTML = versions.map(function (v) {
+          return '<p><strong>' + esc(v.version) + '</strong> ' + esc(v.date) + '</p><p class="muted">' + esc(v.summary) + '</p>';
+        }).join('');
+      }
+    })();
+  </script>
+</body>
+</html>

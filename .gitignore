@@ -1,13 +1,7 @@
-# Intake runtime state
-intake/.state/
-
-# Project attachments (large binaries stay local)
-projects/*/materials/**
-!projects/*/materials/.gitkeep
-projects/*/quotes/*.xlsx
-projects/*/quotes/*.pdf
-projects/*/quotes/*.ppt
-projects/*/quotes/*.pptx
-
-# Local overrides (copy from config.example.yaml)
-intake/config.local.yaml
+node_modules/
+miniprogram_npm/
+.DS_Store
+project.private.config.json
+config/config.js
+config.public.json
+miniprogram/config/config.js

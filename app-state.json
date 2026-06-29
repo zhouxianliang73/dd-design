@@ -1,28 +1,40 @@
 {
-  "version": "2026-06-23",
-  "brand": "deep design",
+  "version": "2026-06-28",
+  "brand": "DD design",
   "mainFiles": {
-    "html": "D:\\DD-cursor\\scheme-center\\1.html",
-    "md": "D:\\DD-cursor\\scheme-center\\1.md",
-    "preview": "file:///D:/DD-cursor/scheme-center/1.html"
+    "html": "1.html",
+    "md": "1.md",
+    "showcase": "showcase.json",
+    "clientPortal": "p.html",
+    "teamAdmin": "admin.html"
   },
   "dataFiles": {
     "catalog": "catalog.json",
-    "quoteTemplates": "quote-templates.json"
+    "quoteTemplates": "quote-templates.json",
+    "channels": "channels.json",
+    "showcase": "showcase.json"
+  },
+  "platform": {
+    "domain": "dd-design.com",
+    "apiProvider": "supabase",
+    "supabaseSchema": "supabase/schema.sql",
+    "migrationSql": "supabase/migrations/2026062801_migration_ready.sql",
+    "configExample": "config.public.example.json",
+    "showcasePublic": true,
+    "liveProjects": "supabase",
+    "magicLinkParam": "t"
   },
   "features": [
-    "统一产品库 catalog.json → 选品中心 + 方案清单",
-    "方案模板 quote-templates.json（全案 / 不锈钢橱柜八类）",
-    "标准 project-shell + proj-section 容器，已去 THOR 品牌耦合",
-    "媒体版块底部 + 添加图片",
-    "产品清单可编辑数量与尺寸，非标系数联动",
-    "项目容器底部 PDF 导出",
-    "清单底部 + 选品联动"
+    "showcase.json 公开精选案例，与 live project 分离",
+    "Supabase live projects + magic link（p.html）",
+    "团队 admin.html（≤5 人）",
+    "catalog.json → 选品；quote-templates.json → 清单结构",
+    "intake 本地归档 → 后续写入 Supabase comm_messages"
   ],
   "localStorageKeys": {
-    "commStructure": "deepdesign_comm_structure"
+    "commStructure": "deepdesign_comm_structure",
+    "teamSession": "dd_design_session"
   },
-  "commStructureFile": "comm-structure.json",
   "intake": {
     "config": "intake/config.yaml",
     "script": "intake/process_intake.py",

@@ -1,0 +1,130 @@
+<view class="page">
+  <view class="card profile-card">
+    <view class="profile-header">
+      <view class="big-avatar">我</view>
+      <view class="profile-info">
+        <view class="profile-name-row">
+          <text class="profile-name">{{displayName}}</text>
+          <text class="member-badge">{{memberLabel}}</text>
+        </view>
+        <view class="profile-email muted">{{profileEmail}}</view>
+        <view class="profile-stats">
+          <text class="profile-stat">已完成 {{completedCount}} 个项目</text>
+          <text class="profile-stat">评分 {{ratingText}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card benefits-card">
+    <view class="card-header">
+      <text class="card-header-title">我的权益</text>
+    </view>
+    <scroll-view class="coupon-scroll" scroll-x enable-flex>
+      <view class="coupon-row">
+        <view
+          class="coupon coupon-{{item.accent}}"
+          wx:for="{{benefits}}"
+          wx:key="title"
+        >
+          <text class="coupon-title">{{item.title}}</text>
+          <text class="coupon-sub muted">{{item.sub}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="card completed-card">
+    <view class="card-header">
+      <text class="card-header-title">我的项目</text>
+      <text class="card-header-sub muted">仅展示已完成 · 付款 / 发货 / 跟踪</text>
+    </view>
+    <view class="ongoing-list">
+      <view
+        class="ongoing-item"
+        wx:for="{{completedProjects}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="onCompletedTap"
+      >
+        <view class="ongoing-top">
+          <text class="ongoing-name">{{item.clientName}}</text>
+          <text class="badge">{{item.statusLabel}}</text>
+        </view>
+        <view class="ongoing-meta muted">
+          <text>{{item.designer}}</text>
+          <text> · {{item.projectNo}}</text>
+          <text> · {{item.updatedAt}}</text>
+        </view>
+        <view class="ongoing-bottom">
+          <text class="ongoing-hint muted">点击查看付款、发货与物流</text>
+          <text class="ongoing-price">{{item.priceText}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card favorites-card">
+    <view class="card-header" bindtap="onToggleFavorites">
+      <text class="card-header-title">我的收藏</text>
+      <text class="card-header-more muted">{{favoritesExpanded ? '收起' : '展开'}}</text>
+    </view>
+    <view wx:if="{{favoritesExpanded}}">
+      <view class="favorites-grid" wx:if="{{favoriteProducts.length}}">
+        <view
+          class="favorite-item"
+          wx:for="{{favoriteProducts}}"
+          wx:key="id"
+          data-id="{{item.id}}"
+          bindtap="onFavoriteTap"
+        >
+          <image wx:if="{{item.image}}" class="fav-img" src="{{item.image}}" mode="aspectFill" />
+          <view wx:else class="fav-img fav-img-ph"></view>
+          <view class="fav-info">
+            <view class="fav-name">{{item.name}}</view>
+          </view>
+        </view>
+      </view>
+      <view wx:else class="favorites-empty muted">在选品页点心形收藏产品</view>
+    </view>
+  </view>
+
+  <view class="card settings-card">
+    <view class="setting-item" bindtap="onSettingTap" data-key="settings">
+      <text>设置</text>
+      <text class="setting-arrow muted">›</text>
+    </view>
+    <view class="setting-item" bindtap="onSettingTap" data-key="language">
+      <text>语言 / Language</text>
+      <text class="setting-value muted">简体中文 ›</text>
+    </view>
+    <picker mode="selector" range="{{channels}}" range-key="label" bindchange="onChannelChange">
+      <view class="setting-item">
+        <text>渠道偏好</text>
+        <text class="setting-value muted">{{currentChannelLabel}} ›</text>
+      </view>
+    </picker>
+    <view class="setting-item" bindtap="onSettingTap" data-key="theme">
+      <text>深色模式</text>
+      <text class="setting-value muted">关闭 ›</text>
+    </view>
+    <view class="setting-item" bindtap="onSettingTap" data-key="privacy">
+      <text>隐私与安全</text>
+      <text class="setting-arrow muted">›</text>
+    </view>
+    <view class="setting-item" bindtap="goProject">
+      <text>方案中心</text>
+      <text class="setting-arrow muted">›</text>
+    </view>
+    <view class="setting-item" bindtap="goCreateProject">
+      <text>新建设计需求</text>
+      <text class="setting-arrow muted">›</text>
+    </view>
+  </view>
+
+  <view class="page-footer">
+    <text class="footer-brand muted">{{footerBrand}}</text>
+    <text class="footer-legal">{{filingNo}} · {{siteDomain}}</text>
+    <text class="footer-legal">服务面向中国大陆用户，遵守相关法律法规</text>
+  </view>
+</view>

@@ -1,0 +1,53 @@
+.shop-page {
+  padding-top: 8rpx;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 8rpx;
+  padding: 0 4rpx;
+}
+
+.search-input {
+  flex: 1;
+  height: 64rpx;
+  padding: 0 8rpx;
+  font-size: 28rpx;
+  color: #111827;
+  background: transparent;
+  border: none;
+}
+
+.search-btn-capsule {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0 22rpx;
+  min-width: 0;
+  width: auto;
+  height: 52rpx;
+  line-height: 52rpx;
+  font-size: 24rpx;
+  border-radius: 999rpx;
+  background: #111827;
+  color: #fff;
+  border: none;
+}
+
+.search-btn-capsule::after {
+  border: none;
+}
+
+.clear-link {
+  font-size: 24rpx;
+  margin-bottom: 16rpx;
+  padding-left: 4rpx;
+}
+
+.empty {
+  text-align: center;
+  color: #9ca3af;
+  padding: 48rpx 24rpx;
+  font-size: 26rpx;
+}

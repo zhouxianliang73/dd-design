@@ -13,6 +13,8 @@
       "spec": "1.8m×0.9m",
       "material": "实木",
       "price": 12800,
+      "featured": true,
+      "channels": ["french-ru", "custom"],
       "image": "https://images.unsplash.com/photo-1617806118233-18e1de247200?w=320&h=180&fit=crop&auto=format&q=80",
       "quoteSections": [
         "products"
@@ -61,6 +63,8 @@
       "spec": "2.1m 三人位",
       "material": "藤编+铝架",
       "price": 9800,
+      "featured": true,
+      "channels": ["outdoor-living", "outdoor-kitchen", "event-ru"],
       "image": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=320&h=180&fit=crop&auto=format&q=80",
       "quoteSections": [
         "products"

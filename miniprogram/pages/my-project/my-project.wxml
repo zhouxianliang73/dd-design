@@ -1,0 +1,138 @@
+<view class="page">
+  <view wx:if="{{loading}}" class="empty muted">正在加载…</view>
+  <view wx:elif="{{!project}}" class="empty muted">未找到该项目</view>
+  <block wx:else>
+    <view class="card head-card">
+      <view class="head-title">{{project.clientName}}</view>
+      <view class="head-meta muted">
+        <text>{{project.designer}}</text>
+        <text> · {{project.projectNo}}</text>
+        <text> · {{project.updatedAt}}</text>
+      </view>
+      <view class="head-row">
+        <text class="badge">{{project.statusLabel}}</text>
+        <text class="head-price">{{project.priceText}}</text>
+      </view>
+      <view class="address muted" wx:if="{{project.address}}">{{project.address}}</view>
+    </view>
+
+    <view class="card action-card">
+      <view class="action-title">订单服务</view>
+      <view class="action-row">
+        <button class="action-btn" bindtap="onPay">付款</button>
+        <button class="action-btn" bindtap="onShipInfo">发货</button>
+        <button class="action-btn" bindtap="onTrack">跟踪</button>
+      </view>
+      <view class="payment-summary muted" wx:if="{{project.payment}}">
+        {{project.payment.statusLabel}} · 总额 {{project.payment.totalText}} · 已付 {{project.payment.paidText}} · 待付 {{project.payment.dueText}}
+      </view>
+      <view class="payment-hint muted" wx:if="{{project.payment.hint}}">{{project.payment.hint}}</view>
+    </view>
+
+    <view class="proj-section {{project.sectionOpen.products ? 'is-open' : ''}}">
+      <view class="proj-section-hd" bindtap="onToggleSection" data-section="products">
+        <text class="proj-section-label">交付清单</text>
+        <text class="chevron">{{project.sectionOpen.products ? '▾' : '▸'}}</text>
+      </view>
+      <view class="proj-section-bd" wx:if="{{project.sectionOpen.products}}">
+        <view class="delivery-hint muted">发货后清单锁定；新增需求请新建项目</view>
+        <view class="quote-row" wx:for="{{project.products}}" wx:key="lineId" wx:for-item="line">
+          <text class="line-name">{{line.emoji}} {{line.name}}</text>
+          <text class="line-price">{{line.lineTotalText}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="proj-section {{project.sectionOpen.production ? 'is-open' : ''}}">
+      <view class="proj-section-hd" bindtap="onToggleSection" data-section="production">
+        <text class="proj-section-label">生产 / 加工</text>
+        <text class="chevron">{{project.sectionOpen.production ? '▾' : '▸'}}</text>
+      </view>
+      <view class="proj-section-bd" wx:if="{{project.sectionOpen.production}}">
+        <view class="section-summary muted">{{project.production.summary}}</view>
+        <view class="step-row" wx:for="{{project.production.steps}}" wx:key="label" wx:for-item="step">
+          <text class="step-label">{{step.label}}</text>
+          <text class="step-date muted">{{step.date}}</text>
+          <text class="step-state">{{step.done ? '已完成' : '进行中'}}</text>
+        </view>
+        <scroll-view class="img-strip" scroll-x enable-flex wx:if="{{project.production.images.length}}">
+          <view class="img-strip-row">
+            <view class="img-strip-item" wx:for="{{project.production.images}}" wx:key="url" wx:for-item="img">
+              <image class="strip-img" src="{{img.url}}" mode="aspectFill" />
+              <text class="strip-note muted">{{img.note}}</text>
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+    </view>
+
+    <view class="proj-section {{project.sectionOpen.shipping ? 'is-open' : ''}}">
+      <view class="proj-section-hd" bindtap="onToggleSection" data-section="shipping">
+        <text class="proj-section-label">发货记录</text>
+        <text class="chevron">{{project.sectionOpen.shipping ? '▾' : '▸'}}</text>
+      </view>
+      <view class="proj-section-bd" wx:if="{{project.sectionOpen.shipping}}">
+        <view class="section-summary muted">{{project.shipping.summary}}</view>
+        <view class="track-line muted">运单 {{project.shipping.trackingNo}} · {{project.shipping.carrier}}</view>
+
+        <view class="ship-block" wx:if="{{project.shipping.documents.length}}">
+          <view class="ship-block-title">发货单 / 单据</view>
+          <view class="doc-list">
+            <view
+              class="doc-item"
+              wx:for="{{project.shipping.documents}}"
+              wx:key="name"
+              wx:for-item="doc"
+              data-url="{{doc.image}}"
+              bindtap="onPreviewDoc"
+            >
+              <image class="doc-thumb" src="{{doc.image}}" mode="aspectFill" />
+              <view class="doc-text">
+                <text class="doc-name">{{doc.name}}</text>
+                <text class="doc-note muted" wx:if="{{doc.note}}">{{doc.note}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <view
+          class="ship-photo-group"
+          wx:for="{{project.shipping.photoGroups}}"
+          wx:key="title"
+          wx:for-item="group"
+        >
+          <view class="ship-block-title">{{group.title}}</view>
+          <scroll-view class="img-strip" scroll-x enable-flex wx:if="{{group.images.length}}">
+            <view class="img-strip-row">
+              <view class="img-strip-item" wx:for="{{group.images}}" wx:key="url" wx:for-item="img">
+                <image class="strip-img" src="{{img.url}}" mode="aspectFill" />
+                <text class="strip-note muted">{{img.note}}</text>
+              </view>
+            </view>
+          </scroll-view>
+        </view>
+      </view>
+    </view>
+
+    <view class="proj-section {{project.sectionOpen.tracking ? 'is-open' : ''}}">
+      <view class="proj-section-hd" bindtap="onToggleSection" data-section="tracking">
+        <text class="proj-section-label">物流跟踪</text>
+        <text class="chevron">{{project.sectionOpen.tracking ? '▾' : '▸'}}</text>
+      </view>
+      <view class="proj-section-bd" wx:if="{{project.sectionOpen.tracking}}">
+        <view class="track-actions">
+          <button class="track-btn" bindtap="onScanTracking">扫码运单</button>
+          <button class="track-btn track-btn-ghost" bindtap="onManualSyncTracking">同步当前运单</button>
+        </view>
+        <view class="track-sync-hint muted" wx:if="{{trackingSyncHint}}">{{trackingSyncHint}}</view>
+        <view class="track-api-hint muted">
+          扫描物流单条码可自动识别运单号；正式环境对接顺丰/德邦等 API 后轨迹自动更新
+        </view>
+        <view class="track-row" wx:for="{{project.tracking}}" wx:key="date" wx:for-item="row">
+          <text class="track-date muted">{{row.date}}</text>
+          <text class="track-text">{{row.text}}</text>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

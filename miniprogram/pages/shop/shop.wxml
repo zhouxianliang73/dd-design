@@ -1,0 +1,47 @@
+<view class="page shop-page">
+  <view class="search-bar">
+    <input
+      class="search-input"
+      placeholder="搜索产品名称"
+      value="{{keyword}}"
+      bindinput="onSearchInput"
+      confirm-type="search"
+      bindconfirm="onSearchConfirm"
+    />
+    <button class="search-btn-capsule" bindtap="onSearchConfirm">搜索</button>
+  </view>
+  <view wx:if="{{keyword}}" class="clear-link muted" bindtap="onClearSearch">清除</view>
+
+  <view class="product-grid" wx:if="{{products.length}}">
+    <view
+      class="product-card"
+      wx:for="{{products}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="onProductTap"
+    >
+      <view class="product-image-wrap">
+        <image
+          wx:if="{{item.image}}"
+          class="product-image"
+          src="{{item.image}}"
+          mode="aspectFill"
+          lazy-load="{{true}}"
+        />
+        <view wx:else class="product-image-placeholder"></view>
+      </view>
+      <view class="product-name-row">
+        <text class="product-name">{{item.name}}</text>
+        <view
+          class="product-fav-inline {{item.isFavorite ? 'product-fav-active' : ''}}"
+          data-id="{{item.id}}"
+          catchtap="onToggleFavorite"
+        >
+          <text class="product-fav-icon">{{item.isFavorite ? '♥' : '♡'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty" wx:else>暂无匹配产品</view>
+</view>

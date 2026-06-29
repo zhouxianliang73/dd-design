@@ -1,0 +1,42 @@
+version: 1
+root: D:/dd-cursor/scheme-center
+
+roles:
+  client_signals:
+    - 尺寸
+    - 户型
+    - 参考
+    - 预算
+    - 风格
+  team_signals:
+    - 方案
+    - 报价
+    - quotation
+    - 效果图
+    - 深化
+
+quote_keywords:
+  - 报价
+  - quotation
+  - quote
+  - price
+  - 价目
+  - 清单
+
+channels:
+  whatsapp:
+    enabled: true
+    groups:
+      - match: AliReza
+        project_slug: alireza-entry-cabinet
+  wechat:
+    enabled: true
+    groups:
+      - match: 顺怡发遮阳伞
+        project_slug: outdoor-shade-umbrella
+        supplier: 佛山顺怡发
+        category: shade
+      # 示例：微信项目群 → 同一 intake 管道
+      - match: 陈先生厨柜
+        project_slug: demo-kitchen-001
+        product_name: 不锈钢厨柜

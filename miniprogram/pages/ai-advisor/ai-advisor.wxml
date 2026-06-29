@@ -1,0 +1,115 @@
+<view class="page">
+  <view class="card form-card">
+    <view class="form-head">
+      <view class="form-title">告诉我你的想法</view>
+      <view class="member-badge">会员专享</view>
+    </view>
+
+    <view class="field">
+      <view class="field-label">文字描述</view>
+      <textarea
+        class="field-textarea"
+        placeholder="我想要一个温暖、明亮的客厅，沙发要耐用，颜色偏浅色系……"
+        value="{{userNote}}"
+        bindinput="onNoteInput"
+        maxlength="500"
+      />
+      <view class="suggest-row">
+        <text
+          class="suggest-tag"
+          wx:for="{{suggestTags}}"
+          wx:key="*this"
+          data-tag="{{item}}"
+          bindtap="onSuggestTap"
+        >{{item}}</text>
+      </view>
+    </view>
+
+    <view class="field">
+      <view class="field-label">参考图片</view>
+      <view class="upload-zone" bindtap="onUploadZoneTap">
+        <view class="upload-icon">＋</view>
+        <view class="upload-title">点击上传参考图（支持多张）</view>
+        <view class="upload-sub muted">JPG · PNG · 最多 9 张</view>
+      </view>
+      <view class="pick-row">
+        <button class="btn-ghost pick-btn" bindtap="onChooseCamera">拍照</button>
+        <button class="btn-ghost pick-btn" bindtap="onChooseAlbum">从相册选择</button>
+      </view>
+      <view class="thumb-grid" wx:if="{{imagePaths.length}}">
+        <view class="thumb-wrap" wx:for="{{imagePaths}}" wx:key="*this">
+          <image class="thumb" src="{{item}}" mode="aspectFill" />
+          <view class="thumb-del" data-index="{{index}}" bindtap="onRemoveImage">×</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="field">
+      <view class="field-label">项目地址</view>
+      <input
+        class="field-input"
+        placeholder="例如：上海市浦东新区 xxx 路 123 号"
+        value="{{projectAddress}}"
+        bindinput="onAddressInput"
+      />
+      <view class="field-hint muted">将根据地址估算运费与气候适配建议</view>
+    </view>
+
+    <view class="field">
+      <view class="field-label">期望时间</view>
+      <picker mode="date" value="{{expectDate}}" bindchange="onDateChange">
+        <view class="field-input picker-display">{{expectDate || '选择期望交付或进场时间'}}</view>
+      </picker>
+    </view>
+
+    <button class="btn-primary submit-btn" bindtap="onSubmit" loading="{{analyzing}}" disabled="{{analyzing}}">
+      {{analyzing ? '正在匹配设计师…' : '提交项目，匹配设计师'}}
+    </button>
+  </view>
+
+  <block wx:if="{{hasResult}}">
+    <view class="ai-banner card">
+      <view class="ai-banner-icon">AI</view>
+      <view class="ai-banner-text">
+        <view class="ai-banner-title">AI 基于你的图片推荐</view>
+        <view class="muted">根据你上传的参考图，为你找到这些相似款</view>
+      </view>
+      <view class="ai-banner-badge">{{modeLabel}}</view>
+    </view>
+
+    <view class="card result-brief" wx:if="{{summary}}">
+      <view class="field-label">分析摘要</view>
+      <view class="summary">{{summary}}</view>
+      <view class="kw-row" wx:if="{{keywords.length}}">
+        <text class="kw" wx:for="{{keywords}}" wx:key="*this">{{item}}</text>
+      </view>
+    </view>
+
+    <view class="results-head">
+      <view class="section-title inline">选品结果</view>
+      <text class="results-count muted">共 {{products.length}} 件</text>
+    </view>
+
+    <view class="product-list">
+      <view
+        class="product-item card"
+        wx:for="{{products}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="onProductTap"
+      >
+        <image wx:if="{{item.image}}" class="thumb" src="{{item.image}}" mode="aspectFill" />
+        <view wx:else class="thumb thumb-ph">{{item.emoji}}</view>
+        <view class="pinfo">
+          <view class="pname">{{item.name}}</view>
+          <view class="muted">{{item.space}} · {{item.style}}</view>
+          <view class="price">{{item.priceText}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="footer-hint muted">已为你推荐相似产品，设计师将据此跟进您的项目</view>
+    <button wx:if="{{projectCreated}}" class="btn-primary more-btn" bindtap="goProject">查看我的方案</button>
+    <button class="btn-ghost more-btn" bindtap="goShop">进入选品中心</button>
+  </block>
+</view>
