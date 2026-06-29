@@ -10,12 +10,19 @@
 -- ── Team (≤5 people) ─────────────────────────────────────────────
 
 CREATE TABLE IF NOT EXISTS team_members (
-  id         UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  name       TEXT NOT NULL DEFAULT '',
-  role       TEXT NOT NULL DEFAULT 'sales'
-             CHECK (role IN ('admin', 'sales', 'design')),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  id              UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  name            TEXT NOT NULL DEFAULT '',
+  role            TEXT NOT NULL DEFAULT 'sales'
+                  CHECK (role IN ('admin', 'sales', 'design', 'procurement')),
+  wechat_unionid  TEXT,
+  wechat_openid   TEXT,
+  auth_provider   TEXT NOT NULL DEFAULT 'email'
+                  CHECK (auth_provider IN ('email', 'wechat')),
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_team_members_wechat_unionid
+  ON team_members (wechat_unionid) WHERE wechat_unionid IS NOT NULL;
 
 CREATE OR REPLACE FUNCTION check_team_member_limit()
 RETURNS TRIGGER
@@ -106,12 +113,30 @@ CREATE TABLE IF NOT EXISTS project_media (
 
 CREATE INDEX IF NOT EXISTS idx_project_media_project ON project_media(project_id, category);
 
+-- ── Procurement (internal — not in client magic link) ─────────────
+
+CREATE TABLE IF NOT EXISTS procurement_comparisons (
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  project_id   UUID REFERENCES projects(id) ON DELETE CASCADE,
+  project_slug TEXT NOT NULL DEFAULT '',
+  category     TEXT NOT NULL DEFAULT '',
+  currency     TEXT NOT NULL DEFAULT 'CNY',
+  rows         JSONB NOT NULL DEFAULT '[]'::jsonb,
+  notes        TEXT NOT NULL DEFAULT '',
+  updated_by   UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+  updated_at   TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_procurement_project ON procurement_comparisons(project_id);
+CREATE INDEX IF NOT EXISTS idx_procurement_slug ON procurement_comparisons(project_slug);
+
 -- ── Row level security ───────────────────────────────────────────
 
 ALTER TABLE team_members   ENABLE ROW LEVEL SECURITY;
 ALTER TABLE projects       ENABLE ROW LEVEL SECURITY;
 ALTER TABLE comm_messages  ENABLE ROW LEVEL SECURITY;
 ALTER TABLE project_media  ENABLE ROW LEVEL SECURITY;
+ALTER TABLE procurement_comparisons ENABLE ROW LEVEL SECURITY;
 
 -- Team: read team roster
 DROP POLICY IF EXISTS team_members_select ON team_members;
@@ -159,7 +184,27 @@ CREATE POLICY project_media_team ON project_media
   USING (EXISTS (SELECT 1 FROM team_members tm WHERE tm.id = auth.uid()))
   WITH CHECK (EXISTS (SELECT 1 FROM team_members tm WHERE tm.id = auth.uid()));
 
+-- Procurement: admin / design / procurement only (sales cannot read)
+DROP POLICY IF EXISTS procurement_internal ON procurement_comparisons;
+CREATE POLICY procurement_internal ON procurement_comparisons
+  FOR ALL TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM team_members tm
+      WHERE tm.id = auth.uid()
+        AND tm.role IN ('admin', 'design', 'procurement')
+    )
+  )
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM team_members tm
+      WHERE tm.id = auth.uid()
+        AND tm.role IN ('admin', 'design', 'procurement')
+    )
+  );
+
 -- ── Magic link RPC (anon — no login for clients) ─────────────────
+-- 注意：仅返回 selection / quote_lines / comm_summary，不含 procurement_comparisons
 
 CREATE OR REPLACE FUNCTION get_client_project_bundle(p_token TEXT)
 RETURNS JSON

@@ -2,9 +2,13 @@
   "brand": "DD design",
   "siteUrl": "https://dd-design.com",
   "legacyApp": "1.html",
+  "apiProvider": "supabase",
   "supabase": {
     "url": "https://YOUR_PROJECT.supabase.co",
     "anonKey": "YOUR_SUPABASE_ANON_KEY"
+  },
+  "tencent": {
+    "apiBase": "https://YOUR_TCB_ENV.ap-shanghai.app.tcloudbase.com/dd-api"
   },
   "magicLinkPath": "p.html",
   "adminPath": "admin.html"

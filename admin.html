@@ -56,6 +56,8 @@
         <nav class="nav">
             <a href="1.html">选品中心</a>
             <a href="showcase.html">精选案例</a>
+            <a href="inquiry-view.html">询价项目</a>
+            <a href="content-admin.html">内容导入</a>
         </nav>
         <h1>DD design · 团队</h1>
         <p class="sub">内部 ERP · 最多 5 人 · 客户通过 magic link 访问自己的项目</p>
@@ -103,6 +105,9 @@
         </div>
     </div>
     <script src="js/dd-config.js"></script>
+    <script src="js/dd-api-contract.js"></script>
+    <script src="js/providers/api-supabase.js"></script>
+    <script src="js/providers/api-tencent.js"></script>
     <script src="js/dd-api.js"></script>
     <script>
         (async function () {
@@ -116,23 +121,24 @@
 
             let session = loadSession();
 
-            if (session?.access_token) showDash();
+            if (tokenOf(session)) showDash();
             else showLogin();
 
             document.getElementById('loginBtn').addEventListener('click', async () => {
                 loginErr.classList.add('hidden');
                 try {
-                    session = await DDApi.authPassword(
+                    session = await DDApi.auth.loginWithPassword(
                         config,
                         document.getElementById('email').value.trim(),
                         document.getElementById('password').value
                     );
+                    await DDApi.team.fetchCurrentMember(config, session);
                     saveSession(session);
                     showDash();
                     await refreshProjects();
                 } catch (err) {
-                    loginErr.textContent = err.message === 'supabase_not_configured'
-                        ? '请先配置 config.public.json'
+                    loginErr.textContent = isConfigError(err.message)
+                        ? '请先配置 config.public.json（apiProvider: supabase）'
                         : (err.message || '登录失败');
                     loginErr.classList.remove('hidden');
                 }
@@ -147,13 +153,13 @@
             document.getElementById('createBtn').addEventListener('click', async () => {
                 createMsg.classList.add('hidden');
                 try {
-                    const created = await DDApi.createProject(config, session.access_token, {
+                    const created = await DDApi.team.createProject(config, session, {
                         clientName: document.getElementById('clientName').value.trim(),
                         channel: document.getElementById('channel').value,
                         inviteLabel: document.getElementById('inviteLabel').value.trim(),
                     });
-                    const link = DDApi.buildMagicLink(config, created.access_token);
-                    createMsg.innerHTML = `已创建 <strong>${created.project_no}</strong><br>Magic link：<code>${link}</code>`;
+                    const link = DDApi.buildMagicLink(config, created.accessToken);
+                    createMsg.innerHTML = `已创建 <strong>${esc(created.projectNo)}</strong><br>Magic link：<code>${link}</code>`;
                     createMsg.classList.remove('hidden');
                     await refreshProjects();
                 } catch (err) {
@@ -166,7 +172,7 @@
             async function refreshProjects() {
                 const wrap = document.getElementById('tableWrap');
                 try {
-                    const rows = await DDApi.fetchTeamProjects(config, session.access_token);
+                    const rows = await DDApi.team.fetchProjects(config, session);
                     if (!rows.length) {
                         wrap.innerHTML = '<p class="sub">暂无项目</p>';
                         return;
@@ -174,11 +180,11 @@
                     wrap.innerHTML = `<table>
                         <thead><tr><th>编号</th><th>客户</th><th>状态</th><th>渠道</th><th>链接</th></tr></thead>
                         <tbody>${rows.map(r => `<tr>
-                            <td>${esc(r.project_no)}</td>
-                            <td>${esc(r.client_name)}</td>
+                            <td>${esc(r.projectNo)}</td>
+                            <td>${esc(r.clientName)}</td>
                             <td>${DDApi.statusLabel(r.status)}</td>
                             <td>${esc(r.channel)}</td>
-                            <td><button class="btn btn-ghost btn-sm copy-btn" data-token="${esc(r.access_token)}">复制</button></td>
+                            <td><button class="btn btn-ghost btn-sm copy-btn" data-token="${esc(r.accessToken)}">复制</button></td>
                         </tr>`).join('')}</tbody>
                     </table>`;
                     wrap.querySelectorAll('.copy-btn').forEach(btn => {
@@ -202,12 +208,29 @@
             function showDash() {
                 loginPanel.classList.add('hidden');
                 dashPanel.classList.remove('hidden');
-                document.getElementById('userLabel').textContent = session.user?.email || '已登录';
+                const u = session.user || {};
+                const role = u.role ? ` · ${u.role}` : '';
+                document.getElementById('userLabel').textContent = (u.email || '已登录') + role;
                 refreshProjects();
             }
 
+            function tokenOf(s) {
+                return s && (s.accessToken || s.access_token);
+            }
+
+            function isConfigError(code) {
+                return code === 'supabase_not_configured'
+                    || code === 'platform_not_configured'
+                    || code === 'tencent_not_configured';
+            }
+
             function loadSession() {
-                try { return JSON.parse(localStorage.getItem(SESSION_KEY)); } catch { return null; }
+                try {
+                    const raw = JSON.parse(localStorage.getItem(SESSION_KEY));
+                    if (!raw) return null;
+                    if (raw.accessToken) return raw;
+                    return DDApi.auth.normalizeSession(raw, raw.provider || 'supabase');
+                } catch { return null; }
             }
             function saveSession(s) {
                 localStorage.setItem(SESSION_KEY, JSON.stringify(s));

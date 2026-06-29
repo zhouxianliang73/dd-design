@@ -93,3 +93,85 @@ button {
 button::after {
   border: none;
 }
+
+/* 极简产品网格（首页爆款 / 选品共用） */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12rpx 16rpx;
+}
+
+.product-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.product-image-wrap {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 75%;
+  border-radius: 16rpx;
+  overflow: hidden;
+  background: #f3f4f6;
+}
+
+.product-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: #f3f4f6;
+}
+
+.product-image-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #f3f4f6;
+}
+
+.product-name-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8rpx;
+  margin-top: 6rpx;
+  padding: 0 4rpx;
+}
+
+.product-name {
+  flex: 1;
+  font-size: 26rpx;
+  font-weight: 500;
+  color: #111827;
+  line-height: 1.45;
+  min-width: 0;
+}
+
+.product-fav-inline {
+  flex-shrink: 0;
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: -2rpx;
+}
+
+.product-fav-icon {
+  font-size: 32rpx;
+  color: #e5e7eb;
+  line-height: 1;
+  font-weight: 400;
+}
+
+.product-fav-active .product-fav-icon {
+  color: #e5e7eb;
+  font-weight: 400;
+}

@@ -14,6 +14,9 @@ Page({
   },
 
   onShow: function () {
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().syncSelected();
+    }
     this.loadPage();
   },
 
@@ -22,7 +25,11 @@ Page({
     var channelId = app.getChannel();
     var channel = channelService.getChannel(channelId);
     var favoriteIds = favoriteService.getIds();
-    var recommendProducts = catalog.getHomeRecommendProducts(channelId, favoriteIds, 6);
+    var recommendProducts = catalog.getHomeRecommendProducts(channelId, favoriteIds, 6).map(function (item) {
+      return Object.assign({}, item, {
+        isFavorite: favoriteService.isFavorite(item.id)
+      });
+    });
 
     this.setData({
       heroTag: channel.heroTag || 'DD Design Center',
@@ -42,6 +49,19 @@ Page({
   onProductTap: function (e) {
     var id = e.currentTarget.dataset.id;
     wx.navigateTo({ url: '/pages/product-detail/product-detail?id=' + id });
+  },
+
+  onToggleFavorite: function (e) {
+    var id = e.currentTarget.dataset.id;
+    var added = favoriteService.toggle(id);
+    var list = this.data.recommendProducts.map(function (item) {
+      if (item.id === id) {
+        return Object.assign({}, item, { isFavorite: added });
+      }
+      return item;
+    });
+    this.setData({ recommendProducts: list });
+    wx.showToast({ title: added ? '已收藏' : '已取消', icon: 'none' });
   },
 
   goShop: function () {

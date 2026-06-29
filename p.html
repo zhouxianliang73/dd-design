@@ -54,6 +54,9 @@
         <div id="app" class="state">正在加载您的项目…</div>
     </div>
     <script src="js/dd-config.js"></script>
+    <script src="js/dd-api-contract.js"></script>
+    <script src="js/providers/api-supabase.js"></script>
+    <script src="js/providers/api-tencent.js"></script>
     <script src="js/dd-api.js"></script>
     <script>
         (async function () {
@@ -70,7 +73,7 @@
 
             try {
                 const config = await DDConfig.loadConfig();
-                const bundle = await DDApi.fetchClientProject(config, token);
+                const bundle = await DDApi.client.fetchProjectBundle(config, token);
                 const p = bundle.project;
                 const selection = p.selection || [];
                 const messages = bundle.messages || [];
@@ -109,9 +112,11 @@
                     <p class="foot">专属链接 · 请勿转发 · <a href="showcase.html">DD design</a></p>
                 `;
             } catch (err) {
-                const isConfig = err.message === 'supabase_not_configured';
+                const isConfig = err.message === 'supabase_not_configured'
+                    || err.message === 'platform_not_configured'
+                    || err.message === 'tencent_not_configured';
                 app.innerHTML = isConfig
-                    ? `<p class="err">Supabase 未配置</p>
+                    ? `<p class="err">后端未配置</p>
                        <p style="margin-top:8px;font-size:13px">复制 config.public.example.json → config.public.json 并填入密钥。</p>
                        <p style="margin-top:8px;font-size:13px">开发测试 token：<code>dev-demo-token-dd-design-2026</code></p>`
                     : `<p class="err">无法打开项目</p>

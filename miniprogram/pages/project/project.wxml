@@ -167,6 +167,125 @@
       </view>
     </view>
   </view>
+
+  <view wx:if="{{item.showProcurementSection}}" class="proj-section procurement-section {{item.sectionOpen.procurement ? 'is-open' : ''}}">
+    <view class="proj-section-hd" catchtap="onToggleSection" data-id="{{item.id}}" data-section="procurement">
+      <text class="proj-section-label">采购询价</text>
+      <text class="procurement-badge muted">内部</text>
+      <text class="chevron">{{item.sectionOpen.procurement ? '▾' : '▸'}}</text>
+    </view>
+    <view class="proj-section-bd" wx:if="{{item.sectionOpen.procurement}}">
+      <view class="procurement-note muted" wx:if="{{item.procurement.note}}">{{item.procurement.note}}</view>
+      <view class="procurement-confirmed muted" wx:if="{{item.procurement.confirmedAt}}">
+        已于 {{item.procurement.confirmedAt}} 由 {{item.procurement.confirmedBy || '管理员'}} 发布确认
+      </view>
+
+      <scroll-view class="procurement-product-tabs" scroll-x enable-flex wx:if="{{item.procurementProducts.length}}">
+        <view class="procurement-product-tabs-row">
+          <view
+            class="procurement-product-tab {{item.activeProcurementProductId === prod.id ? 'is-active' : ''}}"
+            wx:for="{{item.procurementProducts}}"
+            wx:key="id"
+            wx:for-item="prod"
+            catchtap="onProcurementProductTap"
+            data-project-id="{{item.id}}"
+            data-product-id="{{prod.id}}"
+          >
+            <text class="procurement-product-name">{{prod.productName}}</text>
+            <text class="procurement-product-meta muted">{{prod.supplierCount}} 家报价</text>
+          </view>
+        </view>
+      </scroll-view>
+
+      <block wx:for="{{item.procurementProducts}}" wx:key="id" wx:for-item="prod">
+        <block wx:if="{{item.activeProcurementProductId === prod.id}}">
+          <view wx:if="{{prod.inquiryComparison}}" class="procurement-sub {{item.sectionOpen.inquiryCompare ? 'is-open' : ''}}">
+            <view class="procurement-sub-hd" catchtap="onToggleSection" data-id="{{item.id}}" data-section="inquiryCompare">
+              <text class="procurement-sub-label">供应商比价</text>
+              <text class="chevron">{{item.sectionOpen.inquiryCompare ? '▾' : '▸'}}</text>
+            </view>
+            <view class="procurement-sub-bd" wx:if="{{item.sectionOpen.inquiryCompare}}">
+              <view class="compare-summary muted">
+                {{prod.productName}} · 共 {{prod.inquiryComparison.supplierCount}} 家 · 最低合计
+                <text class="compare-low">{{prod.inquiryComparison.minTotalText}}</text>
+              </view>
+              <view class="compare-head muted">
+                <text class="c-supplier">供应商</text>
+                <text class="c-total">合计</text>
+                <text class="c-meta">工期</text>
+              </view>
+              <view
+                class="compare-row {{row.isLowest ? 'is-lowest' : ''}}"
+                wx:for="{{prod.inquiryComparison.rows}}"
+                wx:key="id"
+                wx:for-item="row"
+                catchtap="onInquirySupplierTap"
+                data-project-id="{{item.id}}"
+                data-product-id="{{prod.id}}"
+                data-supplier-id="{{row.id}}"
+              >
+                <view class="c-supplier">
+                  <text class="compare-name">{{row.name}}</text>
+                  <text wx:if="{{row.isLowest}}" class="compare-badge">最低</text>
+                </view>
+                <text class="c-total compare-total">{{row.totalText}}</text>
+                <text class="c-meta muted">{{row.leadTimeDays}}</text>
+              </view>
+              <view class="inquiry-hint muted">点击某行可查看该家明细报价单</view>
+            </view>
+          </view>
+
+          <view class="procurement-sub {{item.sectionOpen.inquiryQuotes ? 'is-open' : ''}}">
+            <view class="procurement-sub-hd" catchtap="onToggleSection" data-id="{{item.id}}" data-section="inquiryQuotes">
+              <text class="procurement-sub-label">供应商询价单</text>
+              <text class="chevron">{{item.sectionOpen.inquiryQuotes ? '▾' : '▸'}}</text>
+            </view>
+            <view class="procurement-sub-bd" wx:if="{{item.sectionOpen.inquiryQuotes}}">
+              <view class="inquiry-hint muted">{{prod.productName}} · 各供应商独立报价明细</view>
+              <scroll-view class="inquiry-tabs" scroll-x enable-flex>
+                <view class="inquiry-tabs-row">
+                  <view
+                    class="inquiry-tab {{prod.activeSupplierId === sup.id ? 'is-active' : ''}}"
+                    wx:for="{{prod.inquirySuppliers}}"
+                    wx:key="id"
+                    wx:for-item="sup"
+                    catchtap="onInquirySupplierTap"
+                    data-project-id="{{item.id}}"
+                    data-product-id="{{prod.id}}"
+                    data-supplier-id="{{sup.id}}"
+                  >{{sup.name}}</view>
+                </view>
+              </scroll-view>
+              <block wx:for="{{prod.inquirySuppliers}}" wx:key="id" wx:for-item="sup">
+                <view wx:if="{{prod.activeSupplierId === sup.id}}">
+                  <view class="inquiry-meta muted">
+                    <text>合计 {{sup.totalText}}</text>
+                    <text wx:if="{{sup.leadTimeDays}}"> · 工期 {{sup.leadTimeDays}}</text>
+                    <text wx:if="{{sup.validDays}}"> · 有效期 {{sup.validDays}}天</text>
+                  </view>
+                  <view class="quote-head muted">
+                    <text class="col-name">品名</text>
+                    <text class="col-qty">数量</text>
+                    <text class="col-price">金额</text>
+                  </view>
+                  <view class="quote-row" wx:for="{{sup.lines}}" wx:key="lineId" wx:for-item="line">
+                    <view class="col-name">
+                      <view class="line-text">
+                        <text class="line-name">{{line.name}}</text>
+                        <text class="line-spec muted">{{line.spec}} {{line.process}}</text>
+                      </view>
+                    </view>
+                    <text class="col-qty">{{line.qty || '—'}}</text>
+                    <text class="col-price">{{line.lineTotalText}}</text>
+                  </view>
+                </view>
+              </block>
+            </view>
+          </view>
+        </block>
+      </block>
+    </view>
+  </view>
 </template>
 
 <view class="page">

@@ -1,152 +1,20 @@
-<view class="page">
-  <view class="search card">
-    <view class="search-meta muted">当前渠道 · {{channelLabel}} · 共 {{total}} 件</view>
-    <view class="search-row">
-      <input
-        class="search-input"
-        placeholder="搜索名称、空间、风格"
-        value="{{keyword}}"
-        bindinput="onSearchInput"
-        confirm-type="search"
-        bindconfirm="onSearchConfirm"
-      />
-      <button class="search-btn-capsule" bindtap="onSearchConfirm">搜索</button>
-    </view>
-    <view wx:if="{{keyword}}" class="clear-link muted" bindtap="onClearSearch">清除搜索</view>
+<view class="page shop-page">
+  <view class="search-bar">
+    <input
+      class="search-input"
+      placeholder="搜索产品名称"
+      value="{{keyword}}"
+      bindinput="onSearchInput"
+      confirm-type="search"
+      bindconfirm="onSearchConfirm"
+    />
+    <button class="search-btn-capsule" bindtap="onSearchConfirm">搜索</button>
   </view>
-
-  <view class="filter card">
-    <view class="filter-tags" wx:if="{{hasActiveFilters}}">
-      <text class="filter-tag" wx:for="{{activeFilterTags}}" wx:key="key">{{item.label}}</text>
-    </view>
-
-    <view class="filter-head-row">
-      <text class="filter-head-title">筛选</text>
-      <view wx:if="{{narrowScreen}}" class="filter-head-space">
-        <picker mode="selector" range="{{filterSpaceLabels}}" value="{{filterSpaceIndex}}" bindchange="onPickSpace">
-          <view class="filter-picker filter-picker-inline">
-            <text class="filter-picker-label">空间</text>
-            <text class="filter-picker-value">{{filterSpaceLabels[filterSpaceIndex]}}</text>
-            <text class="filter-picker-arrow">▾</text>
-          </view>
-        </picker>
-      </view>
-      <scroll-view wx:else class="filter-head-chips" scroll-x enable-flex>
-        <view class="filter-chips">
-          <view
-            class="chip {{filterSpace === '' ? 'chip-active' : ''}}"
-            data-value=""
-            bindtap="onFilterSpace"
-          >全部</view>
-          <view
-            class="chip {{filterSpace === item ? 'chip-active' : ''}}"
-            wx:for="{{spaceOptions}}"
-            wx:key="*this"
-            data-value="{{item}}"
-            bindtap="onFilterSpace"
-          >{{item}}</view>
-        </view>
-      </scroll-view>
-      <text wx:if="{{hasActiveFilters}}" class="filter-clear" bindtap="onClearFilters">清除</text>
-    </view>
-
-    <view wx:if="{{narrowScreen}}" class="filter-dropdown-grid filter-dropdown-grid-3">
-      <picker
-        mode="selector"
-        range="{{filterSubLabels}}"
-        value="{{filterSubIndex}}"
-        bindchange="onPickSub"
-      >
-        <view class="filter-picker filter-picker-sub {{filterSubEnabled ? '' : 'filter-picker-disabled'}}">
-          <text class="filter-picker-label">分类</text>
-          <text class="filter-picker-value">{{filterSubLabels[filterSubIndex]}}</text>
-          <text class="filter-picker-arrow">▾</text>
-        </view>
-      </picker>
-      <picker mode="selector" range="{{filterStyleLabels}}" value="{{filterStyleIndex}}" bindchange="onPickStyle">
-        <view class="filter-picker">
-          <text class="filter-picker-label">风格</text>
-          <text class="filter-picker-value">{{filterStyleLabels[filterStyleIndex]}}</text>
-          <text class="filter-picker-arrow">▾</text>
-        </view>
-      </picker>
-      <picker mode="selector" range="{{filterColorLabels}}" value="{{filterColorIndex}}" bindchange="onPickColor">
-        <view class="filter-picker">
-          <text class="filter-picker-label">颜色</text>
-          <text class="filter-picker-value">{{filterColorLabels[filterColorIndex]}}</text>
-          <text class="filter-picker-arrow">▾</text>
-        </view>
-      </picker>
-    </view>
-
-    <block wx:else>
-    <view class="filter-row filter-row-sub" wx:if="{{filterSpace && subOptions.length}}">
-      <text class="filter-label">分类</text>
-      <scroll-view class="filter-scroll" scroll-x enable-flex>
-        <view class="filter-chips">
-          <view
-            class="chip {{filterSub === '' ? 'chip-active' : ''}}"
-            data-value=""
-            bindtap="onFilterSub"
-          >全部</view>
-          <view
-            class="chip {{filterSub === item ? 'chip-active' : ''}}"
-            wx:for="{{subOptions}}"
-            wx:key="*this"
-            data-value="{{item}}"
-            bindtap="onFilterSub"
-          >{{item}}</view>
-        </view>
-      </scroll-view>
-    </view>
-
-    <view class="filter-row">
-      <text class="filter-label">风格</text>
-      <scroll-view class="filter-scroll" scroll-x enable-flex>
-        <view class="filter-chips">
-          <view
-            class="chip {{filterStyle === '' ? 'chip-active' : ''}}"
-            data-value=""
-            bindtap="onFilterStyle"
-          >全部</view>
-          <view
-            class="chip {{filterStyle === item ? 'chip-active' : ''}}"
-            wx:for="{{styleOptions}}"
-            wx:key="*this"
-            data-value="{{item}}"
-            bindtap="onFilterStyle"
-          >{{item}}</view>
-        </view>
-      </scroll-view>
-    </view>
-
-    <view class="filter-row">
-      <text class="filter-label">颜色</text>
-      <scroll-view class="filter-scroll" scroll-x enable-flex>
-        <view class="filter-chips">
-          <view
-            class="chip {{filterColor === '' ? 'chip-active' : ''}}"
-            data-value=""
-            bindtap="onFilterColor"
-          >全部</view>
-          <view
-            class="chip {{filterColor === item ? 'chip-active' : ''}}"
-            wx:for="{{colorOptions}}"
-            wx:key="*this"
-            data-value="{{item}}"
-            bindtap="onFilterColor"
-          >{{item}}</view>
-        </view>
-      </scroll-view>
-    </view>
-    </block>
-  </view>
-
-  <view class="results-meta muted">选品结果 · 共 {{total}} 件</view>
+  <view wx:if="{{keyword}}" class="clear-link muted" bindtap="onClearSearch">清除</view>
 
   <view class="product-grid" wx:if="{{products.length}}">
     <view
-      class="product-card card"
+      class="product-card"
       wx:for="{{products}}"
       wx:key="id"
       data-id="{{item.id}}"
@@ -160,22 +28,20 @@
           mode="aspectFill"
           lazy-load="{{true}}"
         />
-        <view wx:else class="product-image-placeholder">{{item.emoji}}</view>
+        <view wx:else class="product-image-placeholder"></view>
+      </view>
+      <view class="product-name-row">
+        <text class="product-name">{{item.name}}</text>
         <view
-          class="product-fav {{item.isFavorite ? 'product-fav-active' : ''}}"
+          class="product-fav-inline {{item.isFavorite ? 'product-fav-active' : ''}}"
           data-id="{{item.id}}"
           catchtap="onToggleFavorite"
         >
           <text class="product-fav-icon">{{item.isFavorite ? '♥' : '♡'}}</text>
         </view>
       </view>
-      <view class="product-body">
-        <view class="product-name">{{item.emoji}} {{item.name}}</view>
-        <view class="product-meta muted">{{item.space}} · {{item.style}}</view>
-        <view class="product-price">{{item.priceText}}</view>
-      </view>
     </view>
   </view>
 
-  <view class="empty" wx:else>当前渠道暂无匹配产品</view>
+  <view class="empty" wx:else>暂无匹配产品</view>
 </view>

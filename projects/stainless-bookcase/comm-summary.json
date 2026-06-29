@@ -1,0 +1,44 @@
+{
+  "commImagesSummary": "报价单来自聊天附件 Excel，图片示意列待设计稿/现场图补齐",
+  "commImages": [],
+  "commContentByDate": [
+    {
+      "date": "2026-06-28",
+      "items": [
+        {
+          "text": "客户：直泰 · 产品：不锈钢书柜",
+          "status": "confirmed",
+          "role": "team"
+        },
+        {
+          "text": "询价来源：微信/WhatsApp 供应商报价 Excel",
+          "status": "confirmed",
+          "role": "team"
+        },
+        {
+          "text": "【供应商】钢鹏达金属制品 报价合计 ¥42,408",
+          "status": "pending",
+          "role": "supplier"
+        },
+        {
+          "text": "【供应商】鑫茂不锈钢定制 报价合计 ¥13,332",
+          "status": "pending",
+          "role": "supplier"
+        },
+        {
+          "text": "【供应商】堡亨达智能极简家居 报价合计 ¥17,161.632",
+          "status": "pending",
+          "role": "supplier"
+        }
+      ]
+    }
+  ],
+  "schemeVersions": [
+    {
+      "version": "V1",
+      "date": "",
+      "summary": "不锈钢书柜 · 初版询价整理（Excel 自动导入）",
+      "images": []
+    }
+  ]
+}

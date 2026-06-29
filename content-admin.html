@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DD design · 图片内容导入</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="stylesheet" href="delivery-doc-tokens.css" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--dd-doc-font);
+      background: var(--dd-doc-bg);
+      color: var(--dd-doc-text-default);
+      font-size: var(--dd-doc-fs-base);
+      min-height: 100vh;
+    }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 24px 16px 48px; }
+    h1 { font-size: var(--dd-doc-fs-xl); color: var(--dd-doc-text-strong); font-weight: var(--dd-doc-fw-bold); }
+    .sub { color: var(--dd-doc-text-muted); font-size: var(--dd-doc-fs-sm); margin: 6px 0 20px; line-height: 1.6; }
+    .nav { margin-bottom: 16px; }
+    .nav a { color: var(--dd-doc-text-muted); font-size: var(--dd-doc-fs-sm); margin-right: 14px; }
+    .panel {
+      background: var(--dd-doc-surface);
+      border-radius: var(--dd-doc-radius);
+      padding: 20px;
+      box-shadow: var(--dd-doc-elevation-1);
+      margin-bottom: 16px;
+    }
+    h2 { font-size: 16px; margin-bottom: 12px; color: var(--dd-doc-text-strong); }
+    label { display: block; font-size: var(--dd-doc-fs-sm); color: var(--dd-doc-text-muted); margin-bottom: 6px; }
+    .file-box {
+      border: 1px dashed var(--dd-doc-border-default);
+      border-radius: var(--dd-doc-radius);
+      padding: 16px;
+      margin-bottom: 14px;
+      background: var(--dd-doc-surface-nested);
+    }
+    input[type="file"] { font-size: var(--dd-doc-fs-sm); max-width: 100%; }
+    .btn {
+      padding: 10px 20px; border: none; border-radius: var(--dd-doc-radius);
+      background: var(--dd-doc-action-bg); color: #fff; font: inherit; cursor: pointer;
+    }
+    .btn:hover { background: var(--dd-doc-action-hover); }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+    .btn-ghost {
+      background: transparent; color: var(--dd-doc-text-muted);
+      border: 1px solid var(--dd-doc-border-default); margin-left: 8px;
+    }
+    .steps { list-style: none; font-size: var(--dd-doc-fs-sm); color: var(--dd-doc-text-muted); }
+    .steps li { padding: 6px 0; border-bottom: 1px solid var(--dd-doc-border-subtle); }
+    .steps li:last-child { border-bottom: none; }
+    .steps strong { color: var(--dd-doc-text-default); }
+    table { width: 100%; border-collapse: collapse; font-size: var(--dd-doc-fs-sm); margin-top: 8px; }
+    th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--dd-doc-border-subtle); }
+    th { color: var(--dd-doc-text-muted); }
+    .ok { color: #27ae60; font-size: var(--dd-doc-fs-sm); margin-top: 12px; }
+    .err { color: #c0392b; font-size: var(--dd-doc-fs-sm); margin-top: 12px; }
+    .warn { color: #d68910; font-size: var(--dd-doc-fs-sm); margin-top: 8px; }
+    code {
+      font-size: var(--dd-doc-fs-xs);
+      background: var(--dd-doc-surface-nested);
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+    .hidden { display: none; }
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #e8f4fd;
+      color: #1565c0;
+      margin-left: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <nav class="nav">
+      <a href="admin.html">团队后台</a>
+      <a href="1.html">选品中心</a>
+      <a href="showcase.html">精选案例</a>
+    </nav>
+    <h1>图片内容导入<span class="badge">Excel</span></h1>
+    <p class="sub">
+      用一张标准 Excel 维护设计师头像、商品图、案例封面。本地图片与 Excel 一并上传后，自动写入 JSON 并同步到小程序。
+    </p>
+
+    <div class="panel">
+      <h2>使用步骤</h2>
+      <ol class="steps">
+        <li><strong>下载模板</strong>：运行 <code>npm run content:template</code> 生成 <code>content/dd-content-template.xlsx</code></li>
+        <li><strong>填写 Excel</strong>：三张表「设计师」「商品图片」「案例封面」。图片列填网址或文件名（如 <code>zhangjun.jpg</code>）</li>
+        <li><strong>准备图片</strong>：本地图放到 <code>content/images/</code>，或与 Excel 一起在下文上传</li>
+        <li><strong>导入</strong>：上传 Excel + 图片，点击「开始导入」；微信开发者工具重新编译即可预览</li>
+      </ol>
+    </div>
+
+    <div class="panel">
+      <h2>上传并导入</h2>
+      <div class="file-box">
+        <label for="excelFile">Excel 文件（.xlsx）</label>
+        <input id="excelFile" type="file" accept=".xlsx,.xls" />
+      </div>
+      <div class="file-box">
+        <label for="imageFiles">本地图片（可多选，文件名需与 Excel「图片」列一致）</label>
+        <input id="imageFiles" type="file" accept="image/*" multiple />
+      </div>
+      <button class="btn" id="importBtn">开始导入</button>
+      <button class="btn btn-ghost" id="clearBtn" type="button">清空选择</button>
+      <p id="statusMsg" class="hidden"></p>
+      <div id="resultPanel" class="hidden">
+        <table>
+          <thead><tr><th>工作表</th><th>更新条数</th></tr></thead>
+          <tbody id="resultBody"></tbody>
+        </table>
+        <div id="warnBox" class="warn hidden"></div>
+        <div id="logBox" class="sub" style="margin-top:10px"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Excel 表结构</h2>
+      <table>
+        <thead>
+          <tr><th>工作表</th><th>列</th><th>说明</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>设计师</td><td>ID · 姓名 · 标签 · 图片</td><td>ID 如 d-zhangjun；图片可为 URL 或文件名</td></tr>
+          <tr><td>商品图片</td><td>ID · 名称(参考) · 图片</td><td>ID 如 f-001，对应选品卡片主图</td></tr>
+          <tr><td>案例封面</td><td>ID · 标题(参考) · 图片</td><td>ID 如 case-shade-umbrella</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const excelInput = document.getElementById('excelFile');
+      const imageInput = document.getElementById('imageFiles');
+      const importBtn = document.getElementById('importBtn');
+      const clearBtn = document.getElementById('clearBtn');
+      const statusMsg = document.getElementById('statusMsg');
+      const resultPanel = document.getElementById('resultPanel');
+      const resultBody = document.getElementById('resultBody');
+      const warnBox = document.getElementById('warnBox');
+      const logBox = document.getElementById('logBox');
+
+      clearBtn.addEventListener('click', function () {
+        excelInput.value = '';
+        imageInput.value = '';
+        hideResult();
+      });
+
+      importBtn.addEventListener('click', async function () {
+        hideResult();
+        const excelFile = excelInput.files[0];
+        if (!excelFile) {
+          showStatus('请先选择 Excel 文件', 'err');
+          return;
+        }
+
+        importBtn.disabled = true;
+        showStatus('正在导入，请稍候…', 'sub');
+
+        const form = new FormData();
+        form.append('excel', excelFile);
+        const images = imageInput.files;
+        for (let i = 0; i < images.length; i++) {
+          form.append('images', images[i], images[i].name);
+        }
+
+        try {
+          const res = await fetch('/api/import', { method: 'POST', body: form });
+          const data = await res.json();
+          if (!data.ok) {
+            throw new Error(data.error || '导入失败');
+          }
+          showSummary(data.summary);
+          showStatus('导入成功，请在微信开发者工具中重新编译小程序。', 'ok');
+        } catch (err) {
+          const hint = err.message === 'Failed to fetch'
+            ? '无法连接导入服务。请先运行 npm run content:admin，再打开本页面。'
+            : (err.message || '导入失败');
+          showStatus(hint, 'err');
+        } finally {
+          importBtn.disabled = false;
+        }
+      });
+
+      function showStatus(text, className) {
+        statusMsg.textContent = text;
+        statusMsg.className = className;
+        statusMsg.classList.remove('hidden');
+      }
+
+      function hideResult() {
+        resultPanel.classList.add('hidden');
+        warnBox.classList.add('hidden');
+        logBox.textContent = '';
+      }
+
+      function showSummary(summary) {
+        resultBody.innerHTML = (summary.sheets || []).map(function (s) {
+          return '<tr><td>' + esc(s.name) + '</td><td>' + s.updated + '</td></tr>';
+        }).join('');
+        resultPanel.classList.remove('hidden');
+
+        if (summary.warnings && summary.warnings.length) {
+          warnBox.textContent = summary.warnings.join('；');
+          warnBox.classList.remove('hidden');
+        }
+
+        if (summary.log && summary.log.length) {
+          logBox.innerHTML = '图片路径：<br>' + summary.log.map(function (item) {
+            return '<code>' + esc(item.id) + '</code> → ' + esc(item.image);
+          }).join('<br>');
+        }
+      }
+
+      function esc(s) {
+        return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+      }
+    })();
+  </script>
+</body>
+</html>

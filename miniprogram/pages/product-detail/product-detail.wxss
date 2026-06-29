@@ -24,17 +24,19 @@
 }
 
 .fav-active {
-  background: #fff1f2;
+  background: rgba(255, 255, 255, 0.92);
 }
 
 .fav-icon {
   font-size: 36rpx;
-  color: #9ca3af;
+  color: #e5e7eb;
   line-height: 1;
+  font-weight: 400;
 }
 
 .fav-active .fav-icon {
-  color: #e11d48;
+  color: #e5e7eb;
+  font-weight: 400;
 }
 
 .cover-placeholder {

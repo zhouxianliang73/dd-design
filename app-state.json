@@ -16,7 +16,9 @@
   },
   "platform": {
     "domain": "dd-design.com",
+    "apiProvider": "supabase",
     "supabaseSchema": "supabase/schema.sql",
+    "migrationSql": "supabase/migrations/2026062801_migration_ready.sql",
     "configExample": "config.public.example.json",
     "showcasePublic": true,
     "liveProjects": "supabase",

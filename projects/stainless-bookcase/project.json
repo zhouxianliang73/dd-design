@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "slug": "stainless-bookcase",
+  "name": "不锈钢书柜 · 询价",
+  "client": "直泰",
+  "projectType": "不锈钢定制",
+  "channel": "custom",
+  "quoteTemplate": "default",
+  "status": "询价",
+  "sources": [
+    {
+      "channel": "wechat",
+      "note": "供应商报价 Excel：不锈钢书柜.xlsx"
+    }
+  ],
+  "suppliers": [
+    {
+      "id": "gangpengda",
+      "name": "钢鹏达金属制品",
+      "quoteStatus": "已报价"
+    },
+    {
+      "id": "xinmao",
+      "name": "鑫茂不锈钢定制",
+      "quoteStatus": "已报价"
+    },
+    {
+      "id": "bahengda",
+      "name": "堡亨达智能极简家居",
+      "quoteStatus": "已报价"
+    }
+  ],
+  "updatedAt": "2026-06-28",
+  "notes": "询价数据见 inquiry-bundle.json；不含跨供应商比价页"
+}

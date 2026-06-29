@@ -1,6 +1,9 @@
 var completedDisplay = require('./completed-project-display');
+var inquiryService = require('./inquiry-service');
+var procurementAccess = require('./procurement-access-service');
+var auth = require('./auth-service');
 
-var LAYOUT_KEY = 'dd_project_layout_v3';
+var LAYOUT_KEY = 'dd_project_layout_v5';
 
 var SCHEME_STATUS_VALUES = ['scheme', 'inquiry'];
 var SCHEME_STATUS_LABELS = ['方案', '询价', '设计中', '待确认'];
@@ -279,7 +282,17 @@ var DEMO_RAW = [
     quoteTemplate: 'kitchen',
     designer: '李雅婷',
     coverEmoji: '🗄️',
-    progress: 68
+    progress: 68,
+    procurementInquiries: [
+      { id: 'inq-kitchen', slug: 'kitchen-cabinet', productName: '不锈钢厨柜' },
+      { id: 'inq-bookcase', slug: 'stainless-bookcase', productName: '不锈钢书柜' }
+    ],
+    procurement: {
+      status: 'confirmed',
+      confirmedAt: '2026-06-28',
+      confirmedBy: '管理员',
+      note: '按产品分项询价 · 供应商横向比价 · 内部可见'
+    }
   },
   {
     token: 'demo-scheme-001',
@@ -593,7 +606,10 @@ function normalizeSectionOpen(sectionOpen, quoteCategories) {
     products: o.products || false,
     commImages: o.commImages || o.clientImages || false,
     commContent: o.commContent || o.clientFeedback || false,
-    schemeVersions: o.schemeVersions || o.designerSummary || false
+    schemeVersions: o.schemeVersions || o.designerSummary || false,
+    inquiryCompare: o.inquiryCompare || false,
+    inquiryQuotes: o.inquiryQuotes || false,
+    procurement: o.procurement || false
   };
   if (quoteCategories && quoteCategories.length) {
     quoteCategories.forEach(function (cat) {
@@ -608,11 +624,51 @@ function defaultSectionOpen() {
     products: false,
     commImages: false,
     commContent: false,
-    schemeVersions: false
+    schemeVersions: false,
+    procurement: false,
+    inquiryCompare: false,
+    inquiryQuotes: false
   };
 }
 
-function attachProjectContent(project, index) {
+function attachProcurementContent(project, clientId) {
+  var empty = {
+    showProcurementSection: false,
+    procurementAuthorized: false,
+    procurementProducts: [],
+    activeProcurementProductId: ''
+  };
+
+  var inquiryDefs = inquiryService.getInquiryDefs(project);
+  if (!inquiryDefs.length || !project.procurement) {
+    return empty;
+  }
+
+  if (!procurementAccess.canViewProcurementContent(clientId, project)) {
+    return empty;
+  }
+
+  var procurementProducts = inquiryService.buildProcurementProducts(inquiryDefs);
+  if (!procurementProducts.length) {
+    return empty;
+  }
+
+  return {
+    showProcurementSection: true,
+    procurementAuthorized: true,
+    procurementProducts: procurementProducts,
+    activeProcurementProductId: procurementProducts[0].id
+  };
+}
+
+function refreshProcurementAccess(projects, clientId) {
+  return mapProjectsDeep(projects, function (p) {
+    var fields = attachProcurementContent(p, clientId);
+    return Object.assign({}, p, fields);
+  });
+}
+
+function attachProjectContent(project, index, clientId) {
   var isDemo = String(project.token || '').indexOf('demo-') === 0;
   var isKitchen = isKitchenProject(project);
   var removedIds = project.removedQuoteLineIds || [];
@@ -634,13 +690,15 @@ function attachProjectContent(project, index) {
     comm = normalizeComm(Object.assign({}, buildCommFromMeta(project, index), project.comm || {}));
   }
 
+  var procurementFields = attachProcurementContent(project, clientId);
+
   var priceFromProducts = quoteCategories
     ? sumQuoteCategories(quoteCategories)
     : products.reduce(function (sum, line) {
         return sum + (line.unitPrice || 0) * (line.qty || 1) * (line.coef || 1);
       }, 0);
 
-  var enriched = Object.assign({}, project, {
+  var enriched = Object.assign({}, project, procurementFields, {
     address: project.address || (project.meta && project.meta.address) || '项目地址待填写',
     projectType: project.projectType || '全案设计',
     showConfirm:
@@ -649,7 +707,7 @@ function attachProjectContent(project, index) {
     showDelivery: false,
     phase: 'scheme',
     canEditQuote: true,
-    expanded: false,
+    expanded: !!project.expanded,
     sectionOpen: normalizeSectionOpen(project.sectionOpen, quoteCategories),
     products: products,
     quoteCategories: quoteCategories,
@@ -664,14 +722,14 @@ function attachProjectContent(project, index) {
 
   if (enriched.isMerged && enriched.children && enriched.children.length) {
     enriched.children = enriched.children.map(function (child, childIndex) {
-      return attachProjectContent(child, childIndex);
+      return attachProjectContent(child, childIndex, clientId);
     });
   }
 
   return enriched;
 }
 
-function enrichProject(project, index) {
+function enrichProject(project, index, clientId) {
   var price = project.price != null ? project.price : estimatePrice(project);
   var base = Object.assign({}, project, {
     id: project.id || project.token,
@@ -685,7 +743,7 @@ function enrichProject(project, index) {
     childrenCount: project.children ? project.children.length : project.childrenCount || 0,
     children: project.children || []
   });
-  return attachProjectContent(base, index);
+  return attachProjectContent(base, index, clientId);
 }
 
 function readLayout() {
@@ -744,7 +802,7 @@ function withDemoProjects(rawProjects) {
   return list.filter(isSchemeProject);
 }
 
-function ensureKitchenDemo(projects) {
+function ensureKitchenDemo(projects, clientId) {
   if (!projects || !projects.length) return projects;
   var hasKitchen = projects.some(function (p) {
     return isKitchenProject(p);
@@ -752,7 +810,7 @@ function ensureKitchenDemo(projects) {
   if (hasKitchen) return projects;
   var kitchenRaw = DEMO_RAW.find(function (d) { return d.token === KITCHEN_DEMO_TOKEN; });
   if (!kitchenRaw) return projects;
-  return [enrichProject(Object.assign({}, kitchenRaw), 0)].concat(projects);
+  return [enrichProject(Object.assign({}, kitchenRaw), 0, clientId)].concat(projects);
 }
 
 function filterSchemeProjects(projects) {
@@ -761,20 +819,28 @@ function filterSchemeProjects(projects) {
   });
 }
 
-function buildDisplayProjects(rawProjects) {
+function buildDisplayProjects(rawProjects, clientId) {
+  clientId = clientId || auth.getCachedClientId() || '';
+  if (clientId) {
+    procurementAccess.bootstrapDemo(clientId);
+    if (procurementAccess.isAdmin(clientId)) {
+      procurementAccess.bootstrapDemoAdminProjectGrant(clientId, KITCHEN_DEMO_TOKEN);
+    }
+  }
+
   var layout = readLayout();
   var list;
   if (layout.items && layout.items.length) {
     list = stripNonKitchenDemos(
       layout.items.map(function (item, index) {
-        return enrichProject(item, index);
+        return enrichProject(item, index, clientId);
       })
     );
-    list = ensureKitchenDemo(list);
+    list = ensureKitchenDemo(list, clientId);
     writeLayout(list);
   } else {
     list = withDemoProjects(rawProjects).map(function (item, index) {
-      return enrichProject(item, index);
+      return enrichProject(item, index, clientId);
     });
     writeLayout(list);
   }
@@ -783,7 +849,7 @@ function buildDisplayProjects(rawProjects) {
 
 function collapseAllShells(projects) {
   return mapProjectsDeep(projects, function (p) {
-    return Object.assign({}, p, { expanded: false });
+    return Object.assign({}, p, { expanded: !!p.expanded });
   });
 }
 
@@ -929,7 +995,8 @@ function mergeSelected(projects, mergeName) {
       children: children,
       selection: []
     },
-    0
+    0,
+    auth.getCachedClientId() || ''
   );
 
   var remaining = projects
@@ -937,7 +1004,7 @@ function mergeSelected(projects, mergeName) {
       return !p.selected;
     })
     .map(function (p, index) {
-      return enrichProject(Object.assign({}, p, { selected: false }), index);
+      return enrichProject(Object.assign({}, p, { selected: false }), index, auth.getCachedClientId() || '');
     });
 
   remaining.unshift(merged);
@@ -956,7 +1023,7 @@ function splitMerged(projects, mergedId) {
   if (!merged.isMerged || !merged.children.length) return projects;
 
   var restored = merged.children.map(function (child, childIndex) {
-    return enrichProject(Object.assign({}, child, { selected: false, expanded: false }), childIndex);
+    return enrichProject(Object.assign({}, child, { selected: false, expanded: false }), childIndex, auth.getCachedClientId() || '');
   });
 
   var next = projects.slice(0, index).concat(restored, projects.slice(index + 1));
@@ -975,13 +1042,15 @@ function removeQuoteLine(projects, projectId, lineId) {
   next = next.map(function (p, index) {
     var enriched = enrichProject(
       Object.assign({}, p, { selected: p.selected, expanded: p.expanded }),
-      index
+      index,
+      auth.getCachedClientId() || ''
     );
     if (enriched.children && enriched.children.length) {
       enriched.children = enriched.children.map(function (child, childIndex) {
         return enrichProject(
           Object.assign({}, child, { selected: child.selected, expanded: child.expanded }),
-          childIndex
+          childIndex,
+          auth.getCachedClientId() || ''
         );
       });
     }
@@ -1027,7 +1096,7 @@ function confirmScheme(projects, projectId) {
       return p.id !== projectId && p.token !== projectId;
     })
     .map(function (p, index) {
-      return enrichProject(Object.assign({}, p, { selected: p.selected, expanded: p.expanded }), index);
+      return enrichProject(Object.assign({}, p, { selected: p.selected, expanded: p.expanded }), index, auth.getCachedClientId() || '');
     });
   writeLayout(next);
   return next;
@@ -1057,5 +1126,6 @@ module.exports = {
   resetLayout,
   suggestMergedName,
   formatPrice,
-  defaultSectionOpen
+  defaultSectionOpen,
+  refreshProcurementAccess
 };

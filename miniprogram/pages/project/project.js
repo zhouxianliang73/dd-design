@@ -3,6 +3,7 @@ const clientProject = require('../../utils/client-project-service');
 const catalog = require('../../utils/catalog-service');
 const favoriteService = require('../../utils/favorite-service');
 const projectDisplay = require('../../utils/project-display-service');
+const authService = require('../../utils/auth-service');
 const { getConfig } = require('../../utils/dd-config');
 
 Page({
@@ -44,6 +45,9 @@ Page({
   },
 
   onShow() {
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().syncSelected();
+    }
     this.bootstrap();
   },
 
@@ -103,38 +107,43 @@ Page({
     const config = getConfig();
     const bindToken = this._bindTokenAfterLoad;
     this._bindTokenAfterLoad = '';
+    const that = this;
 
     clientProject
       .listMyProjects()
       .then((projects) => {
-        let displayProjects = projectDisplay.filterSchemeProjects(
-          projectDisplay.buildDisplayProjects(projects)
-        );
-        if (bindToken) {
-          displayProjects = this.ensureTokenProject(displayProjects, bindToken);
-        }
-        this.setData({
-          loading: false,
-          favoriteProducts,
-          pageTitle: config.brand || 'DD Design Center',
-          brand: config.brand,
-          error: '',
-          mergeNameInput: ''
+        return authService.ensureClientId().then(function (clientId) {
+          let displayProjects = projectDisplay.filterSchemeProjects(
+            projectDisplay.buildDisplayProjects(projects, clientId)
+          );
+          if (bindToken) {
+            displayProjects = that.ensureTokenProject(displayProjects, bindToken);
+          }
+          that.setData({
+            loading: false,
+            favoriteProducts,
+            pageTitle: config.brand || 'DD Design Center',
+            brand: config.brand,
+            error: '',
+            mergeNameInput: ''
+          });
+          that.syncSelection(displayProjects);
         });
-        this.syncSelection(displayProjects);
       })
       .catch(() => {
-        let displayProjects = projectDisplay.buildDisplayProjects([]);
-        if (bindToken) {
-          displayProjects = this.ensureTokenProject(displayProjects, bindToken);
-        }
-        this.setData({
-          loading: false,
-          favoriteProducts,
-          pageTitle: config.brand || 'DD Design Center',
-          error: ''
+        authService.ensureClientId().then(function (clientId) {
+          let displayProjects = projectDisplay.buildDisplayProjects([], clientId);
+          if (bindToken) {
+            displayProjects = that.ensureTokenProject(displayProjects, bindToken);
+          }
+          that.setData({
+            loading: false,
+            favoriteProducts,
+            pageTitle: config.brand || 'DD Design Center',
+            error: ''
+          });
+          that.syncSelection(displayProjects);
         });
-        this.syncSelection(displayProjects);
       });
   },
 
@@ -186,6 +195,41 @@ Page({
     const id = e.currentTarget.dataset.id;
     const section = e.currentTarget.dataset.section;
     const projects = projectDisplay.toggleSection(this.data.displayProjects, id, section);
+    this.setData({ displayProjects: projects });
+  },
+
+  onInquirySupplierTap(e) {
+    const projectId = e.currentTarget.dataset.projectId;
+    const productId = e.currentTarget.dataset.productId;
+    const supplierId = e.currentTarget.dataset.supplierId;
+    const projects = this.data.displayProjects.map(function (p) {
+      if (p.id !== projectId) return p;
+      if (!p.procurementAuthorized) return p;
+      const procurementProducts = (p.procurementProducts || []).map(function (prod) {
+        if (prod.id !== productId) return prod;
+        return Object.assign({}, prod, { activeSupplierId: supplierId });
+      });
+      const sectionOpen = Object.assign({}, p.sectionOpen || {}, {
+        procurement: true,
+        inquiryQuotes: true,
+        inquiryCompare: p.sectionOpen && p.sectionOpen.inquiryCompare
+      });
+      return Object.assign({}, p, {
+        activeProcurementProductId: productId,
+        procurementProducts: procurementProducts,
+        sectionOpen: sectionOpen
+      });
+    });
+    this.setData({ displayProjects: projects });
+  },
+
+  onProcurementProductTap(e) {
+    const projectId = e.currentTarget.dataset.projectId;
+    const productId = e.currentTarget.dataset.productId;
+    const projects = this.data.displayProjects.map(function (p) {
+      if (p.id !== projectId) return p;
+      return Object.assign({}, p, { activeProcurementProductId: productId });
+    });
     this.setData({ displayProjects: projects });
   },
 

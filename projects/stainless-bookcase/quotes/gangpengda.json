@@ -1,0 +1,36 @@
+{
+  "id": "gangpengda",
+  "name": "钢鹏达金属制品",
+  "sheetName": "钢鹏达金属制品",
+  "currency": "CNY",
+  "leadTimeDays": "",
+  "validDays": "",
+  "total": 42408,
+  "lines": [
+    {
+      "lineNo": 1,
+      "name": "不锈钢书柜",
+      "image": "",
+      "spec": "3000*2480*360",
+      "process": "不锈钢#304\n拉丝处理\n颜色待定\n激光折弯\n卡扣工艺",
+      "qty": 1,
+      "areaSqm": 7.44,
+      "unitPrice": 2500,
+      "amount": 18600,
+      "notes": "有颜色板制作\n材料1.2mm足厚\n不刨坑折弯\n贴7C激光膜\n整柜无焊点"
+    },
+    {
+      "lineNo": 2,
+      "name": "不锈钢书柜",
+      "image": "",
+      "spec": "3000*2480*360",
+      "process": "不锈钢#304\n拉丝处理\n颜色待定\n激光焊接\n卡扣工艺",
+      "qty": 1,
+      "areaSqm": 7.44,
+      "unitPrice": 3200,
+      "amount": 23808,
+      "notes": "无颜色板制作\n材料5.0mm足厚\n板厚手工倒角\n整体做色\n整柜无焊点"
+    }
+  ],
+  "totalText": "¥42,408"
+}

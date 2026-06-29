@@ -74,7 +74,7 @@
   </view>
   <view class="product-grid" wx:if="{{recommendProducts.length}}">
     <view
-      class="product-card card"
+      class="product-card"
       wx:for="{{recommendProducts}}"
       wx:key="id"
       data-id="{{item.id}}"
@@ -88,13 +88,17 @@
           mode="aspectFill"
           lazy-load="{{true}}"
         />
-        <view wx:else class="product-image-placeholder">{{item.emoji}}</view>
-        <view wx:if="{{item.isFavorite}}" class="product-fav">♥</view>
+        <view wx:else class="product-image-placeholder"></view>
       </view>
-      <view class="product-body">
-        <view class="product-name">{{item.emoji}} {{item.name}}</view>
-        <view class="product-meta muted">{{item.space}} · {{item.style}}</view>
-        <view class="product-price">{{item.priceText}}</view>
+      <view class="product-name-row">
+        <text class="product-name">{{item.name}}</text>
+        <view
+          class="product-fav-inline {{item.isFavorite ? 'product-fav-active' : ''}}"
+          data-id="{{item.id}}"
+          catchtap="onToggleFavorite"
+        >
+          <text class="product-fav-icon">{{item.isFavorite ? '♥' : '♡'}}</text>
+        </view>
       </view>
     </view>
   </view>

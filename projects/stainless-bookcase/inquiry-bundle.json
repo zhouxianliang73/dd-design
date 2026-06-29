@@ -1,0 +1,321 @@
+{
+  "version": 1,
+  "slug": "stainless-bookcase",
+  "name": "不锈钢书柜 · 询价",
+  "client": "直泰",
+  "productName": "不锈钢书柜",
+  "channel": "custom",
+  "projectType": "不锈钢定制",
+  "status": "inquiry",
+  "statusLabel": "询价",
+  "updatedAt": "2026-06-28",
+  "sourceFile": "不锈钢书柜.xlsx",
+  "comm": {
+    "commImagesSummary": "报价单来自聊天附件 Excel，图片示意列待设计稿/现场图补齐",
+    "commImages": [],
+    "commContentByDate": [
+      {
+        "date": "2026-06-28",
+        "items": [
+          {
+            "text": "客户：直泰 · 产品：不锈钢书柜",
+            "status": "confirmed",
+            "role": "team"
+          },
+          {
+            "text": "询价来源：微信/WhatsApp 供应商报价 Excel",
+            "status": "confirmed",
+            "role": "team"
+          },
+          {
+            "text": "【供应商】钢鹏达金属制品 报价合计 ¥42,408",
+            "status": "pending",
+            "role": "supplier"
+          },
+          {
+            "text": "【供应商】鑫茂不锈钢定制 报价合计 ¥13,332",
+            "status": "pending",
+            "role": "supplier"
+          },
+          {
+            "text": "【供应商】堡亨达智能极简家居 报价合计 ¥17,161.632",
+            "status": "pending",
+            "role": "supplier"
+          }
+        ]
+      }
+    ],
+    "schemeVersions": [
+      {
+        "version": "V1",
+        "date": "",
+        "summary": "不锈钢书柜 · 初版询价整理（Excel 自动导入）",
+        "images": []
+      }
+    ]
+  },
+  "suppliers": [
+    {
+      "id": "gangpengda",
+      "name": "钢鹏达金属制品",
+      "sheetName": "钢鹏达金属制品",
+      "currency": "CNY",
+      "leadTimeDays": "",
+      "validDays": "",
+      "total": 42408,
+      "lines": [
+        {
+          "lineNo": 1,
+          "name": "不锈钢书柜",
+          "image": "",
+          "spec": "3000*2480*360",
+          "process": "不锈钢#304\n拉丝处理\n颜色待定\n激光折弯\n卡扣工艺",
+          "qty": 1,
+          "areaSqm": 7.44,
+          "unitPrice": 2500,
+          "amount": 18600,
+          "notes": "有颜色板制作\n材料1.2mm足厚\n不刨坑折弯\n贴7C激光膜\n整柜无焊点"
+        },
+        {
+          "lineNo": 2,
+          "name": "不锈钢书柜",
+          "image": "",
+          "spec": "3000*2480*360",
+          "process": "不锈钢#304\n拉丝处理\n颜色待定\n激光焊接\n卡扣工艺",
+          "qty": 1,
+          "areaSqm": 7.44,
+          "unitPrice": 3200,
+          "amount": 23808,
+          "notes": "无颜色板制作\n材料5.0mm足厚\n板厚手工倒角\n整体做色\n整柜无焊点"
+        }
+      ],
+      "totalText": "¥42,408"
+    },
+    {
+      "id": "xinmao",
+      "name": "鑫茂不锈钢定制",
+      "sheetName": "鑫茂不锈钢定制",
+      "currency": "CNY",
+      "leadTimeDays": "",
+      "validDays": "",
+      "total": 13332,
+      "freeText": "304# 5.0层板架 正面厚度倒圆角，电镀深灰色 \n2.8*2.48*1920=13332元\n此价格不含税运木箱！\n整体做好发货或拆装都可以，看客户需求",
+      "lines": [
+        {
+          "lineNo": 1,
+          "name": "304# 5.0层板架",
+          "spec": "304# 5.0层板架 正面厚度倒圆角，电镀深灰色 ",
+          "process": "",
+          "qty": 1,
+          "unitPrice": 13332,
+          "amount": 13332,
+          "notes": "304# 5.0层板架 正面厚度倒圆角，电镀深灰色 \n2.8*2.48*1920=13332元\n此价格不含税运木箱！\n整体做好发货或拆装都可以，看客户需求"
+        }
+      ],
+      "totalText": "¥13,332"
+    },
+    {
+      "id": "bahengda",
+      "name": "堡亨达智能极简家居",
+      "sheetName": "堡亨达智能极简家居",
+      "currency": "CNY",
+      "clientName": "",
+      "productName": "",
+      "quoteDate": "",
+      "total": 17161.632,
+      "lines": [
+        {
+          "lineNo": 0,
+          "name": "堡亨达智能极简家居              客户单号：",
+          "bodyColor": "",
+          "glassColor": "",
+          "heightMm": 0,
+          "widthMm": 0,
+          "depthMm": 0,
+          "qty": 0,
+          "areaSqm": 0,
+          "unitPrice": 0,
+          "amount": 0,
+          "notes": "",
+          "spec": " mm"
+        },
+        {
+          "lineNo": 0,
+          "name": "客户名称",
+          "bodyColor": "",
+          "glassColor": "直泰",
+          "heightMm": 0,
+          "widthMm": 0,
+          "depthMm": null,
+          "qty": 0,
+          "areaSqm": 0,
+          "unitPrice": 0,
+          "amount": 0,
+          "notes": "日期：2026.6.2",
+          "spec": "联系电话 mm"
+        },
+        {
+          "lineNo": 0,
+          "name": "产品名称",
+          "bodyColor": "",
+          "glassColor": "5mm实心铝板柜",
+          "heightMm": 0,
+          "widthMm": 0,
+          "depthMm": null,
+          "qty": 0,
+          "areaSqm": 0,
+          "unitPrice": 0,
+          "amount": 0,
+          "notes": "",
+          "spec": "尺寸 mm"
+        },
+        {
+          "lineNo": 1,
+          "name": "5mm实心铝板柜\n（无灯光）",
+          "bodyColor": "后喷漆颜色",
+          "glassColor": "/",
+          "heightMm": 0,
+          "widthMm": 0,
+          "depthMm": 0,
+          "qty": 1,
+          "areaSqm": 0,
+          "unitPrice": 0,
+          "amount": 0,
+          "notes": "",
+          "spec": " mm"
+        },
+        {
+          "lineNo": 3,
+          "name": "立板",
+          "bodyColor": "后喷漆颜色",
+          "glassColor": "/",
+          "heightMm": 2480,
+          "widthMm": null,
+          "depthMm": 360,
+          "qty": 7,
+          "areaSqm": 0.8928,
+          "unitPrice": 1280,
+          "amount": 7999.488,
+          "notes": "",
+          "spec": "2480×/×360 mm"
+        },
+        {
+          "lineNo": 4,
+          "name": "顶板",
+          "bodyColor": "后喷漆颜色",
+          "glassColor": "/",
+          "heightMm": null,
+          "widthMm": 2800,
+          "depthMm": 360,
+          "qty": 1,
+          "areaSqm": 1.008,
+          "unitPrice": 1280,
+          "amount": 1290.24,
+          "notes": "",
+          "spec": "/×2800×360 mm"
+        },
+        {
+          "lineNo": 5,
+          "name": "层板",
+          "bodyColor": "后喷漆颜色",
+          "glassColor": "/",
+          "heightMm": null,
+          "widthMm": 2800,
+          "depthMm": 360,
+          "qty": 3,
+          "areaSqm": 1.008,
+          "unitPrice": 1280,
+          "amount": 3870.72,
+          "notes": "",
+          "spec": "/×2800×360 mm"
+        },
+        {
+          "lineNo": 6,
+          "name": "层板",
+          "bodyColor": "后喷漆颜色",
+          "glassColor": "/",
+          "heightMm": null,
+          "widthMm": 540,
+          "depthMm": 360,
+          "qty": 4,
+          "areaSqm": 0.1944,
+          "unitPrice": 1280,
+          "amount": 995.328,
+          "notes": "",
+          "spec": "/×540×360 mm"
+        },
+        {
+          "lineNo": 7,
+          "name": "层板",
+          "bodyColor": "后喷漆颜色",
+          "glassColor": "/",
+          "heightMm": null,
+          "widthMm": 1940,
+          "depthMm": 360,
+          "qty": 3,
+          "areaSqm": 0.6984,
+          "unitPrice": 1280,
+          "amount": 2681.856,
+          "notes": "",
+          "spec": "/×1940×360 mm"
+        },
+        {
+          "lineNo": 8,
+          "name": "分段折边",
+          "bodyColor": "后喷漆颜色",
+          "glassColor": "/",
+          "heightMm": null,
+          "widthMm": 2480,
+          "depthMm": null,
+          "qty": 1,
+          "areaSqm": 2.48,
+          "unitPrice": 50,
+          "amount": 124,
+          "notes": "",
+          "spec": "/×2480×/ mm"
+        },
+        {
+          "lineNo": 9,
+          "name": "木架",
+          "bodyColor": "",
+          "glassColor": "/",
+          "heightMm": null,
+          "widthMm": null,
+          "depthMm": null,
+          "qty": 2,
+          "areaSqm": 0,
+          "unitPrice": 100,
+          "amount": 200,
+          "notes": "",
+          "spec": "/×/×/ mm"
+        },
+        {
+          "lineNo": 11,
+          "name": "成品出货",
+          "bodyColor": "",
+          "glassColor": "",
+          "heightMm": 0,
+          "widthMm": 0,
+          "depthMm": 0,
+          "qty": 0,
+          "areaSqm": 0,
+          "unitPrice": 0,
+          "amount": 0,
+          "notes": "",
+          "spec": " mm"
+        }
+      ],
+      "totalText": "¥17,161.632"
+    }
+  ],
+  "suggestedCatalog": {
+    "id": "f-bookcase-001",
+    "name": "不锈钢书柜",
+    "space": "不锈钢家具",
+    "sub": "书柜",
+    "style": "现代",
+    "spec": "3000×2480×360",
+    "material": "不锈钢#304",
+    "notes": "由询价 Excel 自动生成草稿，审核后写入 catalog.json"
+  }
+}
