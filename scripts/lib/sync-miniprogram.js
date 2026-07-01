@@ -3,6 +3,17 @@
  */
 const fs = require('fs');
 const path = require('path');
+const {
+  loadImageCdnConfig,
+  resolveProductImage,
+  resolveDesignerImage,
+  purgeMiniprogramImages,
+} = require('./image-cdn');
+const {
+  syncHardwareSubPackages,
+  updateAppJsonSubPackages,
+  clearHardwareSubPackages,
+} = require('./image-subpackages');
 
 const LITE_FIELDS = [
   'id',
@@ -22,9 +33,6 @@ const LITE_FIELDS = [
   'channels'
 ];
 
-const IMAGE_FALLBACK =
-  'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=320&h=180&fit=crop&auto=format&q=80';
-
 function copyDirIfExists(srcDir, destDir) {
   if (!fs.existsSync(srcDir)) return 0;
   fs.mkdirSync(destDir, { recursive: true });
@@ -37,66 +45,92 @@ function copyDirIfExists(srcDir, destDir) {
   return count;
 }
 
-function syncAssetImages(projectRoot) {
-  const mpRoot = path.join(projectRoot, 'miniprogram', 'images');
-  const pairs = [
-    ['images/designers', 'designers'],
-    ['images/hardware', 'hardware'],
-    ['images/products', 'products']
-  ];
-  let total = 0;
-  pairs.forEach(function (pair) {
-    const copied = copyDirIfExists(path.join(projectRoot, pair[0]), path.join(mpRoot, pair[1]));
-    if (copied) {
-      console.log('copied', copied, 'images → miniprogram/images/' + pair[1]);
+function syncAssetImages(projectRoot, cdnConfig) {
+  if (!cdnConfig.copyToMiniprogram) {
+    clearHardwareSubPackages(projectRoot);
+    const removed = purgeMiniprogramImages(projectRoot);
+    if (removed) {
+      console.log('CDN 模式：已从小程序包移除', removed, '张本地图片');
     }
-    total += copied;
-  });
-  return total;
-}
-
-function resolveHardwareImage(item, projectRoot) {
-  return resolveCatalogImage(item, projectRoot, 'hardware');
-}
-
-function resolveCatalogImage(item, projectRoot, kind) {
-  const id = item.id || '';
-  const localJpg = path.join(projectRoot, 'images', kind, id + '.jpg');
-  const localPng = path.join(projectRoot, 'images', kind, id + '.png');
-  if (fs.existsSync(localJpg)) return '/images/' + kind + '/' + id + '.jpg';
-  if (fs.existsSync(localPng)) return '/images/' + kind + '/' + id + '.png';
-  if (item.imageLocal && String(item.imageLocal).indexOf('/images/') === 0) {
-    const rel = item.imageLocal.replace(/^\//, '');
-    if (fs.existsSync(path.join(projectRoot, 'miniprogram', rel))) return item.imageLocal;
+    return null;
   }
-  if (item.image && String(item.image).indexOf('http') === 0) return item.image;
-  if (item.image && String(item.image).indexOf('/images/') === 0) return item.image;
-  return IMAGE_FALLBACK;
+
+  clearHardwareSubPackages(projectRoot);
+
+  const mpRoot = path.join(projectRoot, 'miniprogram', 'images');
+  const designerCopied = copyDirIfExists(
+    path.join(projectRoot, 'images', 'designers'),
+    path.join(mpRoot, 'designers')
+  );
+  if (designerCopied) {
+    console.log('copied', designerCopied, 'images → miniprogram/images/designers');
+  }
+
+  copyDirIfExists(path.join(projectRoot, 'images', 'products'), path.join(mpRoot, 'products'));
+
+  const subPack =
+    cdnConfig.useImageSubPackages !== false
+      ? syncHardwareSubPackages(projectRoot, { maxBytes: cdnConfig.maxSubPackageBytes })
+      : null;
+
+  if (subPack) {
+    updateAppJsonSubPackages(projectRoot, subPack.packCount);
+    console.log(
+      '五金图分包',
+      subPack.packCount,
+      '个 ·',
+      (subPack.totalBytes / 1024 / 1024).toFixed(2),
+      'MB（主包不含五金图）'
+    );
+    return subPack.map;
+  }
+
+  const hwCopied = copyDirIfExists(
+    path.join(projectRoot, 'images', 'hardware'),
+    path.join(mpRoot, 'hardware')
+  );
+  if (hwCopied) {
+    console.log('copied', hwCopied, 'images → miniprogram/images/hardware');
+  }
+  return null;
 }
 
-function resolveDesignerPhoto(designer, projectRoot) {
-  const id = designer.id || '';
-  const localJpg = path.join(projectRoot, 'images', 'designers', id + '.jpg');
-  const localPng = path.join(projectRoot, 'images', 'designers', id + '.png');
-  if (fs.existsSync(localJpg)) return '/images/designers/' + id + '.jpg';
-  if (fs.existsSync(localPng)) return '/images/designers/' + id + '.png';
-  if (designer.photo && String(designer.photo).indexOf('http') === 0) return designer.photo;
-  if (designer.photoFallback) return designer.photoFallback;
-  return designer.photo || IMAGE_FALLBACK;
+function syncPackOptions(projectRoot, cdnConfig) {
+  const configPath = path.join(projectRoot, 'project.config.json');
+  if (!fs.existsSync(configPath)) return;
+
+  const cfg = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+  const excludeImages = cdnConfig.useCdn && !cdnConfig.copyToMiniprogram;
+  const ignore = excludeImages ? [{ type: 'folder', value: 'images' }] : [];
+  const prev = JSON.stringify(cfg.packOptions && cfg.packOptions.ignore || []);
+  const next = JSON.stringify(ignore);
+
+  if (prev !== next) {
+    cfg.packOptions = cfg.packOptions || {};
+    cfg.packOptions.ignore = ignore;
+    fs.writeFileSync(configPath, JSON.stringify(cfg, null, 2) + '\n', 'utf8');
+    console.log(excludeImages ? 'packOptions：CDN 模式已忽略 miniprogram/images' : 'packOptions：本地模式已包含 miniprogram/images');
+  }
 }
 
 function syncMiniprogramData(root) {
   const projectRoot = root || path.join(__dirname, '..', '..');
+  const cdnConfig = loadImageCdnConfig(projectRoot);
   const dataDir = path.join(projectRoot, 'miniprogram', 'data');
-  const files = ['catalog.json', 'channels.json', 'showcase.json', 'designers.json'];
+  const jsonFiles = ['channels.json', 'showcase.json', 'designers.json'];
 
   if (!fs.existsSync(dataDir)) {
     fs.mkdirSync(dataDir, { recursive: true });
   }
 
-  syncAssetImages(projectRoot);
+  if (cdnConfig.useCdn) {
+    console.log('CDN 模式', cdnConfig.imageCdnBase);
+  }
 
-  files.forEach(function (name) {
+  const imagePackMap = syncAssetImages(projectRoot, cdnConfig);
+  syncPackOptions(projectRoot, cdnConfig);
+
+  jsonFiles.forEach(function (name) {
     const jsonPath = path.join(projectRoot, name);
     const outName = name.replace('.json', '.js');
     const outPath = path.join(dataDir, outName);
@@ -104,7 +138,9 @@ function syncMiniprogramData(root) {
 
     if (name === 'designers.json') {
       const designers = (data.designers || data).map(function (d) {
-        return Object.assign({}, d, { photo: resolveDesignerPhoto(d, projectRoot) });
+        return Object.assign({}, d, {
+          photo: resolveDesignerImage(d, projectRoot, cdnConfig),
+        });
       });
       fs.writeFileSync(outPath, 'module.exports = ' + JSON.stringify(designers) + ';\n', 'utf8');
     } else {
@@ -120,9 +156,15 @@ function syncMiniprogramData(root) {
       if (item[key] != null) lite[key] = item[key];
     });
     if (item.sub === '功能配件' || (item.quoteSections || []).indexOf('hardware') >= 0) {
-      lite.image = resolveHardwareImage(item, projectRoot);
+      if (imagePackMap && imagePackMap[item.id]) {
+        lite.image = imagePackMap[item.id];
+      } else {
+        lite.image = resolveProductImage(item, projectRoot, 'hardware', cdnConfig);
+      }
     } else if (item.meta && item.meta.importSource === 'emsun-2026') {
-      lite.image = resolveCatalogImage(item, projectRoot, 'products');
+      lite.image = resolveProductImage(item, projectRoot, 'products', cdnConfig);
+    } else if (item.imageLocal && String(item.imageLocal).indexOf('/images/products/') === 0) {
+      lite.image = resolveProductImage(item, projectRoot, 'products', cdnConfig);
     }
     return lite;
   });
@@ -133,6 +175,12 @@ function syncMiniprogramData(root) {
     'utf8'
   );
   console.log('synced', litePath);
+
+  const staleCatalogJs = path.join(dataDir, 'catalog.js');
+  if (fs.existsSync(staleCatalogJs)) {
+    fs.unlinkSync(staleCatalogJs);
+    console.log('removed unused', staleCatalogJs);
+  }
 }
 
-module.exports = { syncMiniprogramData, resolveHardwareImage, resolveDesignerPhoto };
+module.exports = { syncMiniprogramData };

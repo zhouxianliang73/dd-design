@@ -9,6 +9,7 @@ try {
 const DEFAULTS = {
   brand: 'DD design',
   siteUrl: 'https://dd-design.com',
+  imageCdnBase: '',
   defaultChannel: 'custom',
   supabase: { url: '', anonKey: '' }
 };

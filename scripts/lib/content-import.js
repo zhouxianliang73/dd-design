@@ -7,6 +7,7 @@ const path = require('path');
 const XLSX = require('xlsx');
 const { syncMiniprogramData } = require('./sync-miniprogram');
 const { normalizeProductRow, mergeProduct } = require('./catalog-normalize');
+const { exportDesignerAvatarsFromXlsx, parseDispimgId } = require('./extract-wps-dispimg-images');
 
 const SHEET_TYPES = {
   '设计师': 'designer',
@@ -142,7 +143,28 @@ function processSimpleSheet(sheetName, type, rows, imagesDir, projectRoot, log) 
     const imageVal = cell(row, ['图片', '封面图', '封面', meta.imageField, 'image', 'photo', 'cover']);
     if (imageVal) {
       if (isDispimg(imageVal)) {
-        warnings.push(sheetName + ' 第 ' + (index + 2) + ' 行 ID「' + id + '」：图例为 Excel 嵌入图，请导出图片后重新导入');
+        if (type === 'designer') {
+          const extCandidates = ['.jpg', '.png', '.webp'];
+          let localPhoto = '';
+          for (let i = 0; i < extCandidates.length; i += 1) {
+            const abs = path.join(projectRoot, 'images', meta.assetDir, id + extCandidates[i]);
+            if (fs.existsSync(abs)) {
+              localPhoto = '/images/' + meta.assetDir + '/' + id + extCandidates[i];
+              break;
+            }
+          }
+          if (localPhoto && item[meta.imageField] !== localPhoto) {
+            item[meta.imageField] = localPhoto;
+            rowChanged = true;
+            log.push({ sheet: sheetName, id: id, image: localPhoto });
+          } else if (!localPhoto) {
+            warnings.push(
+              sheetName + ' 第 ' + (index + 2) + ' 行 ID「' + id + '」：嵌入图未导出，请先 npm run content:import-designers'
+            );
+          }
+        } else {
+          warnings.push(sheetName + ' 第 ' + (index + 2) + ' 行 ID「' + id + '」：图例为 Excel 嵌入图，请导出图片后重新导入');
+        }
       } else {
         try {
           const resolved = resolveImageValue(imageVal, imagesDir, meta.assetDir, id, projectRoot);
@@ -309,6 +331,16 @@ function importFromExcel(excelPath, imagesDir, options) {
     const sheet = workbook.Sheets[sheetName];
     const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
     if (!rows.length) return;
+
+    if (SHEET_TYPES[sheetName] === 'designer') {
+      const hasDispimg = rows.some(function (row) {
+        const imageVal = cell(row, ['图片', 'photo', 'image']);
+        return parseDispimgId(imageVal);
+      });
+      if (hasDispimg) {
+        exportDesignerAvatarsFromXlsx(excelPath, { projectRoot: projectRoot, updateJson: true });
+      }
+    }
 
     const result = processSheet(sheetName, rows, imagesDir, projectRoot, log);
     if (result.skipped) {

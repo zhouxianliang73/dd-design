@@ -72,6 +72,143 @@ function mediaExt(mediaPath) {
   return ext || '.jpg';
 }
 
+function exportDispimgRows(xlsxPath, options) {
+  const projectRoot = options.projectRoot || path.join(__dirname, '..', '..');
+  const outDir = options.outDir;
+  const rows = options.rows || [];
+  const getId = options.getId || function (row) { return row.ID || row.id; };
+  const getImageRaw =
+    options.getImageRaw ||
+    function (row) {
+      return row['图片'] || row['图例'] || row.image || row.photo;
+    };
+  const labelField = options.labelField || 'name';
+
+  fs.mkdirSync(outDir, { recursive: true });
+
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'dispimg-xlsx-'));
+  const warnings = [];
+  const log = [];
+  let exported = 0;
+  let skipped = 0;
+  let missing = 0;
+
+  try {
+    unzipXlsx(xlsxPath, tmpDir);
+    const { guidToMedia, hasCellImages } = parseCellImageMap(tmpDir);
+    if (!hasCellImages) {
+      warnings.push('未找到 WPS cellimages.xml，无法自动导出嵌入图');
+      return { exported, skipped, missing, log, warnings };
+    }
+
+    rows.forEach(function (row, index) {
+      const id = String(getId(row) || '').trim();
+      if (!id) {
+        skipped += 1;
+        return;
+      }
+
+      const imageRaw = getImageRaw(row);
+      const guid = parseDispimgId(imageRaw);
+      if (!guid) {
+        skipped += 1;
+        return;
+      }
+
+      const mediaRel = guidToMedia[guid];
+      if (!mediaRel) {
+        missing += 1;
+        warnings.push('第 ' + (index + 2) + ' 行 ID「' + id + '」：找不到嵌入图 ' + guid);
+        return;
+      }
+
+      const srcPath = path.join(tmpDir, 'xl', mediaRel.replace(/\//g, path.sep));
+      if (!fs.existsSync(srcPath)) {
+        missing += 1;
+        warnings.push('第 ' + (index + 2) + ' 行 ID「' + id + '」：媒体文件缺失 ' + mediaRel);
+        return;
+      }
+
+      const ext = mediaExt(mediaRel);
+      const fileName = id + ext;
+      const destPath = path.join(outDir, fileName);
+      fs.copyFileSync(srcPath, destPath);
+      exported += 1;
+
+      const kind = path.basename(outDir);
+      const imageUrl = '/images/' + kind + '/' + fileName;
+      const label = row[labelField] || row['姓名'] || row.name || id;
+      log.push({ id: id, name: label, file: fileName, imageUrl: imageUrl, guid: guid });
+    });
+  } finally {
+    try {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    } catch (e) {
+      /* ignore cleanup errors */
+    }
+  }
+
+  return { exported, skipped, missing, log, warnings, projectRoot: projectRoot };
+}
+
+/**
+ * 从 content/dd-content-template.xlsx「设计师」表导出头像
+ */
+function exportDesignerAvatarsFromXlsx(xlsxPath, options) {
+  const projectRoot = options.projectRoot || path.join(__dirname, '..', '..');
+  const outDir = options.outDir || path.join(projectRoot, 'images', 'designers');
+  const updateJson = options.updateJson !== false;
+
+  const wb = XLSX.readFile(xlsxPath);
+  const sheetName =
+    options.sheetName ||
+    wb.SheetNames.find(function (n) {
+      return n.indexOf('设计') >= 0;
+    }) ||
+    '设计师';
+
+  if (!wb.Sheets[sheetName]) {
+    return {
+      exported: 0,
+      skipped: 0,
+      missing: 0,
+      log: [],
+      warnings: ['找不到工作表「' + sheetName + '」'],
+    };
+  }
+
+  const rows = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { defval: '' });
+  const result = exportDispimgRows(xlsxPath, {
+    projectRoot: projectRoot,
+    outDir: outDir,
+    rows: rows,
+    getId: function (row) {
+      return row.ID || row.id;
+    },
+    getImageRaw: function (row) {
+      return row['图片'] || row.photo || row.image;
+    },
+  });
+
+  if (updateJson && result.log.length) {
+    const designersPath = path.join(projectRoot, 'designers.json');
+    const data = JSON.parse(fs.readFileSync(designersPath, 'utf8'));
+    const list = data.designers || [];
+    result.log.forEach(function (entry) {
+      const item = list.find(function (d) {
+        return d.id === entry.id;
+      });
+      if (item) {
+        item.photo = entry.imageUrl;
+      }
+    });
+    data.updatedAt = new Date().toISOString().slice(0, 10);
+    fs.writeFileSync(designersPath, JSON.stringify(data, null, 2) + '\n', 'utf8');
+  }
+
+  return result;
+}
+
 /**
  * @param {string} xlsxPath
  * @param {object} options
@@ -167,5 +304,7 @@ function exportHardwareImagesFromXlsx(xlsxPath, options) {
 module.exports = {
   parseDispimgId,
   parseCellImageMap,
+  exportDispimgRows,
+  exportDesignerAvatarsFromXlsx,
   exportHardwareImagesFromXlsx,
 };

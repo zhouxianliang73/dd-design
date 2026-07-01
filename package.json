@@ -3,10 +3,11 @@
   "private": true,
   "scripts": {
     "sync": "node scripts/sync-miniprogram-data.js",
+    "cdn:manifest": "node scripts/publish-cdn-assets.js",
     "content:template": "node scripts/generate-content-template.js",
     "content:import": "node scripts/import-content-excel.js",
     "content:import-hardware": "node scripts/import-hardware-xlsx.js",
-    "content:extract-hardware-images": "node scripts/extract-hardware-images.js",
+    "content:import-designers": "node scripts/import-designer-avatars-xlsx.js",
     "content:import-emsun": "node scripts/import-emsun-xlsx.js",
     "content:merge-hardware": "node scripts/merge-catalog-hardware.js",
     "content:import-inquiry": "node scripts/import-inquiry-excel.js",

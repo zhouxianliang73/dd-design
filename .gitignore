@@ -5,3 +5,5 @@ project.private.config.json
 config/config.js
 config.public.json
 miniprogram/config/config.js
+cdn.config.json
+content/cdn-upload-manifest.json

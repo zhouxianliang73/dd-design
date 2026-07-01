@@ -6,49 +6,49 @@
       "id": "d-zhangjun",
       "name": "张俊",
       "tag": "现代简约 · 8年",
-      "photo": "/images/designers/d-zhangjun.jpg",
+      "photo": "/images/designers/d-zhangjun.png",
       "photoFallback": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=144&h=144&fit=crop&crop=face&auto=format&q=80"
     },
     {
       "id": "d-guxin",
       "name": "顾欣",
       "tag": "北欧自然 · 6年",
-      "photo": "/images/designers/d-guxin.jpg",
+      "photo": "/images/designers/d-guxin.png",
       "photoFallback": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=144&h=144&fit=crop&crop=face&auto=format&q=80"
     },
     {
       "id": "d-shengfei",
       "name": "盛菲",
       "tag": "新中式 · 10年",
-      "photo": "/images/designers/d-shengfei.jpg",
+      "photo": "/images/designers/d-shengfei.png",
       "photoFallback": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=144&h=144&fit=crop&crop=face&auto=format&q=80"
     },
     {
       "id": "d-alex",
       "name": "ALEX",
       "tag": "极简主义 · 7年",
-      "photo": "/images/designers/d-alex.jpg",
+      "photo": "/images/designers/d-alex.png",
       "photoFallback": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=144&h=144&fit=crop&crop=face&auto=format&q=80"
     },
     {
       "id": "d-hill",
       "name": "HILL",
       "tag": "复古轻奢 · 5年",
-      "photo": "/images/designers/d-hill.jpg",
+      "photo": "/images/designers/d-hill.png",
       "photoFallback": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=144&h=144&fit=crop&crop=face&auto=format&q=80"
     },
     {
       "id": "d-zhouhong",
       "name": "周宏",
       "tag": "侘寂风 · 4年",
-      "photo": "/images/designers/d-zhouhong.jpg",
+      "photo": "/images/designers/d-zhouhong.png",
       "photoFallback": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=144&h=144&fit=crop&crop=face&auto=format&q=80"
     },
     {
       "id": "d-zhouchuxuan",
       "name": "周楚轩",
       "tag": "法式 · 6年",
-      "photo": "/images/designers/d-zhouchuxuan.jpg",
+      "photo": "/images/designers/d-zhouchuxuan.png",
       "photoFallback": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=144&h=144&fit=crop&crop=face&auto=format&q=80"
     }
   ]

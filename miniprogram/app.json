@@ -43,5 +43,28 @@
   },
   "style": "v2",
   "lazyCodeLoading": "requiredComponents",
-  "sitemapLocation": "sitemap.json"
+  "sitemapLocation": "sitemap.json",
+  "subPackages": [
+    {
+      "root": "packages/hw-assets-1",
+      "name": "hwassets1",
+      "pages": [
+        "pages/empty/empty"
+      ]
+    },
+    {
+      "root": "packages/hw-assets-2",
+      "name": "hwassets2",
+      "pages": [
+        "pages/empty/empty"
+      ]
+    },
+    {
+      "root": "packages/hw-assets-3",
+      "name": "hwassets3",
+      "pages": [
+        "pages/empty/empty"
+      ]
+    }
+  ]
 }

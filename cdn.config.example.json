@@ -1,0 +1,6 @@
+{
+  "imageCdnBase": "",
+  "copyToMiniprogram": true,
+  "useImageSubPackages": true,
+  "maxSubPackageBytes": 1800000
+}
